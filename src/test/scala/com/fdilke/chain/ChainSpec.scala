@@ -13,4 +13,10 @@ class ChainSpec extends FunSuite:
     val mappedChain: Chain[String] = Chain.pure(2).map { _.toString }
     mappedChain.run() is "2"
 
+  test("can flatMap a chain"):
+    def kleisli(text: String): Chain[Int] =
+      Chain.pure(text).map { _.length }
+    val flatMappedChain: Chain[Int] = Chain.pure("David Sylvian").flatMap(kleisli)
+    flatMappedChain.run() is 13
+
 
