@@ -19,4 +19,10 @@ class ChainSpec extends FunSuite:
     val flatMappedChain: Chain[Int] = Chain.pure("David Sylvian").flatMap(kleisli)
     flatMappedChain.run() is 13
 
+  test("can flatten a chain of a chain"):
+    def chainChain: Chain[Chain[Int]] =
+      Chain.pure(8).map { Chain.pure }
+    val flattenedChain: Chain[Int] = chainChain.flatten
+    flattenedChain.run() is 8
+
 

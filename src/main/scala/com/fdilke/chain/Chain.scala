@@ -10,7 +10,11 @@ sealed trait Chain[T]:
     MappedChain[T, U](this, function)
   final def flatMap[U](function: T => Chain[U]): Chain[U] =
     FlatMappedChain[T, U](this, function)
-  
+
+extension[T](chainChain: Chain[Chain[T]])
+  def flatten: Chain[T] =
+    FlattenedChain[T](chainChain)
+
 object Chain:
   object VanillaRunner extends ChainRunner:
     @tailrec override def run[T](chain: Chain[T]): T =
@@ -50,5 +54,8 @@ private class FlatMappedChain[T, U](
     case Left(result) => Right(function(result))
     case Right(nextChain) => Right(FlatMappedChain(nextChain, function))
 
-
-
+private class FlattenedChain[T](chainChain: Chain[Chain[T]]) extends Chain[T]:
+  override def step: Either[T, Chain[T]] =
+    chainChain.step match
+    case Left(result) => Right(result)
+    case Right(nextChainChain) => Right(FlattenedChain(nextChainChain))
