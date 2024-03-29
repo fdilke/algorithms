@@ -1,17 +1,17 @@
 package com.fdilke.backtrack.node
 
 
-trait Node[+NODE <: Node[NODE]]:
-  def explore: NodeStatus[NODE]
-  final def solve: Option[NODE] =
-    val pig: NodeStatus[NODE] = NodeFailed
-    explore match {
-      case NodeFailed => None
-    }
+trait Node[+NODE <: Node[NODE, SOLUTION], +SOLUTION]:
+  node =>
+  def explore: NodeStatus[NODE, SOLUTION]
+  final def solve: Option[SOLUTION] =
+    explore match
+      case NodeBad => None
+      case NodeGood(solution) => Some(solution)
 
-// object NodeSucceeded extends NodeStatus[_]
-sealed trait NodeStatus[+NODE <: Node[NODE]]
+sealed trait NodeStatus[+NODE <: Node[NODE, SOLUTION], +SOLUTION]
 
-case object NodeFailed extends NodeStatus[Nothing]
+case class NodeGood[+SOLUTION](solution: SOLUTION) extends NodeStatus[Nothing, SOLUTION]
+case object NodeBad extends NodeStatus[Nothing, Nothing]
 
 
