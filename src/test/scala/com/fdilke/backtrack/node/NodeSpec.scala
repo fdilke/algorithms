@@ -3,6 +3,7 @@ package com.fdilke.backtrack.node
 import munit.FunSuite
 
 import com.fdilke.utility.RichFunSuite._
+import java.util.concurrent.atomic.AtomicReference
 
 
 class NodeSpec extends FunSuite:
@@ -31,8 +32,10 @@ class NodeSpec extends FunSuite:
 
   test("find a solution in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
+    val explorations: AtomicReference[Seq[Seq[Boolean]]] = AtomicReference[Seq[Seq[Boolean]]](Seq.empty)
     class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Seq[Boolean]]:
       override def explore: NodeStatus =
+        explorations.set(explorations.get() :+ prefix)
         if (prefix.length == 3)
           NodeGood(prefix)
         else
@@ -43,4 +46,29 @@ class NodeSpec extends FunSuite:
     initialNode.solve is Some(
       Seq(true, true, true)
     )
+    println("explorations.get() = " + explorations.get)
+    println("" + explorations.get().size + " explorations")
 
+  test("find all solutions in a branching search"):
+    val seqValues: Iterable[Boolean] = Iterable(true, false)
+    class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Seq[Boolean]]:
+      override def explore: NodeStatus =
+        if (prefix.length == 3)
+          NodeGood(prefix)
+        else
+          NodeContinue(
+            seqValues.map { v => SearchNode(prefix :+ v) }
+          )
+    checkSameElementsAs(  
+      SearchNode(Seq.empty).allSolutions.toSeq,
+      Seq(
+        Seq(true, true, true),
+        Seq(true, true, false),
+        Seq(true, false, true),
+        Seq(true, false, false),
+        Seq(false, true, true),
+        Seq(false, true, false),
+        Seq(false, false, true),
+        Seq(false, false, false)
+      )
+    )

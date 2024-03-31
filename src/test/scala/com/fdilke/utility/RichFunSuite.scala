@@ -25,6 +25,7 @@ object RichFunSuite:
   //     assert(!(arrow =!= arrow2))
 
   def checkSameElementsAs[X](thing: Seq[X], other: Seq[X]): Unit =
+    thing.size is other.size
     thing.toSet is other.toSet
   // extension(text: String)
   //   inline def is(letters: Seq[Char]): Unit =
