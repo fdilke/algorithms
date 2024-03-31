@@ -1,22 +1,22 @@
 package com.fdilke.backtrack.node
 
 
-trait Node[+NODE <: Node[NODE, SOLUTION], +SOLUTION]:
+trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
   node =>
-  def explore: NodeStatus[NODE, SOLUTION]
+  def explore: NodeStatus
   final def solve: Option[SOLUTION] =
     explore match
       case NodeBad => None
       case NodeGood(solution) => Some(solution)
-      case NodeContinue[NODE, SOLUTION](nextNodes) => 
+      case NodeContinue(nextNodes) => 
         nextNodes.map { _.solve  }.find { _.isDefined }.flatten
 
-sealed trait NodeStatus[+NODE <: Node[NODE, SOLUTION], +SOLUTION]
+  sealed trait NodeStatus
 
-case class NodeGood[+SOLUTION](solution: SOLUTION) extends NodeStatus[Nothing, SOLUTION]
-case object NodeBad extends NodeStatus[Nothing, Nothing]
-case class NodeContinue[+NODE <: Node[NODE, SOLUTION], +SOLUTION](
-  nextNodes: Iterable[NODE]
-) extends NodeStatus[NODE, SOLUTION]
+  case class NodeGood(solution: SOLUTION) extends NodeStatus
+  case object NodeBad extends NodeStatus
+  case class NodeContinue(
+    nextNodes: Iterable[NODE]
+  ) extends NodeStatus
 
 

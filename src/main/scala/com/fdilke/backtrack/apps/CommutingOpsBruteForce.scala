@@ -9,7 +9,7 @@ import scala.annotation.tailrec
 import scala.collection.View
 
 object CommutingOpsBruteForce extends App:
-  private val order = 4
+  private val order = 3
   private val quads: Seq[(Int, Int, Int, Int)] =
     allMaps(
       source = 0 until 4,

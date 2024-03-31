@@ -6,7 +6,7 @@ import com.fdilke.backtrack.Backtrack.{DecisionNode, MapComplete, MapInvalid, Ne
 import java.util.concurrent.atomic.AtomicInteger
 
 object CommutingOpsSubtle extends App:
-  private val order = 5
+  private val order = 3
 
   private val elements: Set[Int] = (0 until order).toSet
   private val pairs: Set[(Int, Int)] =
