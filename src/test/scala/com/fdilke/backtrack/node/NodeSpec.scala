@@ -46,8 +46,7 @@ class NodeSpec extends FunSuite:
     initialNode.solve is Some(
       Seq(true, true, true)
     )
-    println("explorations.get() = " + explorations.get)
-    println("" + explorations.get().size + " explorations")
+    explorations.get().size is 4
 
   test("find all solutions in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
