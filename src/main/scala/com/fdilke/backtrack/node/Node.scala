@@ -1,6 +1,5 @@
 package com.fdilke.backtrack.node
 
-
 trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
   node =>
   def explore: NodeStatus
@@ -9,20 +8,12 @@ trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
       case NodeBad => None
       case NodeGood(solution) => Iterable(solution)
       case NodeContinue(nextNodes) => 
-        nextNodes.map { _.allSolutions  }.flatten
+        nextNodes.view.map { 
+          _.allSolutions 
+        }.flatten
 
   final def solve: Option[SOLUTION] =
-    explore match
-      case NodeBad => None
-      case NodeGood(solution) => 
-        Some(solution)
-      case NodeContinue(nextNodes) => 
-        nextNodes.view.map { 
-          _.solve  
-        }.find { 
-          _.isDefined 
-        }.flatten
-//    allSolutions.headOption
+    allSolutions.headOption
 
   sealed trait NodeStatus
 
