@@ -1,7 +1,8 @@
 package com.fdilke.backtrack.node
 
-trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
+trait Node[SOLUTION]:
   node =>
+  protected type NodeStatus = NodeLocalStatus[SOLUTION]
   def explore: NodeStatus
   final def allSolutions: Iterable[SOLUTION] =
     explore match
@@ -13,12 +14,12 @@ trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
   final def solve: Option[SOLUTION] =
     allSolutions.headOption
 
-  sealed trait NodeStatus
+sealed trait NodeLocalStatus[+SOLUTION]
 
-  case class NodeGood(solution: SOLUTION) extends NodeStatus
-  case object NodeBad extends NodeStatus
-  case class NodeContinue(
-    nextNodes: Iterable[NODE]
-  ) extends NodeStatus
+case class NodeGood[SOLUTION](solution: SOLUTION) extends NodeLocalStatus[SOLUTION]
+case object NodeBad extends NodeLocalStatus[Nothing]
+case class NodeContinue[SOLUTION](
+  nextNodes: Iterable[Node[SOLUTION]]
+) extends NodeLocalStatus[SOLUTION]
 
 

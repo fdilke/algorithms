@@ -8,21 +8,21 @@ import java.util.concurrent.atomic.AtomicReference
 
 class NodeSpec extends FunSuite:
   test("successfully fails at the first hurdle"):
-    class NonStarterNode extends Node[NonStarterNode, Unit]:
+    class NonStarterNode extends Node[Unit]:
       override def explore: NodeStatus =
         NodeBad
     NonStarterNode().solve is None
 
   test("successfully succeeds at the first hurdle"):
-    class QuickWinNode extends Node[QuickWinNode, Int]:
+    class QuickWinNode extends Node[Int]:
       override def explore: NodeStatus =
         NodeGood(2)
     val node = QuickWinNode()
     node.solve is Some(2)
 
   test("successfully increments a value to 5"):
-    class SearchNode(i: Int) extends Node[SearchNode, Boolean]:
-      override def explore: NodeStatus =
+    class SearchNode(i: Int) extends Node[Boolean]:
+      override def explore:NodeStatus =
         if (i == 5)
           NodeGood(true)
         else
@@ -33,7 +33,7 @@ class NodeSpec extends FunSuite:
   test("find a solution in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
     val explorations: AtomicReference[Seq[Seq[Boolean]]] = AtomicReference[Seq[Seq[Boolean]]](Seq.empty)
-    class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Seq[Boolean]]:
+    class SearchNode(prefix: Seq[Boolean]) extends Node[Seq[Boolean]]:
       override def explore: NodeStatus =
         explorations.set(explorations.get() :+ prefix)
         if (prefix.length == 3)
@@ -50,7 +50,7 @@ class NodeSpec extends FunSuite:
 
   test("find all solutions in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
-    class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Seq[Boolean]]:
+    class SearchNode(prefix: Seq[Boolean]) extends Node[Seq[Boolean]]:
       override def explore: NodeStatus =
         if (prefix.length == 3)
           NodeGood(prefix)
