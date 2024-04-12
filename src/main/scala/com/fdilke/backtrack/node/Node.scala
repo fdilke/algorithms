@@ -7,10 +7,8 @@ trait Node[NODE <: Node[NODE, SOLUTION], SOLUTION]:
     explore match
       case NodeBad => None
       case NodeGood(solution) => Iterable(solution)
-      case NodeContinue(nextNodes) => 
-        nextNodes.view.map { 
-          _.allSolutions 
-        }.flatten
+      case NodeContinue(nextNodes) =>
+        nextNodes.view.flatMap(_.allSolutions)
 
   final def solve: Option[SOLUTION] =
     allSolutions.headOption
