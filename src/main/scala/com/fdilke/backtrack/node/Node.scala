@@ -4,15 +4,6 @@ trait Node[SOLUTION]:
   node =>
   protected type NodeStatus = NodeLocalStatus[SOLUTION]
   def explore: NodeStatus
-  final def allSolutions: Iterable[SOLUTION] =
-    explore match
-      case NodeBad => None
-      case NodeGood(solution) => Iterable(solution)
-      case NodeContinue(nextNodes) =>
-        nextNodes.view.flatMap(_.allSolutions)
-
-  final def solve: Option[SOLUTION] =
-    allSolutions.headOption
 
 sealed trait NodeLocalStatus[+SOLUTION]
 
@@ -22,4 +13,9 @@ case class NodeContinue[SOLUTION](
   nextNodes: Iterable[Node[SOLUTION]]
 ) extends NodeLocalStatus[SOLUTION]
 
+trait NodeSolver:
+  def allSolutions[SOLUTION](node: Node[SOLUTION]): Iterable[SOLUTION]
+
+  final def oneSolution[SOLUTION](node: Node[SOLUTION]): Option[SOLUTION] =
+    allSolutions(node).headOption
 

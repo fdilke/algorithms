@@ -5,20 +5,21 @@ import munit.FunSuite
 import com.fdilke.utility.RichFunSuite._
 import java.util.concurrent.atomic.AtomicReference
 
+class SimpleNodeSolverSpec extends NodeSolverSpec(new SimpleNodeSearcher)
 
-class NodeSpec extends FunSuite:
+abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
   test("successfully fails at the first hurdle"):
     class NonStarterNode extends Node[Unit]:
       override def explore: NodeStatus =
         NodeBad
-    NonStarterNode().solve is None
+    solver.oneSolution(NonStarterNode()) is None
 
   test("successfully succeeds at the first hurdle"):
     class QuickWinNode extends Node[Int]:
       override def explore: NodeStatus =
         NodeGood(2)
     val node = QuickWinNode()
-    node.solve is Some(2)
+    solver.oneSolution(node) is Some(2)
 
   test("successfully increments a value to 5"):
     class SearchNode(i: Int) extends Node[Boolean]:
@@ -28,7 +29,7 @@ class NodeSpec extends FunSuite:
         else
           NodeContinue(Iterable(SearchNode(i + 1)))
     val initialNode = SearchNode(0)
-    initialNode.solve is Some(true)
+    solver.oneSolution(initialNode) is Some(true)
 
   test("find a solution in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
@@ -43,7 +44,7 @@ class NodeSpec extends FunSuite:
             seqValues.map { v => SearchNode(prefix :+ v) }
           )
     val initialNode = SearchNode(Seq.empty)
-    initialNode.solve is Some(
+    solver.oneSolution(initialNode) is Some(
       Seq(true, true, true)
     )
     explorations.get().size is 4
@@ -59,7 +60,7 @@ class NodeSpec extends FunSuite:
             seqValues.map { v => SearchNode(prefix :+ v) }
           )
     checkSameElementsAs(  
-      SearchNode(Seq.empty).allSolutions.toSeq,
+      solver.allSolutions(SearchNode(Seq.empty)).toSeq,
       Seq(
         Seq(true, true, true),
         Seq(true, true, false),
