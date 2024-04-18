@@ -11,23 +11,23 @@ abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
   test("successfully fails at the first hurdle"):
     class NonStarterNode extends Node[Unit]:
       override def explore: NodeStatus =
-        NodeBad
+        Left(Iterable.empty[Unit])
     solver.oneSolution(NonStarterNode()) is None
 
   test("successfully succeeds at the first hurdle"):
     class QuickWinNode extends Node[Int]:
       override def explore: NodeStatus =
-        NodeGood(2)
+        Left(Iterable[Int](2))
     val node = QuickWinNode()
     solver.oneSolution(node) is Some(2)
 
   test("successfully increments a value to 5"):
     class SearchNode(i: Int) extends Node[Boolean]:
-      override def explore:NodeStatus =
+      override def explore: NodeStatus =
         if (i == 5)
-          NodeGood(true)
+          Left(Iterable[Boolean](true))
         else
-          NodeContinue(Iterable(SearchNode(i + 1)))
+          Right(Iterable[Node[Boolean]](SearchNode(i + 1)))
     val initialNode = SearchNode(0)
     solver.oneSolution(initialNode) is Some(true)
 
@@ -38,11 +38,9 @@ abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
       override def explore: NodeStatus =
         explorations.set(explorations.get() :+ prefix)
         if (prefix.length == 3)
-          NodeGood(prefix)
+          Left(Iterable[Seq[Boolean]](prefix))
         else
-          NodeContinue(
-            seqValues.map { v => SearchNode(prefix :+ v) }
-          )
+          Right(seqValues.map { v => SearchNode(prefix :+ v) })
     val initialNode = SearchNode(Seq.empty)
     solver.oneSolution(initialNode) is Some(
       Seq(true, true, true)
@@ -54,11 +52,9 @@ abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
     class SearchNode(prefix: Seq[Boolean]) extends Node[Seq[Boolean]]:
       override def explore: NodeStatus =
         if (prefix.length == 3)
-          NodeGood(prefix)
+          Left(Iterable[Seq[Boolean]](prefix))
         else
-          NodeContinue(
-            seqValues.map { v => SearchNode(prefix :+ v) }
-          )
+          Right(seqValues.map { v => SearchNode(prefix :+ v) })
     checkSameElementsAs(  
       solver.allSolutions(SearchNode(Seq.empty)).toSeq,
       Seq(
