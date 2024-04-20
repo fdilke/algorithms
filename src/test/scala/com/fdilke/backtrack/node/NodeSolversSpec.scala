@@ -71,3 +71,19 @@ abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
         Seq(false, false, false)
       )
     )
+
+// do this in an IO?
+//  test("break the stack"):
+//    val maxDepth = 2000
+//    class DeepNode(depth: Int) extends NodeIterable[Boolean]:
+//      override def explore: NodeStatus =
+//        if (depth == maxDepth)
+//          Iterable(solution(true))
+//        else
+//          Iterable(node(DeepNode(depth + 1)))
+//    val error = intercept[StackOverflowError]:
+//      checkSameElementsAs(
+//        solver.allSolutions(DeepNode(0)).toSeq,
+//        Seq(true)
+//      )
+//    println("Error = " + error)
