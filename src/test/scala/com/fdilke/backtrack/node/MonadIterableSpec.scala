@@ -6,6 +6,7 @@ import com.fdilke.utility.RichFunSuite.*
 import java.util.concurrent.atomic.AtomicReference
 import MonadIterable.*
 import cats.Monad
+import com.fdilke.utility.Handy._
 
 class MonadIterableSpec extends FunSuite:
   private val monad: Monad[Iterable] = implicitly // check 'using'
@@ -15,8 +16,37 @@ class MonadIterableSpec extends FunSuite:
     pure.toSeq is Seq(3)
 
   test("has flatMap"):
-    Iterable(0, 1).flatMap {
+    monad.flatMap(Iterable(0, 1)) {
       case 0 => Iterable("xy", "z")
       case 1 => Iterable("w", "v", "k")
     }.toSeq is Seq("xy", "z", "w", "v", "k")
+
+  test("has tailRecM, correctly calculated"):
+    def reduceTo(b: Boolean): Iterable[Either[Int, Seq[Boolean]]] =
+      Iterable(Right[Int, Seq[Boolean]](Seq(b)))
+    def continue(is: Int*): Iterable[Either[Int, Seq[Boolean]]] =
+      is map { i =>
+        Left[Int, Seq[Boolean]](i)
+      }
+    val sampleInt: Int = 15
+    monad.tailRecM[Int, Seq[Boolean]](sampleInt) {
+      case 0 => reduceTo(false)
+      case 1 => reduceTo(true)
+      case i =>
+        val half = i/2
+        continue(half, i - half)
+    }.toSeq is Seq.fill(sampleInt)(Seq(true))
+
+//  test("has tailRecM, using fixed stack size"):
+//    def testDepth(maxDepth: Int): Long =
+//      monad.tailRecM[Int, Long](0) { (depth : Int) =>
+//        Iterable[Either[Int, Long]](
+//          if (depth < maxDepth) then
+//            Left(depth + 1)
+//          else
+//            Right(stackDepth() : Long)
+//        )
+//      }.head
+//    val startDepth = stackDepth()
+//    testDepth(5) is testDepth(10)
 
