@@ -15,6 +15,13 @@ class MonadIterableSpec extends FunSuite:
     val pure: Iterable[Int] = monad.pure[Int](3)
     pure.toSeq is Seq(3)
 
+  test("has map"):
+    val mapped: Iterable[String] =
+      monad.map[Int, String](
+        Iterable[Int](3, 4)
+      ){ _.toString }
+    mapped.toSeq is Seq("3", "4")
+
   test("has flatMap"):
     monad.flatMap(Iterable(0, 1)) {
       case 0 => Iterable("xy", "z")
@@ -37,16 +44,16 @@ class MonadIterableSpec extends FunSuite:
         continue(half, i - half)
     }.toSeq is Seq.fill(sampleInt)(Seq(true))
 
-//  test("has tailRecM, using fixed stack size"):
-//    def testDepth(maxDepth: Int): Long =
-//      monad.tailRecM[Int, Long](0) { (depth : Int) =>
-//        Iterable[Either[Int, Long]](
-//          if (depth < maxDepth) then
-//            Left(depth + 1)
-//          else
-//            Right(stackDepth() : Long)
-//        )
-//      }.head
-//    val startDepth = stackDepth()
-//    testDepth(5) is testDepth(10)
+  test("has tailRecM, using fixed stack size"):
+    def testDepth(maxDepth: Int): Long =
+      monad.tailRecM[Int, Long](0) { (depth : Int) =>
+        Iterable[Either[Int, Long]](
+          if (depth < maxDepth) then
+            Left(depth + 1)
+          else
+            Right(stackDepth() : Long)
+        )
+      }.head
+    val startDepth = stackDepth()
+    testDepth(5) is testDepth(10)
 

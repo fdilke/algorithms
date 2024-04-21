@@ -2,12 +2,21 @@ package com.fdilke.backtrack.node
 
 import cats.Monad
 
+import scala.annotation.tailrec
+import scala.util.Try
+
 object MonadIterable:
   implicit object MonadIterable extends Monad[Iterable]:
-    override def pure[A](x: A): Iterable[A] =
+    override def pure[A](
+      x: A
+    ): Iterable[A] =
       Iterable(x)
 
-    override def flatMap[A, B](fa: Iterable[A])(f: A => Iterable[B]): Iterable[B] =
+    override def flatMap[A, B](
+      fa: Iterable[A]
+    )(
+      f: A => Iterable[B]
+    ): Iterable[B] =
       fa.flatMap(f)
 
     override def tailRecM[A, B](
@@ -15,23 +24,27 @@ object MonadIterable:
     )(
       f: A => Iterable[Either[A, B]]
     ): Iterable[B] =
-      f(a) flatMap {
-        case Left(aa) => tailRecM(aa)(f)
-        case Right(b) => pure(b)
-      }
-
-// sample tail recursion fail
-//    override def tailRecM_2[A, B](
+      @tailrec def loop(
+        value: Iterable[Either[A, B]]
+      ): Iterable[B] =
+        if value.forall { _.isRight } then
+          value.collect:
+            case Right(b) => b
+        else
+          loop(
+            value.flatMap:
+              case Left(aa) => f(aa)
+              case Right(b) => pure(Right(b))
+          )
+      loop(f(a))
+//    override def tailRecM[A, B](
 //      a: A
 //    )(
 //      f: A => Iterable[Either[A, B]]
 //    ): Iterable[B] =
-//      @tailrec def loop(aa: Either[A, B]): Iterable[B] =
-//        aa match {
-//          case Left(aaa)  => tailRecM_2(aaa)(f)
-//          case Right(b) => pure(b)
-//        }
-        
+//      f(a) flatMap {
+//        case Left(aa) => tailRecM(aa)(f)
+//        case Right(b) => pure(b)
+//      }
 
-// bonus marks for making this tail-recursive
-  // note: is there not an off the peg implementation of Monad[Iterable] ?
+// note: is there not an off the peg implementation of Monad[Iterable] ? MUST be.
