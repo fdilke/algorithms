@@ -1,14 +1,23 @@
 package com.fdilke.backtrack.node
 
 import munit.FunSuite
+import com.fdilke.utility.RichFunSuite.*
 
-import com.fdilke.utility.RichFunSuite._
 import java.util.concurrent.atomic.AtomicReference
-import MonadIterable._
+import MonadIterable.*
+import NodeSolvers.*
+import com.fdilke.utility.Handy
+import com.fdilke.utility.Handy.stackDepth
 
-class SimpleNodeSolverSpec extends NodeSolverSpec(new SimpleNodeSearcher)
+class NaiveNodeSolverSpec extends NodeSolverSpec(
+  solver = NaiveNodeSolver(),
+  stackSafe = false
+)
 
-abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
+abstract class NodeSolverSpec(
+  solver: NodeSolver,
+  stackSafe: Boolean = true
+) extends FunSuite:
   test("successfully fails at the first hurdle"):
     class NonStarterNode extends NodeIterable[Unit]:
       override def explore: NodeStatus =
@@ -72,34 +81,19 @@ abstract class NodeSolverSpec(solver: NodeSolver) extends FunSuite:
       )
     )
 
-// do this in an IO?
-//  test("break the stack"):
-//    val maxDepth = 2000
-//    class DeepNode(depth: Int) extends NodeIterable[Boolean]:
-//      override def explore: NodeStatus =
-//        if (depth == maxDepth)
-//          Iterable(solution(true))
-//        else
-//          Iterable(node(DeepNode(depth + 1)))
-//    val error = intercept[StackOverflowError]:
-//      checkSameElementsAs(
-//        solver.allSolutions(DeepNode(0)).toSeq,
-//        Seq(true)
-//      )
-//    println("Error = " + error)
+  if stackSafe then
+    test("is stack safe"):
+      stackUse(10) is stackUse(5)
+  else
+    test("is unfortunately not stack safe"):
+      (stackUse(10) > stackUse(5)) is true
 
-object HackStack extends App:
-  def corecurse(depth: Int) =
-    recurse(depth)
-  def recurse(depth: Int): Unit =
-    if depth == 40 then
-      println("Hit max depth")
-      val trace: Seq[StackTraceElement] =
-        Thread.currentThread().getStackTrace.toSeq
-      println("size = " + trace.size)
-      trace.foreach { tel =>
-        println("tel = " + tel.toString)
-      }
-    else
-      corecurse(depth + 1)
-  recurse(0)
+  private def stackUse(maxRecursions: Int): Int =
+    class DeepNode(recursions: Int = 0) extends NodeIterable[Int]:
+      override def explore: NodeStatus =
+        if recursions == maxRecursions then
+          Iterable(solution(stackDepth()))
+        else
+          Iterable(node(DeepNode(recursions + 1)))
+    solver.allSolutions(DeepNode()).head
+
