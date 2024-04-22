@@ -8,6 +8,9 @@ import MonadIterable.*
 import cats.Monad
 import com.fdilke.utility.Handy._
 
+// implementing this myself because cats,, and even alleycats, doesn't provide an implementation -
+// (because Iterable is considered mutable and therefore unclean, or something)
+
 class MonadIterableSpec extends FunSuite:
   private val monad: Monad[Iterable] = implicitly // check 'using'
 

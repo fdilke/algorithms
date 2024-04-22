@@ -12,6 +12,13 @@ object MonadIterable:
     ): Iterable[A] =
       Iterable(x)
 
+    override def map[A, B](
+      fa: Iterable[A]
+    )(
+      f: A => B
+    ): Iterable[B] =
+      fa.map(f)
+
     override def flatMap[A, B](
       fa: Iterable[A]
     )(
@@ -37,14 +44,3 @@ object MonadIterable:
               case Right(b) => pure(Right(b))
           )
       loop(f(a))
-//    override def tailRecM[A, B](
-//      a: A
-//    )(
-//      f: A => Iterable[Either[A, B]]
-//    ): Iterable[B] =
-//      f(a) flatMap {
-//        case Left(aa) => tailRecM(aa)(f)
-//        case Right(b) => pure(b)
-//      }
-
-// note: is there not an off the peg implementation of Monad[Iterable] ? MUST be.
