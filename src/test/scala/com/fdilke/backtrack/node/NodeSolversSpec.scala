@@ -14,6 +14,11 @@ class NaiveNodeSolverSpec extends NodeSolverSpec(
   stackSafe = false
 )
 
+class StackSafeNodeSolverSpec extends NodeSolverSpec(
+  solver = StackSafeNodeSolver(),
+  stackSafe = true
+)
+
 abstract class NodeSolverSpec(
   solver: NodeSolver,
   stackSafe: Boolean = true

@@ -14,4 +14,12 @@ object NodeSolvers:
         case Left(node) => allSolutions(node)
       }
 
+  class StackSafeNodeSolver extends NodeSolver:
+    override def allSolutions[F[_] : Monad, SOLUTION](
+      node: Node[F, SOLUTION]
+    ): F[SOLUTION] =
+      val monad: Monad[F] = implicitly
+      monad.tailRecM[Node[F, SOLUTION], SOLUTION](node):
+        _.explore
+
 
