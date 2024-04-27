@@ -5,6 +5,7 @@ import Free.liftF
 import cats.arrow.FunctionK
 import cats.{Id, ~>}
 import scala.collection.mutable
+import cats.data.State
 
 // based on the example from the typelevel documentation
 object FreeMonadKVStore:
@@ -83,4 +84,20 @@ object FreeMonadKVStore:
 
     def impureRun[R](prog: KVStore[R]): R = 
         prog.foldMap(impureCompiler)
-        
+
+    // Step 8. for bonus points: do that with a properly functional "pure compiler"
+       
+    type KVStoreState[A] = State[Map[String, Any], A]
+    val pureCompiler: KVStoreA ~> KVStoreState = 
+        new (KVStoreA ~> KVStoreState):
+            override def apply[A](fa: KVStoreA[A]): KVStoreState[A] =
+                fa match
+                    case Put(key, value) => 
+                        State.modify(_.updated(key, value))
+                    case Get(key) =>
+                        State.inspect(_.get(key).asInstanceOf[A])
+                    case Delete(key) => 
+                        State.modify(_ - key)
+
+    def pureRun[R](prog: KVStore[R]): State[Map[String, Any], R] = 
+        prog.foldMap(pureCompiler)
