@@ -4,7 +4,7 @@ import cats.Monad
 
 object NodeSolvers:
   
-  class NaiveNodeSolver extends NodeSolver:
+  object NaiveNodeSolver extends NodeSolver:
     override def allSolutions[F[_] : Monad, SOLUTION](
       node: Node[F, SOLUTION]
     ): F[SOLUTION] =
@@ -14,7 +14,7 @@ object NodeSolvers:
         case Left(node) => allSolutions(node)
       }
 
-  class StackSafeNodeSolver extends NodeSolver:
+  object StackSafeNodeSolver extends NodeSolver:
     override def allSolutions[F[_] : Monad, SOLUTION](
       node: Node[F, SOLUTION]
     ): F[SOLUTION] =

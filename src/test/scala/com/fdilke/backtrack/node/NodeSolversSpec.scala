@@ -10,12 +10,12 @@ import com.fdilke.utility.Handy
 import com.fdilke.utility.Handy.stackDepth
 
 class NaiveNodeSolverSpec extends NodeSolverSpec(
-  solver = NaiveNodeSolver(),
+  solver = NaiveNodeSolver,
   stackSafe = false
 )
 
 class StackSafeNodeSolverSpec extends NodeSolverSpec(
-  solver = StackSafeNodeSolver(),
+  solver = StackSafeNodeSolver,
   stackSafe = true
 )
 
