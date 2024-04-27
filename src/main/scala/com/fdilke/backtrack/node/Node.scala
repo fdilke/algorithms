@@ -17,3 +17,15 @@ trait NodeSolver:
   def allSolutions[F[_] : Monad, SOLUTION](
     node: Node[F ,SOLUTION]
   ): F[SOLUTION]
+
+// TODO: complete steps to making it into a monad. Make it into NodeMonad
+
+object Node:
+  def pure[F[_] : Monad, SOLUTION](
+    s: SOLUTION
+  ): Node[F, SOLUTION] =
+    new Node[F, SOLUTION]:
+      override def explore: NodeStatus =
+        Monad[F].pure(
+          solution(s)
+        )
