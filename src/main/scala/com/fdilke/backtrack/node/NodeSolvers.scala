@@ -3,6 +3,10 @@ package com.fdilke.backtrack.node
 import cats.Monad
 import cats.free.Free
 import Free.liftF
+import cats.{Id, ~>}
+import cats.free.FreeT
+import cats.Functor
+import cats.Applicative
 
 object NodeSolvers:
   
@@ -31,13 +35,72 @@ object NodeSolvers:
       type FreeNode[A] = Free[NodeF, A]
       def pure[S](s: S): FreeNode[S] =
         liftF(Node.pure[F, S](s))
-      def defer[S](next: F[Either[Node[F, S], S]]): FreeNode[S] =
+      def defer[S](
+        next: F[Either[Node[F, S], S]]
+      ): FreeNode[S] =
         liftF(
           new NodeF[S]:
             override def explore: NodeStatus =
               next
         )
+      def spikeCompiler: NodeF ~> F  =
+        new (NodeF ~> F):
+            override def apply[A](
+              fa: NodeF[A]
+            ): F[A] =
+              ???
+      def impureRun[S](prog: FreeNode[S]): F[S] = 
+        prog.foldMap(spikeCompiler)
       ???
 
+/* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.      
+  object FancyFreeNodeSolver2 extends NodeSolver:
+    override def allSolutions[F[_] : Monad, SOLUTION](
+      node: Node[F, SOLUTION]
+    ): F[SOLUTION] =
+      type NodeF[S] = Node[F, S]
+      type FreeNode[A] = FreeT[F, NodeF, A]
+      // case class PureNodeStage[S](
+      //   fs: F[S]
+      // ) extends NodeS[S]
+      // given Functor[NodeF] = new Functor[NodeF]:
+      //   override def map[A, B](fa: NodeF[A])(f: A => B): NodeF[B] =
+      //     Node.map[F, A, B](fa)(f)
+      given Applicative[NodeF] = new Applicative[NodeF]:
+        override def map[A, B](fa: NodeF[A])(f: A => B): NodeF[B] =
+          Node.map[F, A, B](fa)(f)
+      def pure1[S](ns: NodeF[S]): FreeNode[S] =
+        FreeT.liftT[F, NodeF, S](ns)
+      def pure2[S](fs: F[S]): FreeNode[S] =
+        FreeT.liftF[F, NodeF, S](fs)
+      def pure3[S](ff: F[FreeNode[S]]): FreeNode[S] =
+        FreeT.roll[F, NodeF, S](ff)
+      // case class DeferNodeStage[S](
+      //   fn: F[Either[NodeS[S], S]]
+      // ) extends NodeS[S]
+      // def defer[S](
+      //   next: F[Either[NodeS[S], S]]
+      // ): FreeNode[S] =
+      //   liftF(DeferNodeStage(next))
+      def nodeCompiler: NodeF ~> F  =
+        new (NodeF ~> F):
+            override def apply[S](
+              n: NodeF[S]
+            ): F[S] =
+              n match
+                case PureNodeStage(fs) => fs
+      def pureRun[S](
+        prog: FreeNode[S]
+      ): F[S] = 
+        prog.foldMap(nodeCompiler)
+      def nodeToFree[S](
+        node: Node[F, S]
+      ): NodeS[S] =
+        Monad[F].map(node.explore) {
+          case Left(n: Node[F, S]) => ???
+          case Right(s: S) => ???
+        }
+      ???
+*/
 
 

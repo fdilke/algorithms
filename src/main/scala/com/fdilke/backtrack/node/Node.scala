@@ -29,3 +29,17 @@ object Node:
         Monad[F].pure(
           solution(s)
         )
+  def map[F[_]: Monad, A, B](
+    nodeA: Node[F, A]
+  )(
+    f: A => B
+  ): Node[F, B] =
+    new Node[F, B]:
+      override def explore: NodeStatus =
+        Monad[F].map(nodeA.explore):
+          _ match {
+            case Left(na) =>
+              Left(map[F, A, B](na)(f))
+            case Right(a) =>
+              Right(f(a))
+          }
