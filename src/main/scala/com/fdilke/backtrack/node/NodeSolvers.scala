@@ -7,6 +7,7 @@ import cats.{Id, ~>}
 import cats.free.FreeT
 import cats.Functor
 import cats.Applicative
+import cats.arrow.FunctionK
 
 object NodeSolvers:
   
@@ -102,5 +103,39 @@ object NodeSolvers:
         }
       ???
 */
+
+  object FreeFireT:
+    type S[A] = List[A]
+    type M[A] = Option[A]
+    type FreeNode[A] = FreeT[S, M, A]
+
+    def pure1[A](ma: M[A]): FreeNode[A] =
+      FreeT.liftT[S, M, A](ma)
+    def pure2[A](sa: S[A]): FreeNode[A] =
+      FreeT.liftF[S, M, A](sa)
+    def pure3[A](sf: S[FreeNode[A]]): FreeNode[A] =
+      FreeT.roll[S, M, A](sf)
+
+    type T[A] = Iterable[A]
+    def functionK: S ~> T  =
+      new (S ~> T):
+        override def apply[A](
+          list: S[A]
+        ): T[A] =
+          list.headOption
+
+    def remap: FunctionK[FreeNode, [A] =>> FreeT[T, M, A]] =
+      FreeT.compile[S, T, M](functionK)
+    def remap2: FreeNode ~> FreeT[T, M, *] =
+      FreeT.compile[S, T, M](functionK)
+    def bzzzt[S[_], T[_], M[_]: Functor](
+      st: FunctionK[S, T]
+    ): FunctionK[FreeT[S, M, _], FreeT[T, M, _]] =
+      ???
+    def bzzzt2[S[_], T[_], M[_]: Functor](
+      st: FunctionK[S, T]
+    ): FunctionK[FreeT[S, M, *], FreeT[T, M, *]] =
+      ???
+
 
 
