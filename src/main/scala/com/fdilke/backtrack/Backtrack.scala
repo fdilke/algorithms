@@ -23,8 +23,8 @@ object Backtrack:
       )
   
   sealed trait NextStep[KEY, VALUE]
-  case object MapComplete extends NextStep[_, _]
-  case object MapInvalid extends NextStep[_, _]
+  case object MapComplete extends NextStep[?, ?]
+  case object MapInvalid extends NextStep[?, ?]
   case class MapContinue[KEY, VALUE](
     requiredKey: KEY,
     node: DecisionNode[KEY, VALUE]

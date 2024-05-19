@@ -92,6 +92,8 @@ object SetsUtilities:
       yield
         join(z, assign)
 
+  def naivePow(n: Int, k: Int): Int =
+    Seq.fill(n)(k).product
   extension(letters: Seq[Char])
     inline def string: String =
       new String(letters.toArray)
