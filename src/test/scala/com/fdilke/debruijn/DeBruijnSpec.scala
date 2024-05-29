@@ -3,6 +3,7 @@ package com.fdilke.debruijn
 import munit.FunSuite
 import com.fdilke.utility.RichFunSuite._
 import com.fdilke.utility.SetsUtilities._
+
 class DeBruijnSpec extends FunSuite:
   test("calculate trivial case (n=1, k=1)"):
     DeBruijn.string(n=1, k=1) is "0"
