@@ -6,6 +6,8 @@ import com.fdilke.utility.SetsUtilities._
 
 class GrittyDeBruijnSpec extends DeBruijnSpec(GrittyDeBruijn)
 
+abstract class NodeDeBruijnSpec extends DeBruijnSpec(NodeDeBruijn)
+
 trait DeBruijnSpec(
   deBruijn: DeBruijn
 ) extends FunSuite:
