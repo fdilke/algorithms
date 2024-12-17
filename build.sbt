@@ -2,7 +2,7 @@ lazy val root = project
   .in(file("."))
   .settings(
     name := "algorithms",
-    description := "place to explore algorthmic adventures in Scala 3",
+    description := "place to explore algorithmic adventures in Scala 3",
     version := "0.1.0",
     scalaVersion := "3.3.1",
     scalacOptions ++= Seq(),
