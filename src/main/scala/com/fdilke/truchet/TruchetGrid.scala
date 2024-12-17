@@ -8,12 +8,12 @@ class TruchetGrid(
     for
       x <- 0 until width : Seq[Int]
       y <- 0 until height : Seq[Int]
-      index = (y * width) + x
+      index = (x * height) + y
     yield
       Square(x, y, index)
 
 case class Square(
-  xPosition: Int, 
+  xPosition: Int,
   yPosition: Int,
   index: Int
 ):

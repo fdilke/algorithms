@@ -10,4 +10,4 @@ class TruchetGridSpec extends FunSuite:
     test("grid has indexed squares"):
         val squares: Seq[Square] = grid.squares
         squares.size is 6
-        squares.map { _.index }.sorted is (0 until 6 : Seq[Int])
+        squares.map { _.index } is (0 until 6 : Seq[Int])
