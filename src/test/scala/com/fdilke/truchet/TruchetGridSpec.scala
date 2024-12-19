@@ -5,7 +5,7 @@ import munit.FunSuite
 
 class TruchetGridSpec extends FunSuite:
 
-    private val grid = TruchetGrid(3, 2)
+    private val grid: SquareHolder = TruchetGrid(3, 2)
 
     test("grid has indexed squares"):
         val squares: Seq[Square] = grid.squares
