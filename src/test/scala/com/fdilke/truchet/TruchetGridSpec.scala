@@ -11,3 +11,8 @@ class TruchetGridSpec extends FunSuite:
         val squares: Seq[Square] = grid.squares
         squares.size is 6
         squares.map { _.index } is (0 until 6 : Seq[Int])
+
+    test("grid squares are self describing, consistent with lookup"):
+        val aSquare = grid.lookup(2, 1)
+        aSquare.xPosition is 2
+        aSquare.yPosition is 1

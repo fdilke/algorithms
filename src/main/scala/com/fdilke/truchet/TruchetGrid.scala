@@ -8,9 +8,14 @@ class TruchetGrid(
     for
       x <- 0 until width : Seq[Int]
       y <- 0 until height : Seq[Int]
-      index = (x * height) + y
     yield
-      Square(x, y, index)
+      Square(x, y, indexFor(x, y))
+
+  def indexFor(x: Int, y: Int): Int =
+    (x * height) + y
+
+  def lookup(x: Int, y: Int): Square =
+    squares(indexFor(x, y))
 
 case class Square(
   xPosition: Int,
