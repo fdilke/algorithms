@@ -6,10 +6,12 @@ trait SquareHolder:
   val squares: Seq[Square]
   def indexFor(x: Int, y: Int): Int
   def lookup(x: Int, y: Int): Square
+  def conditionalLookup(x: Int, y: Int): Option[Square]
 
 class TruchetGrid(
   width: Int,
-  height: Int
+  height: Int,
+  toroidal: Boolean
 ) extends SquareHolder:
   grid =>
   override val squares: Seq[Square] =
@@ -26,18 +28,26 @@ class TruchetGrid(
     println(s"indexFor($x, $y) is ${indexFor(x, y)}")
     squares(indexFor(x, y))
 
+  private def inBounds(z: Int, bound: Int): Boolean =
+    (z >= 0) && (z < bound)
+  
+  override def conditionalLookup(x: Int, y: Int): Option[Square] =
+    if (toroidal || (inBounds(x, width) && inBounds(y, height) ))
+      Some(lookup(x, y))
+    else None
+
 class Square(
   val xPosition: Int,
   val yPosition: Int,
   val index: Int,
   holder: SquareHolder
 ):
-  def left: Square =
-    holder.lookup(xPosition - 1, yPosition)
-  def right: Square =
-    holder.lookup(xPosition + 1, yPosition)
-  def up: Square =
-    holder.lookup(xPosition, yPosition - 1)
-  def down: Square =
-    holder.lookup(xPosition, yPosition + 1)
+  def left: Option[Square] =
+    holder.conditionalLookup(xPosition - 1, yPosition)
+  def right: Option[Square] =
+    holder.conditionalLookup(xPosition + 1, yPosition)
+  def up: Option[Square] =
+    holder.conditionalLookup(xPosition, yPosition - 1)
+  def down: Option[Square] =
+    holder.conditionalLookup(xPosition, yPosition + 1)
 
