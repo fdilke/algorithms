@@ -2,11 +2,13 @@ package com.fdilke.truchet
 
 import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
+import Orientation._
+import scala.util.Random
 
 class TruchetGridSpec extends FunSuite:
 
-    private val squareGrid: SquareHolder = TruchetGrid(3, 4, false)
-    private val torusGrid: SquareHolder = TruchetGrid(3, 4, true)
+    private val squareGrid: SquareHolder = TruchetGrid(3, 4, false, new Random(0L))
+    private val torusGrid: SquareHolder = TruchetGrid(3, 4, true, new Random(0L))
     private val grids = Seq(squareGrid, torusGrid)
 
     test("grid has indexed squares"):
@@ -49,3 +51,11 @@ class TruchetGridSpec extends FunSuite:
         aSquare.up is Some(squareGrid.lookup(0, 2))
         aSquare.down is None
 
+    test("grid has predictable orientations"):
+        for
+            grid <- grids
+        do
+            grid.lookup(0, 0).orientation is Forward
+            grid.lookup(0, 1).orientation is Forward
+            grid.lookup(1, 0).orientation is Forward
+            grid.lookup(1, 1).orientation is Backward

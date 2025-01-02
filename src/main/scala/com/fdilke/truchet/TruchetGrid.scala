@@ -1,6 +1,10 @@
 package com.fdilke.truchet
 
+import com.fdilke.truchet.Orientation.Forward
 import com.fdilke.utility.NumberCrunch.confineTo
+
+import reflect.Selectable.reflectiveSelectable
+import scala.language.reflectiveCalls
 
 trait SquareHolder:
   val squares: Seq[Square]
@@ -8,18 +12,32 @@ trait SquareHolder:
   def lookup(x: Int, y: Int): Square
   def conditionalLookup(x: Int, y: Int): Option[Square]
 
+type BoolStream = { def nextBoolean(): Boolean }
+
+enum Orientation:
+  case Forward, Backward
+
+object Orientation:
+  def from(bool: Boolean): Orientation =
+    if bool then
+      Forward
+    else
+      Backward
+
 class TruchetGrid(
   width: Int,
   height: Int,
-  toroidal: Boolean
+  toroidal: Boolean,
+  boolStream: BoolStream
 ) extends SquareHolder:
   grid =>
   override val squares: Seq[Square] =
     for
       x <- 0 until width : Seq[Int]
       y <- 0 until height : Seq[Int]
+      orientation = Orientation.from(boolStream.nextBoolean())
     yield
-      Square(x, y, indexFor(x, y), grid)
+      Square(x, y, indexFor(x, y), grid, orientation)
 
   override def indexFor(x: Int, y: Int): Int =
     confineTo(x, width) * height + confineTo(y, height)
@@ -29,7 +47,7 @@ class TruchetGrid(
 
   private def inBounds(z: Int, bound: Int): Boolean =
     (z >= 0) && (z < bound)
-  
+
   override def conditionalLookup(x: Int, y: Int): Option[Square] =
     if (toroidal || (inBounds(x, width) && inBounds(y, height) ))
       Some(lookup(x, y))
@@ -39,7 +57,8 @@ class Square(
   val xPosition: Int,
   val yPosition: Int,
   val index: Int,
-  holder: SquareHolder
+  holder: SquareHolder,
+  val orientation: Orientation
 ):
   def left: Option[Square] =
     holder.conditionalLookup(xPosition - 1, yPosition)
