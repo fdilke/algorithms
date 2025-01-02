@@ -12,6 +12,9 @@ trait SquareHolder:
   def lookup(x: Int, y: Int): Square
   def conditionalLookup(x: Int, y: Int): Option[Square]
 
+trait TileHolder:
+    val tiles: Seq[Tile]
+
 type BoolStream = { def nextBoolean(): Boolean }
 
 enum Orientation:
@@ -29,7 +32,7 @@ class TruchetGrid(
   height: Int,
   toroidal: Boolean,
   boolStream: BoolStream
-) extends SquareHolder:
+) extends SquareHolder with TileHolder:
   grid =>
   override val squares: Seq[Square] =
     for
@@ -38,6 +41,11 @@ class TruchetGrid(
       orientation = Orientation.from(boolStream.nextBoolean())
     yield
       Square(x, y, indexFor(x, y), grid, orientation)
+
+  override val tiles: Seq[Tile] =
+    squares.flatMap:
+      square =>
+      square.tiles
 
   override def indexFor(x: Int, y: Int): Int =
     confineTo(x, width) * height + confineTo(y, height)
@@ -68,4 +76,14 @@ class Square(
     holder.conditionalLookup(xPosition, yPosition - 1)
   def down: Option[Square] =
     holder.conditionalLookup(xPosition, yPosition + 1)
+  def tiles: Seq[Tile] =
+    Seq(
+      Tile(index*2),
+      Tile(index*2 + 1)
+    )
+
+class Tile(
+  val index: Int
+):
+  ()
 
