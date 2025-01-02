@@ -1,7 +1,8 @@
 package com.fdilke.truchet
 
-import java.awt._
+import java.awt.*
 import javax.swing.{JFrame, JPanel, WindowConstants}
+import scala.util.Random
 
 object TruchetApp extends App:
   val device: GraphicsDevice =
@@ -41,3 +42,8 @@ class TruchetPanel extends JPanel(new GridLayout(1, 2)):
     graphics.drawLine(0, 0, dimension.width, dimension.height)
     graphics.drawLine(0, 0, dimension.width/2, dimension.height)
     graphics.drawLine(0, 0, dimension.width, dimension.height/2)
+
+object ShowRandomApp extends App:
+  val rnd = new Random(0)
+  for (i <- 0 until 7)
+    println(s"${rnd.nextInt()}")

@@ -25,7 +25,6 @@ class TruchetGrid(
     confineTo(x, width) * height + confineTo(y, height)
 
   override def lookup(x: Int, y: Int): Square =
-    println(s"indexFor($x, $y) is ${indexFor(x, y)}")
     squares(indexFor(x, y))
 
   private def inBounds(z: Int, bound: Int): Boolean =
