@@ -85,7 +85,7 @@ class TruchetGrid(
       adjacency
 
   override val regions: Seq[Int] =
-    BuildEquivalence(
+    BuildEquivalence.classes(
       tiles.size,
       tileAdjacencies map:
         case (t, u) => (t.index, u.index)  

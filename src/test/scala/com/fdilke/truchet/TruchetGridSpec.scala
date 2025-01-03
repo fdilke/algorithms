@@ -139,16 +139,32 @@ class TruchetGridSpec extends FunSuite:
 
     test("square grid models regions"):
       squareGrid.regions is Seq(
-          0, 2,     2, 12,      12, 6,
-          6, 15,    2, 18,      18, 12,
-          12, 22,   22, 15,     18,18,
-          18, 20,   20, 22,     22, 22
+          0, 1,   1, 2,     2, 3,
+          3, 4,   1, 5,     5, 2,
+          2, 6,   6, 4,     5, 5,
+          5, 7,   7, 6,     6, 6
       )
 
     test("toroidal grid models regions"):
       torusGrid.regions is Seq(
-          6, 6,     6, 12,      12, 6,
-          6, 6,     6, 6,       6, 12,
-          12, 6,    6, 6,       6, 6,
-          6, 6,     6, 6,       6, 6
+          0, 0,     0, 1,       1, 0,
+          0, 0,     0, 0,       0, 1,
+          1, 0,     0, 0,       0, 0,
+          0, 0,     0, 0,       0, 0
       )
+      
+//    test("square grid models regions"):
+//      squareGrid.regions is Seq(
+//          0, 2,     2, 12,      12, 6,
+//          6, 15,    2, 18,      18, 12,
+//          12, 22,   22, 15,     18,18,
+//          18, 20,   20, 22,     22, 22
+//      )
+//
+//    test("toroidal grid models regions"):
+//      torusGrid.regions is Seq(
+//          6, 6,     6, 12,      12, 6,
+//          6, 6,     6, 6,       6, 12,
+//          12, 6,    6, 6,       6, 6,
+//          6, 6,     6, 6,       6, 6
+//      )
