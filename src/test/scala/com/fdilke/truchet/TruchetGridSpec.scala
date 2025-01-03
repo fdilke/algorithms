@@ -69,3 +69,73 @@ class TruchetGridSpec extends FunSuite:
             tiles.map {
                 _.index
             } is (0 until 24: Seq[Int])
+
+    test("grid prints to expected pattern"):
+        for
+            grid <- grids
+        do
+            val showGrid = grid.toString
+//            println(s"grid is:\n${showGrid}\n")
+            showGrid is "///\n/\\/\n\\/\\\n/\\\\\n"
+
+    test("grids model leftTile and upTile"):
+        for
+            grid <- grids
+        do
+            val square00: Square = grid.lookup(0, 0)
+            square00.leftTile is square00.tiles(0)
+            square00.upTile is square00.tiles(0)
+            val square11: Square = grid.lookup(1, 1)
+            square11.leftTile is square11.tiles(1)
+            square11.upTile is square11.tiles(0)
+            val square12: Square = grid.lookup(1, 2)
+            square12.leftTile is square12.tiles(0)
+            square12.upTile is square12.tiles(0)
+            val square22: Square = grid.lookup(2, 2)
+            square22.leftTile is square22.tiles(1)
+            square22.upTile is square22.tiles(0)
+
+    /*
+        ///
+        /\/
+        \/\
+        /\\
+
+        ./././
+        /././.
+        ./\../
+        /..\/.
+        \../\.
+        .\/..\
+        ./\.\.
+        /..\.\
+
+        0/8/6/
+        /1/9/7
+        2/\08/
+        /31\/9
+        \42/\0
+        5\/31\
+        6/\4\2
+        /75\3\
+*/
+
+    test("square grid models adjacencies"):
+        val mappedAdjs = squareGrid.tileAdjacencies.map:
+            case (t, u) => (t.index, u.index)
+        mappedAdjs is Seq(
+            (1,8), (1,2), (3,11), (3,4), (4,12), (5,6), (7,15), (9,16), (9,10),
+            (10,18), (11,12), (13,21), (13,14), (14,23), (17,18), (19,20), (21,22)
+        )
+
+    test("toroidal grid models adjacencies"):
+        val mappedAdjs = torusGrid.tileAdjacencies.map:
+            case (t, u) => (t.index, u.index)
+        println(s"torus tileAdjacencies: $mappedAdjs")
+        mappedAdjs is Seq(
+            (1,8), (1,2), (3,11), (3,4), (4,12), (5,6), (7,15), (7,0), (9,16), (9,10),
+            (10,18), (11,12), (13,21), (13,14), (14,23), (15,8), (17,0), (17,18), (19,2),
+            (19,20), (20,5), (21,22), (22,6), (23,16)
+        )
+
+//    test("square grid models regions"):

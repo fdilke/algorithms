@@ -13,12 +13,16 @@ trait SquareHolder:
   def conditionalLookup(x: Int, y: Int): Option[Square]
 
 trait TileHolder:
-    val tiles: Seq[Tile]
+  val tiles: Seq[Tile]
+  def tileAdjacencies: Seq[(Tile, Tile)]
 
 type BoolStream = { def nextBoolean(): Boolean }
 
-enum Orientation:
-  case Forward, Backward
+enum Orientation(repr: String):
+  case Forward extends Orientation("/")
+  case Backward extends Orientation("\\")
+  override def toString: String =
+    repr
 
 object Orientation:
   def from(bool: Boolean): Orientation =
@@ -61,6 +65,23 @@ class TruchetGrid(
       Some(lookup(x, y))
     else None
 
+  override def toString: String =
+    (for
+      y <- (0 until height)
+      x <- (0 until width)
+    yield
+      lookup(x, y).orientation.toString +
+        (if x == width - 1 then "\n" else "")
+    ).mkString("")
+
+  override def tileAdjacencies: Seq[(Tile, Tile)] =
+    for
+      square <- squares
+      adjacency <- square.tileAdjacencies
+    yield
+      adjacency
+
+
 class Square(
   val xPosition: Int,
   val yPosition: Int,
@@ -76,11 +97,48 @@ class Square(
     holder.conditionalLookup(xPosition, yPosition - 1)
   def down: Option[Square] =
     holder.conditionalLookup(xPosition, yPosition + 1)
-  def tiles: Seq[Tile] =
+  val tiles: Seq[Tile] =
     Seq(
       Tile(index*2),
       Tile(index*2 + 1)
     )
+    
+  def leftTile: Tile =
+    if (orientation == Forward)
+      tiles(0)
+    else
+      tiles(1)
+      
+  def upTile: Tile =
+    tiles(0)
+      
+  def tileAdjacencies: Seq[(Tile, Tile)] =
+    if orientation == Forward then
+      (for
+        square <- right.toSeq
+        other = square.leftTile
+      yield
+        (tiles(1), other)
+      ) ++
+      (for
+        square <- down.toSeq
+        other = square.upTile
+      yield
+        (tiles(1), other)
+      )
+    else
+      (for
+        square <- right.toSeq
+        other = square.leftTile
+      yield
+        (tiles(0), other)
+      ) ++
+      (for
+        square <- down.toSeq
+        other = square.upTile
+      yield
+        (tiles(1), other)
+      )
 
 class Tile(
   val index: Int
