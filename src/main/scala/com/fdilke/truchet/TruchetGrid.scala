@@ -1,6 +1,7 @@
 package com.fdilke.truchet
 
 import com.fdilke.truchet.Orientation.Forward
+import com.fdilke.utility.BuildEquivalence
 import com.fdilke.utility.NumberCrunch.confineTo
 
 import reflect.Selectable.reflectiveSelectable
@@ -14,7 +15,9 @@ trait SquareHolder:
 
 trait TileHolder:
   val tiles: Seq[Tile]
-  def tileAdjacencies: Seq[(Tile, Tile)]
+  val tileAdjacencies: Seq[(Tile, Tile)]
+  val regions: Seq[Int]
+  
 
 type BoolStream = { def nextBoolean(): Boolean }
 
@@ -67,20 +70,26 @@ class TruchetGrid(
 
   override def toString: String =
     (for
-      y <- (0 until height)
-      x <- (0 until width)
+      y <- 0 until height
+      x <- 0 until width
     yield
       lookup(x, y).orientation.toString +
         (if x == width - 1 then "\n" else "")
     ).mkString("")
 
-  override def tileAdjacencies: Seq[(Tile, Tile)] =
+  override val tileAdjacencies: Seq[(Tile, Tile)] =
     for
       square <- squares
       adjacency <- square.tileAdjacencies
     yield
       adjacency
 
+  override val regions: Seq[Int] =
+    BuildEquivalence(
+      tiles.size,
+      tileAdjacencies map:
+        case (t, u) => (t.index, u.index)  
+    )
 
 class Square(
   val xPosition: Int,
