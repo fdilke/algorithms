@@ -7,9 +7,9 @@ import Assertions.{ assertEquals, assertNotEquals }
 
 object RichFunSuite:
   extension[A] (a: A)
-    inline def is(b: A): Unit =
+    inline infix def is(b: A): Unit =
       assertEquals(a, b)
-    inline def isnt(b: A): Unit =
+    inline infix def isnt(b: A): Unit =
       assertNotEquals(a, b)
 
   extension(letters: Seq[Char])
