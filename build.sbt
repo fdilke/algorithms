@@ -4,7 +4,7 @@ lazy val root = project
     name := "algorithms",
     description := "place to explore algorithmic adventures in Scala 3",
     version := "0.1.0",
-    scalaVersion := "3.3.1",
+    scalaVersion := "3.6.2",
     scalacOptions ++= Seq(),
     ThisBuild/scalacOptions ++= Seq(
       "-unchecked", 
