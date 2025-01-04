@@ -116,29 +116,27 @@ class Square(
     holder.conditionalLookup(xPosition, yPosition - 1)
   def down: Option[Square] =
     holder.conditionalLookup(xPosition, yPosition + 1)
+
+  val upTile: Tile =
+    Tile(index * 2)
+
+  val downTile: Tile =
+    Tile(index*2 + 1)
+
   val tiles: Seq[Tile] =
-    Seq(
-      Tile(index*2),
-      Tile(index*2 + 1)
-    )
+    Seq(upTile, downTile)
     
   def leftTile: Tile =
     if (orientation == Forward)
-      tiles(0)
+      upTile
     else
-      tiles(1)
+      downTile
 
   def rightTile: Tile =
     if (orientation == Forward)
-      tiles(1)
+      downTile
     else
-      tiles(0)
-
-  def upTile: Tile =
-    tiles(0)
-
-  def downTile: Tile =
-    tiles(1)
+      upTile
 
   def tileAdjacencies: Seq[(Tile, Tile)] =
       (for
