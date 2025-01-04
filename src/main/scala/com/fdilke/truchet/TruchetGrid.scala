@@ -4,6 +4,7 @@ import com.fdilke.truchet.Orientation.Forward
 import com.fdilke.utility.BuildEquivalence
 import com.fdilke.utility.NumberCrunch.confineTo
 
+import java.awt.{Color, Dimension, Graphics}
 import reflect.Selectable.reflectiveSelectable
 import scala.language.reflectiveCalls
 
@@ -12,12 +13,12 @@ trait SquareHolder:
   def indexFor(x: Int, y: Int): Int
   def lookup(x: Int, y: Int): Square
   def conditionalLookup(x: Int, y: Int): Option[Square]
+  def draw(graphics: Graphics, dimension: Dimension): Unit
 
 trait TileHolder:
   val tiles: Seq[Tile]
   val tileAdjacencies: Seq[(Tile, Tile)]
   val regions: Seq[Int]
-  
 
 type BoolStream = { def nextBoolean(): Boolean }
 
@@ -91,6 +92,15 @@ class TruchetGrid(
         case (t, u) => (t.index, u.index)  
     )
 
+  override def draw(graphics: Graphics, dimension: Dimension): Unit =
+    graphics.setColor(Color.BLACK)
+    val squareWidth = dimension.width / width
+    val squareHeight = dimension.height / height
+    for
+      square <- squares
+    do
+      square.draw(graphics, squareWidth, squareHeight)
+
 class Square(
   val xPosition: Int,
   val yPosition: Int,
@@ -143,6 +153,14 @@ class Square(
       yield
         (downTile, other)
       )
+
+  def draw(graphics: Graphics, squareWidth: Int, squareHeight: Int): Unit =
+    graphics.drawLine(
+      squareWidth * xPosition,
+      squareHeight * yPosition,
+      squareWidth * (xPosition + 1),
+      squareHeight * (yPosition + 1)
+    )
 
 class Tile(
   val index: Int

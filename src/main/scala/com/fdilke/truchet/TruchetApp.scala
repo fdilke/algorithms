@@ -7,11 +7,17 @@ import scala.util.Random
 object TruchetApp extends App:
   val device: GraphicsDevice =
     GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
-
-  new TruchetFrame(device)
+  val grid = new TruchetGrid(
+    width = 3,
+    height = 4,
+    toroidal = false,
+    boolStream = new Random(0L)
+  )
+  new TruchetFrame(device, grid)
 
 class TruchetFrame(
-  device: GraphicsDevice
+  device: GraphicsDevice,
+  grid: SquareHolder & TileHolder
 ) extends JFrame("Truchet Frame", device.getDefaultConfiguration):
 
   setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -21,7 +27,7 @@ class TruchetFrame(
   private def initComponents(): Unit =
     val contentPane = getContentPane
     contentPane.setLayout(new BorderLayout)
-    val panel = new TruchetPanel
+    val panel = new TruchetPanel(grid)
     contentPane.add(panel, BorderLayout.CENTER)
 
   private def begin(): Unit =
@@ -35,13 +41,12 @@ class TruchetFrame(
       pack()
       setVisible(true)
 
-class TruchetPanel extends JPanel(new GridLayout(1, 2)):
+class TruchetPanel(
+  grid: SquareHolder & TileHolder
+) extends JPanel(new GridLayout(1, 2)):
   override def paint(graphics: Graphics): Unit =
     val dimension = getSize()
-    graphics.setColor(Color.BLACK)
-    graphics.drawLine(0, 0, dimension.width, dimension.height)
-    graphics.drawLine(0, 0, dimension.width/2, dimension.height)
-    graphics.drawLine(0, 0, dimension.width, dimension.height/2)
+    grid.draw(graphics, dimension)
 
 object ShowRandomApp extends App:
   val rnd = new Random(0)
