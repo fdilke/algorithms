@@ -11,7 +11,8 @@ object TruchetApp extends App:
     width = 3,
     height = 4,
     toroidal = false,
-    boolStream = new Random(0L)
+    boolStream = new Random(0L),
+    colorGenerator = TruchetGrid.colorGenerator
   )
   new TruchetFrame(device, grid)
 

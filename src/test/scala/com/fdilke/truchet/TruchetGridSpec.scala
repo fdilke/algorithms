@@ -7,8 +7,8 @@ import scala.util.Random
 
 class TruchetGridSpec extends FunSuite:
 
-  private val squareGrid: SquareHolder & TileHolder = TruchetGrid(3, 4, false, new Random(0L))
-  private val torusGrid: SquareHolder & TileHolder = TruchetGrid(3, 4, true, new Random(0L))
+  private val squareGrid: SquareHolder & TileHolder = TruchetGrid(3, 4, false, new Random(0L), TruchetGrid.colorGenerator)
+  private val torusGrid: SquareHolder & TileHolder = TruchetGrid(3, 4, true, new Random(0L), TruchetGrid.colorGenerator)
   private val grids = Seq(squareGrid, torusGrid)
 
   test("grid has indexed squares"):

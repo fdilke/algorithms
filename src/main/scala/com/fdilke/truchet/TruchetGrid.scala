@@ -7,6 +7,7 @@ import com.fdilke.utility.NumberCrunch.confineTo
 import java.awt.{Color, Dimension, Graphics}
 import reflect.Selectable.reflectiveSelectable
 import scala.language.reflectiveCalls
+import scala.util.Random
 
 trait SquareHolder:
   val squares: Seq[Square]
@@ -39,7 +40,8 @@ class TruchetGrid(
   width: Int,
   height: Int,
   toroidal: Boolean,
-  boolStream: BoolStream
+  boolStream: BoolStream,
+  colorGenerator: () => Color
 ) extends SquareHolder with TileHolder:
   grid =>
   override val squares: Seq[Square] =
@@ -92,6 +94,16 @@ class TruchetGrid(
         case (t, u) => (t.index, u.index)  
     )
 
+  val regionColors: Seq[Color] =
+    regions.indices.map:
+      _ => colorGenerator()
+
+  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
+  println("There are " + regions.size + " regions")
+
+  private def colorTile(tile: Tile): Color =
+    regionColors(regions(tile.index))
+
   override def draw(graphics: Graphics, dimension: Dimension): Unit =
     graphics.setColor(Color.BLACK)
     val squareWidth = dimension.width / width
@@ -99,7 +111,14 @@ class TruchetGrid(
     for
       square <- squares
     do
-      square.draw(graphics, squareWidth, squareHeight)
+      square.draw(graphics, squareWidth, squareHeight, colorTile)
+
+object TruchetGrid:
+  private val randomColors = Random()
+  private def colorIndexGenerator(): Int =
+    randomColors.nextInt(256)
+  def colorGenerator(): Color =
+    Color(colorIndexGenerator(), colorIndexGenerator(), colorIndexGenerator())
 
 class Square(
   val xPosition: Int,
@@ -152,7 +171,7 @@ class Square(
         (downTile, other)
       )
 
-  def draw(graphics: Graphics, squareWidth: Int, squareHeight: Int): Unit =
+  def draw(graphics: Graphics, squareWidth: Int, squareHeight: Int, colorRegion: Tile => Color): Unit =
     def xx(x: Int) =
       squareWidth * (xPosition + x)
     def yy(y: Int) =
@@ -168,28 +187,27 @@ class Square(
       )
 
     if (orientation == Forward)
-      graphics.setColor(Color.RED)
+      graphics.setColor(colorRegion(upTile))
       subFill(
         0, 1, 0,
         0, 0, 1
       )
-      graphics.setColor(Color.GREEN)
+      graphics.setColor(colorRegion(downTile))
       subFill(
         1, 0, 1,
         1, 1, 0
       )
     else
-      graphics.setColor(Color.RED)
+      graphics.setColor(colorRegion(upTile))
       subFill(
         0, 1, 1,
         0, 1, 0
       )
-      graphics.setColor(Color.GREEN)
+      graphics.setColor(colorRegion(downTile))
       subFill(
         1, 0, 0,
         1, 0, 1
       )
-
 
 class Tile(
   val index: Int
