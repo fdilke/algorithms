@@ -125,7 +125,7 @@ class Square(
 
   val tiles: Seq[Tile] =
     Seq(upTile, downTile)
-    
+
   def leftTile: Tile =
     if (orientation == Forward)
       upTile
@@ -153,12 +153,53 @@ class Square(
       )
 
   def draw(graphics: Graphics, squareWidth: Int, squareHeight: Int): Unit =
-    graphics.drawLine(
-      squareWidth * xPosition,
-      squareHeight * yPosition,
-      squareWidth * (xPosition + 1),
-      squareHeight * (yPosition + 1)
-    )
+    def xx(x: Int) =
+      squareWidth * (xPosition + x)
+    def yy(y: Int) =
+      squareHeight * (yPosition + y)
+    def subFill(
+      x0: Int, x1: Int, x2: Int,
+      y0: Int, y1: Int, y2: Int
+     ): Unit =
+      graphics.fillPolygon(
+        Array[Int]( xx(x0), xx(x1), xx(x2) ),
+        Array[Int]( yy(y0), yy(y1), yy(y2) ),
+        3
+      )
+
+    if (orientation == Forward)
+      graphics.setColor(Color.RED)
+      subFill(
+        0, 1, 0,
+        0, 0, 1
+      )
+//      graphics.fillPolygon(
+//        Array[Int]( squareWidth * xPosition, squareWidth * (xPosition + 1), squareWidth * xPosition    ),
+//        Array[Int]( squareHeight * yPosition, squareHeight * yPosition, squareHeight * (yPosition + 1) ),
+//        3
+//      )
+
+//    squareWidth * (xPosition + 1),
+//        squareHeight * yPosition,
+//        ,
+//        squareHeight * (yPosition + 1)
+//      )
+
+//    if (orientation == Forward)
+//      graphics.drawLine(
+//        squareWidth * (xPosition + 1),
+//        squareHeight * yPosition,
+//        squareWidth * xPosition,
+//        squareHeight * (yPosition + 1)
+//      )
+//    else
+//      graphics.drawLine(
+//        squareWidth * xPosition,
+//        squareHeight * yPosition,
+//        squareWidth * (xPosition + 1),
+//        squareHeight * (yPosition + 1)
+//      )
+
 
 class Tile(
   val index: Int
