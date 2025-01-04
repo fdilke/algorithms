@@ -173,32 +173,22 @@ class Square(
         0, 1, 0,
         0, 0, 1
       )
-//      graphics.fillPolygon(
-//        Array[Int]( squareWidth * xPosition, squareWidth * (xPosition + 1), squareWidth * xPosition    ),
-//        Array[Int]( squareHeight * yPosition, squareHeight * yPosition, squareHeight * (yPosition + 1) ),
-//        3
-//      )
-
-//    squareWidth * (xPosition + 1),
-//        squareHeight * yPosition,
-//        ,
-//        squareHeight * (yPosition + 1)
-//      )
-
-//    if (orientation == Forward)
-//      graphics.drawLine(
-//        squareWidth * (xPosition + 1),
-//        squareHeight * yPosition,
-//        squareWidth * xPosition,
-//        squareHeight * (yPosition + 1)
-//      )
-//    else
-//      graphics.drawLine(
-//        squareWidth * xPosition,
-//        squareHeight * yPosition,
-//        squareWidth * (xPosition + 1),
-//        squareHeight * (yPosition + 1)
-//      )
+      graphics.setColor(Color.GREEN)
+      subFill(
+        1, 0, 1,
+        1, 1, 0
+      )
+    else
+      graphics.setColor(Color.RED)
+      subFill(
+        0, 1, 1,
+        0, 1, 0
+      )
+      graphics.setColor(Color.GREEN)
+      subFill(
+        1, 0, 0,
+        1, 0, 1
+      )
 
 
 class Tile(
