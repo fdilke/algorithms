@@ -78,22 +78,30 @@ class TruchetGridSpec extends FunSuite:
       //            println(s"grid is:\n${showGrid}\n")
       showGrid is "///\n/\\/\n\\/\\\n/\\\\\n"
 
-  test("grids model leftTile and upTile"):
+  test("grids model left/right/up/downTile"):
     for
       grid <- grids
     do
       val square00: Square = grid.lookup(0, 0)
       square00.leftTile is square00.tiles(0)
+      square00.rightTile is square00.tiles(1)
       square00.upTile is square00.tiles(0)
+      square00.downTile is square00.tiles(1)
       val square11: Square = grid.lookup(1, 1)
       square11.leftTile is square11.tiles(1)
+      square11.rightTile is square11.tiles(0)
       square11.upTile is square11.tiles(0)
+      square11.downTile is square11.tiles(1)
       val square12: Square = grid.lookup(1, 2)
       square12.leftTile is square12.tiles(0)
+      square12.rightTile is square12.tiles(1)
       square12.upTile is square12.tiles(0)
+      square12.downTile is square12.tiles(1)
       val square22: Square = grid.lookup(2, 2)
       square22.leftTile is square22.tiles(1)
+      square22.rightTile is square22.tiles(0)
       square22.upTile is square22.tiles(0)
+      square22.downTile is square22.tiles(1)
 
   /*
       ///

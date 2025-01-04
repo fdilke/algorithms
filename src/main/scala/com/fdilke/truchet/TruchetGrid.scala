@@ -117,36 +117,31 @@ class Square(
       tiles(0)
     else
       tiles(1)
-      
+
+  def rightTile: Tile =
+    if (orientation == Forward)
+      tiles(1)
+    else
+      tiles(0)
+
   def upTile: Tile =
     tiles(0)
-      
+
+  def downTile: Tile =
+    tiles(1)
+
   def tileAdjacencies: Seq[(Tile, Tile)] =
-    if orientation == Forward then
       (for
         square <- right.toSeq
         other = square.leftTile
       yield
-        (tiles(1), other)
+        (rightTile, other)
       ) ++
       (for
         square <- down.toSeq
         other = square.upTile
       yield
-        (tiles(1), other)
-      )
-    else
-      (for
-        square <- right.toSeq
-        other = square.leftTile
-      yield
-        (tiles(0), other)
-      ) ++
-      (for
-        square <- down.toSeq
-        other = square.upTile
-      yield
-        (tiles(1), other)
+        (downTile, other)
       )
 
 class Tile(
