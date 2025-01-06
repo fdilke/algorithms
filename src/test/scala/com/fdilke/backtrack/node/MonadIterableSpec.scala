@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.node
 
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 
 import java.util.concurrent.atomic.AtomicReference
 import MonadIterable.*
