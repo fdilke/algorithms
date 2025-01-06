@@ -19,7 +19,9 @@ trait SquareHolder:
 trait TileHolder:
   val tiles: Seq[Tile]
   val tileAdjacencies: Seq[(Tile, Tile)]
-  val regions: Seq[Int]
+  val tileRegions: Seq[Int]
+  val regionColors: Seq[Color]
+  val regionAdjacencies: Seq[Seq[Boolean]]
 
 type BoolStream = { def nextBoolean(): Boolean }
 
@@ -87,22 +89,52 @@ class TruchetGrid(
     yield
       adjacency
 
-  override val regions: Seq[Int] =
+  override val tileRegions: Seq[Int] =
     BuildEquivalence.classes(
       tiles.size,
       tileAdjacencies map:
         case (t, u) => (t.index, u.index)  
     )
-
-  val regionColors: Seq[Color] =
-    regions.distinct.indices.map:
+    
+  override val regionColors: Seq[Color] =
+    tileRegions.distinct.indices.map:
       _ => colorGenerator()
 
+  override val regionAdjacencies: Seq[Seq[Boolean]]  =
+    val adjacencyRecords: Seq[(Int, Int)] =
+      squares.map:
+        square =>
+          def regionFor(tileNo: Int) = tileRegions(square.tiles(tileNo).index)
+          regionFor(0) -> regionFor(1)
+      .filterNot:
+        case (r, s) => r == s
+    val fullRecords: Seq[(Int, Int)] =
+      adjacencyRecords ++ adjacencyRecords.map { case (r, s) => s -> r }
+//    println("Initial adj records = " + adjacencyRecords)
+//    for
+//      r <- regionColors.indices
+//    do
+//      for
+//        s <- regionColors.indices
+//      do
+//        if (fullRecords.contains (r -> s))
+//          print("X")
+//        else
+//          print("_")
+//      println("")
+    for
+      r <- regionColors.indices
+    yield
+      for
+        s <- regionColors.indices
+      yield
+        fullRecords.contains (r -> s)
+    
 //  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
 //  println("There are " + regionColors.size + " regions")
 
   private def colorTile(tile: Tile): Color =
-    regionColors(regions(tile.index))
+    regionColors(tileRegions(tile.index))
 
   override def draw(graphics: Graphics, dimension: Dimension): Unit =
     graphics.setColor(Color.BLACK)

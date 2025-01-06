@@ -146,19 +146,37 @@ class TruchetGridSpec extends FunSuite:
     )
 
   test("square grid models regions"):
-    squareGrid.regions is Seq(
+    squareGrid.tileRegions is Seq(
       0, 1,   1, 2,     2, 3,
       3, 4,   1, 5,     5, 2,
       2, 6,   6, 4,     5, 5,
       5, 7,   7, 6,     6, 6
     )
 
+  test("square grid models region adjacencies"):
+    squareGrid.regionAdjacencies is Seq(
+      Seq(  false,  true,   false,  false,  false,  false,  false,  false ),
+      Seq(  true,  false,   true,   false,  false,  true,   false,  false ),
+      Seq(  false, true,   false,   true,   false,  true,   true,   false ),
+      Seq(  false, false,  true,    false,   true,  false,  false,  false ),
+      Seq(  false, false,  false,   true,  false,   false,  true,   false ),
+      Seq(  false, true,    true,   false,  false,   false,  false, true  ),
+      Seq(  false, false,  true,    false,  true,   false,  false,  true  ),
+      Seq(  false, false,  false,   false,  false,  true,   true,  false  )
+    )
+
   test("toroidal grid models regions"):
-    torusGrid.regions is Seq(
+    torusGrid.tileRegions is Seq(
       0, 0,     0, 1,       1, 0,
       0, 0,     0, 0,       0, 1,
       1, 0,     0, 0,       0, 0,
       0, 0,     0, 0,       0, 0
+    )
+
+  test("toroidal grid models region adjacencies"):
+    torusGrid.regionAdjacencies is Seq(
+      Seq(false, true),
+      Seq(true, false)
     )
 
 //    test("square grid models regions"):
