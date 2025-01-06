@@ -8,8 +8,8 @@ object TruchetApp extends App:
   val device: GraphicsDevice =
     GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
   val grid = new TruchetGrid(
-    width = 3,
-    height = 4,
+    width = 60,
+    height = 45,
     toroidal = false,
     boolStream = new Random(0L),
     colorGenerator = TruchetGrid.colorGenerator

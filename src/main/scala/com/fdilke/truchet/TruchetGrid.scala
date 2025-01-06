@@ -95,11 +95,11 @@ class TruchetGrid(
     )
 
   val regionColors: Seq[Color] =
-    regions.indices.map:
+    regions.distinct.indices.map:
       _ => colorGenerator()
 
-  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
-  println("There are " + regions.size + " regions")
+//  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
+//  println("There are " + regionColors.size + " regions")
 
   private def colorTile(tile: Tile): Color =
     regionColors(regions(tile.index))
@@ -114,7 +114,7 @@ class TruchetGrid(
       square.draw(graphics, squareWidth, squareHeight, colorTile)
 
 object TruchetGrid:
-  private val randomColors = Random()
+  private val randomColors = Random(0L)
   private def colorIndexGenerator(): Int =
     randomColors.nextInt(256)
   def colorGenerator(): Color =
@@ -177,37 +177,47 @@ class Square(
     def yy(y: Int) =
       squareHeight * (yPosition + y)
     def subFill(
+      tile: Tile,
       x0: Int, x1: Int, x2: Int,
       y0: Int, y1: Int, y2: Int
      ): Unit =
+      graphics.setColor(colorRegion(tile))
       graphics.fillPolygon(
         Array[Int]( xx(x0), xx(x1), xx(x2) ),
         Array[Int]( yy(y0), yy(y1), yy(y2) ),
         3
       )
+    def drawDiagonal(color: Color, fromX: Int, fromY: Int, toX: Int, toY: Int): Unit =
+      graphics.setColor(color)
+      graphics.drawLine(
+        xx(fromX), yy(fromY),
+        xx(toX), yy(toY)
+      )
 
     if (orientation == Forward)
-      graphics.setColor(colorRegion(upTile))
       subFill(
+        upTile,
         0, 1, 0,
         0, 0, 1
       )
-      graphics.setColor(colorRegion(downTile))
       subFill(
+        downTile,
         1, 0, 1,
         1, 1, 0
       )
+      drawDiagonal(Color.BLACK, 1, 0, 0, 1)
     else
-      graphics.setColor(colorRegion(upTile))
       subFill(
+        upTile,
         0, 1, 1,
         0, 1, 0
       )
-      graphics.setColor(colorRegion(downTile))
       subFill(
+        downTile,
         1, 0, 0,
         1, 0, 1
       )
+      drawDiagonal(Color.BLACK, 0, 0, 1, 1)
 
 class Tile(
   val index: Int
