@@ -6,14 +6,6 @@ import munit.FunSuite
 class PartialColoringSpec extends FunSuite:
   private val sampleGraph: PartialColoring =
     PartialColoring(
-      numVertices = 5,
-      adjacencies = Seq(
-        Seq(false, true,  false,  false, false),
-        Seq(true,  false, true,   false, false),
-        Seq(false, true,  false,  true,  false),
-        Seq(false, false, true,   false, true),
-        Seq(false, false, false,  true,  false)
-      ),
       colors = Seq(0,1,0,3,4),
       colorAdjacencies = Seq(
         Seq(false, true,  true,  true,  false),
@@ -39,14 +31,6 @@ class PartialColoringSpec extends FunSuite:
   test("Can apply an amalgamation"):
     sampleGraph.amalgamate(0 -> 4) is
       PartialColoring(
-        numVertices = 5,
-        adjacencies = Seq(
-          Seq(false, true, false, false, false),
-          Seq(true, false, true, false, false),
-          Seq(false, true, false, true, false),
-          Seq(false, false, true, false, true),
-          Seq(false, false, false, true, false)
-        ),
         colors = Seq(0, 1, 0, 3, 0),
         colorAdjacencies = Seq(
           Seq(false, true, true, true,  true),
@@ -62,14 +46,6 @@ class PartialColoringSpec extends FunSuite:
   test("Can apply an amalgamation (2)"):
     sampleGraph.amalgamate(1 -> 3) is
       PartialColoring(
-        numVertices = 5,
-        adjacencies = Seq(
-          Seq(false, true, false, false, false),
-          Seq(true, false, true, false, false),
-          Seq(false, true, false, true, false),
-          Seq(false, false, true, false, true),
-          Seq(false, false, false, true, false)
-        ),
         colors = Seq(0,1,0,1,4),
         colorAdjacencies = Seq(
           Seq(false, true, true, true,  false),
@@ -85,14 +61,6 @@ class PartialColoringSpec extends FunSuite:
   test("Can apply an amalgamation (3)"):
     sampleGraph.amalgamate(1 -> 4) is
       PartialColoring(
-        numVertices = 5,
-        adjacencies = Seq(
-          Seq(false, true, false, false, false),
-          Seq(true, false, true, false, false),
-          Seq(false, true, false, true, false),
-          Seq(false, false, true, false, true),
-          Seq(false, false, false, true, false)
-        ),
         colors = Seq(0,1,0,3,1),
         colorAdjacencies = Seq(
           Seq(false, true, true, true,  true),

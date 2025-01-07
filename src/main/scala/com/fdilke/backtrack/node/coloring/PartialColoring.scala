@@ -5,14 +5,13 @@ import com.fdilke.backtrack.node.NodeIterable
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 
 case class PartialColoring(
-  numVertices: Int,
-  adjacencies: Seq[Seq[Boolean]],
   colors: Seq[Int],
   colorAdjacencies: Seq[Seq[Boolean]]
 ):
-  val distinctColors: Seq[Int] = colors.distinct
-//  val numColors: Int = distinctColors.size
-  def amalgamations: Seq[(Int, Int)] =
+  lazy val distinctColors: Seq[Int] = colors.distinct
+  private lazy val numVertices: Int = colors.size
+
+  lazy val amalgamations: Seq[(Int, Int)] =
     for
       c <- distinctColors
       d <- distinctColors if c < d && !colorAdjacencies(c)(d)
@@ -38,12 +37,10 @@ case class PartialColoring(
           (e == c && colorAdjacencies(d)(f)) ||
           (f == c && colorAdjacencies(e)(d)) ||
           e == d || f == d
-    println("New c adjs:")
-    for (xx <- newColorAdjacencies)
-      println(">> " + xx)
+//    println("New c adjs:")
+//    for (xx <- newColorAdjacencies)
+//      println(">> " + xx)
     PartialColoring(
-      numVertices,
-      adjacencies,
       newColors,
       newColorAdjacencies
     )
