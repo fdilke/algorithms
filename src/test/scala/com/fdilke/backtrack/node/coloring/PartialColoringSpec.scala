@@ -33,4 +33,26 @@ class PartialColoringSpec extends FunSuite:
     sampleGraph.amalgamations is Seq(
       (0, 4), (1, 3), (1, 4)
     )
-    
+
+  // amalgamate 0 and 4 in 0---1---0---3---4 => 0---1---0---3---0
+  
+  test("Can apply an amalgamation"):
+    sampleGraph.amalgamate(0 -> 4) is
+      PartialColoring(
+        numVertices = 5,
+        adjacencies = Seq(
+          Seq(false, true, false, false, false),
+          Seq(true, false, true, false, false),
+          Seq(false, true, false, true, false),
+          Seq(false, false, true, false, true),
+          Seq(false, false, false, true, false)
+        ),
+        colors = Seq(0, 1, 0, 3, 0),
+        colorAdjacencies = Seq(
+          Seq(false, true, true, true,  true),
+          Seq(true, false, true, false, true),
+          Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
+          Seq(true, false, true, false, true),
+          Seq(true, true, true, true,   true) // 4 washed out
+        )
+      )
