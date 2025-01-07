@@ -4,8 +4,8 @@ import munit.FunSuite
 import com.fdilke.utility.RichFunSuite.*
 
 import java.util.concurrent.atomic.AtomicReference
-import MonadIterable.*
-import NodeSolvers.*
+import MonadIterable._
+import NodeSolvers._
 import com.fdilke.utility.Handy
 import com.fdilke.utility.Handy.stackDepth
 
