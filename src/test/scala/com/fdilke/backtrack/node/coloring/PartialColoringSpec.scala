@@ -16,6 +16,16 @@ class PartialColoringSpec extends FunSuite:
       )
     )
 
+  private val noAmalgamationsGraph: PartialColoring =
+    PartialColoring(
+      colors = Seq(0,1,1),
+      colorAdjacencies = Seq(
+        Seq(false, true,  true),
+        Seq(true,  false, true),
+        Seq(true, true,   true),
+      )
+    )
+
   // 0---1---2---3---4 with 0,2 identified ; so colors 0,1,0,3,4 => 0---1---0---3---4
 
   test("Can identify the distinct colors"):
@@ -73,6 +83,7 @@ class PartialColoringSpec extends FunSuite:
 
   test("Can check consistency for 'blank' colors"):
     sampleGraph.consistentBlanks is true
+    noAmalgamationsGraph.consistentBlanks is true
     PartialColoring(
       colors = Seq(0, 1, 0, 3, 4),
       colorAdjacencies = Seq(
@@ -93,4 +104,6 @@ class PartialColoringSpec extends FunSuite:
         Seq(false, false, false, true, false)
       )
     ).consistentBlanks is false
-    
+
+  test("Can detect a graph with no amalgamations"):
+    noAmalgamationsGraph.amalgamations is Iterable.empty
