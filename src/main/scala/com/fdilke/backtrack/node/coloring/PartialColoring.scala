@@ -11,6 +11,13 @@ case class PartialColoring(
   lazy val distinctColors: Seq[Int] = colors.distinct
   private lazy val numVertices: Int = colors.size
 
+  lazy val consistentBlanks: Boolean =
+    val unusedColors: Set[Int] =
+      (0 until numVertices).toSet diff distinctColors.toSet
+    unusedColors forall: u =>
+      (0 until numVertices) forall: v =>
+        colorAdjacencies(u)(v) && colorAdjacencies(v)(u)
+
   lazy val amalgamations: Seq[(Int, Int)] =
     for
       c <- distinctColors

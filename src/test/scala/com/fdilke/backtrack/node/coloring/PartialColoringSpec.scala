@@ -70,3 +70,27 @@ class PartialColoringSpec extends FunSuite:
           Seq(true, true, true, true,   true) // 4 washed out
         )
       )
+
+  test("Can check consistency for 'blank' colors"):
+    sampleGraph.consistentBlanks is true
+    PartialColoring(
+      colors = Seq(0, 1, 0, 3, 4),
+      colorAdjacencies = Seq(
+        Seq(false, true, true, true, false),
+        Seq(true, false, true, false, false),
+        Seq(true, true, true, false, true), // 2 washed out ; have it be adjacent to everything. Also column #2
+        Seq(true, false, true, false, true),
+        Seq(false, false, true, true, false)
+      )
+    ).consistentBlanks is false
+    PartialColoring(
+      colors = Seq(0, 1, 0, 3, 4),
+      colorAdjacencies = Seq(
+        Seq(false, true, true, true, false),
+        Seq(true, false, true, false, false),
+        Seq(true, true, true, true, true), // 2 washed out ; have it be adjacent to everything. Also column #2
+        Seq(true, false, true, false, true),
+        Seq(false, false, false, true, false)
+      )
+    ).consistentBlanks is false
+    
