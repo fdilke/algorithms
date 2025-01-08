@@ -93,7 +93,7 @@ class TruchetGrid(
     BuildEquivalence.classes(
       tiles.size,
       tileAdjacencies map:
-        case (t, u) => (t.index, u.index)  
+        (t, u) => (t.index, u.index)
     )
     
   override val regionColors: Seq[Color] =
@@ -107,7 +107,7 @@ class TruchetGrid(
           def regionFor(tileNo: Int) = tileRegions(square.tiles(tileNo).index)
           regionFor(0) -> regionFor(1)
       .filterNot:
-        case (r, s) => r == s
+        (r, s) => r == s
     val fullRecords: Seq[(Int, Int)] =
       adjacencyRecords ++ adjacencyRecords.map { case (r, s) => s -> r }
 //    println("Initial adj records = " + adjacencyRecords)
@@ -253,6 +253,5 @@ class Square(
 
 class Tile(
   val index: Int
-):
-  ()
+)
 

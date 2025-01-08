@@ -129,16 +129,16 @@ class TruchetGridSpec extends FunSuite:
 */
 
   test("square grid models adjacencies"):
-    val mappedAdjs = squareGrid.tileAdjacencies.map:
-      case (t, u) => (t.index, u.index)
+    val mappedAdjs: Seq[(Int, Int)] = squareGrid.tileAdjacencies.map:
+      (t, u) => (t.index, u.index)
     mappedAdjs is Seq(
       (1,8), (1,2), (3,11), (3,4), (4,12), (5,6), (7,15), (9,16), (9,10),
       (10,18), (11,12), (13,21), (13,14), (14,23), (17,18), (19,20), (21,22)
     )
 
   test("toroidal grid models adjacencies"):
-    val mappedAdjs = torusGrid.tileAdjacencies.map:
-      case (t, u) => (t.index, u.index)
+    val mappedAdjs: Seq[(Int, Int)] = torusGrid.tileAdjacencies.map:
+      (t, u) => (t.index, u.index)
     mappedAdjs is Seq(
       (1,8), (1,2), (3,11), (3,4), (4,12), (5,6), (7,15), (7,0), (9,16), (9,10),
       (10,18), (11,12), (13,21), (13,14), (14,23), (15,8), (17,0), (17,18), (19,2),
