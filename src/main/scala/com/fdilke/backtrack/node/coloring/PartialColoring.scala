@@ -7,7 +7,7 @@ import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 case class PartialColoring(
   colors: Seq[Int],
   colorAdjacencies: Seq[Seq[Boolean]]
-):
+) extends NodeIterable[Seq[Int]]:
   lazy val distinctColors: Seq[Int] = colors.distinct
   private lazy val numVertices: Int = colors.size
 
@@ -52,16 +52,10 @@ case class PartialColoring(
       newColorAdjacencies
     )
 
-// extends NodeIterable[Seq[Int]]:
-//      override def explore: NodeStatus =
-//        Iterable.empty[NodeChoice]
-
-//        val distinctColors: Seq[Int] = colors.distinct
-//        val possibleIdentifications =
-//          for
-//            c <- distinctColors
-//            d <- distinctColors if c != d
-//              ...
-//
-
-
+  override def explore: NodeStatus =
+    amalgamations match
+      case Seq() =>
+        Iterable(solution(colors))
+      case ams =>
+        ams.map: am =>
+          node(amalgamate(am))

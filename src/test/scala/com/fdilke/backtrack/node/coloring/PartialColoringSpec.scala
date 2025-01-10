@@ -38,48 +38,54 @@ class PartialColoringSpec extends FunSuite:
 
   // amalgamate 0 and 4 in 0---1---0---3---4 => 0---1---0---3---0
 
-  test("Can apply an amalgamation"):
-    sampleGraph.amalgamate(0 -> 4) is
-      PartialColoring(
-        colors = Seq(0, 1, 0, 3, 0),
-        colorAdjacencies = Seq(
-          Seq(false, true, true, true,  true),
-          Seq(true, false, true, false, true),
-          Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
-          Seq(true, false, true, false, true),
-          Seq(true, true, true, true,   true) // 4 washed out
-        )
+  private val amalgamate04Graph: PartialColoring =
+    PartialColoring(
+      colors = Seq(0, 1, 0, 3, 0),
+      colorAdjacencies = Seq(
+        Seq(false, true, true, true,  true),
+        Seq(true, false, true, false, true),
+        Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
+        Seq(true, false, true, false, true),
+        Seq(true, true, true, true,   true) // 4 washed out
       )
+    )
+
+  test("Can apply an amalgamation"):
+    sampleGraph.amalgamate(0 -> 4) is amalgamate04Graph
 
   // amalgamate 1 and 3 in 0---1---0---3---4 => 0---1---0---1---4
 
-  test("Can apply an amalgamation (2)"):
-    sampleGraph.amalgamate(1 -> 3) is
-      PartialColoring(
-        colors = Seq(0,1,0,1,4),
-        colorAdjacencies = Seq(
-          Seq(false, true, true, true,  false),
-          Seq(true, false, true, true,  true),
-          Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
-          Seq(true, true, true, true,   true), // 3 washed out
-          Seq(false, true, true, true,  false)
-        )
+  private val amalgamate13Graph: PartialColoring =
+    PartialColoring(
+      colors = Seq(0,1,0,1,4),
+      colorAdjacencies = Seq(
+        Seq(false, true, true, true,  false),
+        Seq(true, false, true, true,  true),
+        Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
+        Seq(true, true, true, true,   true), // 3 washed out
+        Seq(false, true, true, true,  false)
       )
+    )
+
+  test("Can apply an amalgamation (2)"):
+    sampleGraph.amalgamate(1 -> 3) is amalgamate13Graph
 
   // amalgamate 1 and 4 in 0---1---0---3---4 => 0---1---0---3---1
 
-  test("Can apply an amalgamation (3)"):
-    sampleGraph.amalgamate(1 -> 4) is
-      PartialColoring(
-        colors = Seq(0,1,0,3,1),
-        colorAdjacencies = Seq(
-          Seq(false, true, true, true,  true),
-          Seq(true, false, true, true,  true),
-          Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
-          Seq(true, true, true, false,  true),
-          Seq(true, true, true, true,   true) // 4 washed out
-        )
+  private val amalgamate14Graph: PartialColoring =
+    PartialColoring(
+      colors = Seq(0,1,0,3,1),
+      colorAdjacencies = Seq(
+        Seq(false, true, true, true,  true),
+        Seq(true, false, true, true,  true),
+        Seq(true, true, true, true,   true), // 2 washed out ; have it be adjacent to everything. Also column #2
+        Seq(true, true, true, false,  true),
+        Seq(true, true, true, true,   true) // 4 washed out
       )
+    )
+
+  test("Can apply an amalgamation (3)"):
+    sampleGraph.amalgamate(1 -> 4) is amalgamate14Graph
 
   test("Can check consistency for 'blank' colors"):
     sampleGraph.consistentBlanks is true
@@ -107,3 +113,13 @@ class PartialColoringSpec extends FunSuite:
 
   test("Can detect a graph with no amalgamations"):
     noAmalgamationsGraph.amalgamations is Iterable.empty
+
+  test("can explore amalgamations via the NodeIterable API"):
+    noAmalgamationsGraph.explore is
+      Iterable(Right(noAmalgamationsGraph.colors))
+    sampleGraph.explore is
+      Iterable(
+        Left(amalgamate04Graph),
+        Left(amalgamate13Graph),
+        Left(amalgamate14Graph)
+      )
