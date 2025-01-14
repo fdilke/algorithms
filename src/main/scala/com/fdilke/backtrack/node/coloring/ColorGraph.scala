@@ -6,15 +6,15 @@ import com.fdilke.backtrack.node.MonadIterable._
 
 object ColorGraph:
   def apply(
-    numVertexes: Int,
+    numColors: Int,
     adjacencies: Seq[Seq[Boolean]]
-  ): Seq[Int] =
+  ): Option[Seq[Int]] =
     class PartialColoring(
       colors: Seq[Int]
     ) extends NodeIterable[Seq[Int]]:
       override def explore: NodeStatus =
         Iterable.empty[NodeChoice]
-    Seq.empty[Int]
+    Some(0 until adjacencies.length)
 
 //        val distinctColors: Seq[Int] = colors.distinct
 //        val possibleIdentifications =
