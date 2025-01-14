@@ -14,6 +14,8 @@ object ColorGraph:
     ) extends NodeIterable[Seq[Int]]:
       override def explore: NodeStatus =
         Iterable.empty[NodeChoice]
+    Seq.empty[Int]
+
 //        val distinctColors: Seq[Int] = colors.distinct
 //        val possibleIdentifications =
 //          for
@@ -21,8 +23,9 @@ object ColorGraph:
 //            d <- distinctColors if c != d
 //              ...
 //
-    StackSafeNodeSolver.allSolutions:
-      PartialColoring(0 until numVertexes)
-    .head
+
+//    StackSafeNodeSolver.allSolutions:
+//      PartialColoring(0 until numVertexes)
+//    .head
 
 

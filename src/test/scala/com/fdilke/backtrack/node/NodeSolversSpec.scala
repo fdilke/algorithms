@@ -19,6 +19,11 @@ class StackSafeNodeSolverSpec extends NodeSolverSpec(
   stackSafe = true
 )
 
+class StackSafeDedupNodeSolverSpec extends NodeSolverSpec(
+  solver = StackSafeDedupNodeSolver,
+  stackSafe = true
+)
+
 abstract class NodeSolverSpec(
   solver: NodeSolver,
   stackSafe: Boolean = true
@@ -101,4 +106,33 @@ abstract class NodeSolverSpec(
         else
           Iterable(node(DeepNode(recursions + 1)))
     solver.allSolutions(DeepNode()).head
+
+class DupAndDedupSolversSpec extends FunSuite:
+  // check dups and dedups for a deliberately redundant search for partitions of 7
+  private inline val targetSum = 7
+  private case class SumNode(
+    values: Set[Int]
+  ) extends NodeIterable[Set[Int]]:
+    override def explore: NodeStatus =
+      // println("exploring: " + values)
+      val sum = values.sum
+      if (sum == targetSum)
+        Iterable(solution(values))
+      else
+        (1 to (targetSum - sum)) filterNot(values.contains) map: value =>
+          node(SumNode(values + value))
+
+  private val sumNode: SumNode = SumNode(Set())
+
+  test("vanilla stacksafe solver enumerates solutions redundantly"):
+    StackSafeNodeSolver.allSolutions(sumNode) is Seq(
+      Set(1, 2, 4), Set(1, 4, 2), Set(1, 6), Set(2, 1, 4), Set(2, 4, 1), Set(2, 5),
+      Set(3, 4), Set(4, 1, 2), Set(4, 2, 1), Set(4, 3), Set(5, 2), Set(6, 1), Set(7)
+    )
+
+  test("vanilla stacksafe solver enumerates solutions redundantly"):
+    StackSafeDedupNodeSolver.allSolutions(sumNode) is Seq(
+      Set(1, 2, 4), Set(1, 6), Set(2, 5), Set(3, 4), Set(7)
+    )
+
 

@@ -8,6 +8,7 @@ import cats.free.FreeT
 import cats.Functor
 import cats.Applicative
 import cats.arrow.FunctionK
+import MonadIterable._
 
 object NodeSolvers:
   
@@ -27,6 +28,30 @@ object NodeSolvers:
     ): F[SOLUTION] =
       Monad[F].tailRecM[Node[F, SOLUTION], SOLUTION](node):
         _.explore
+
+  object StackSafeDedupNodeSolver extends NodeSolver:
+    private def getEmpty[F[_] : Monad, SOLUTION]: F[Either[Node[F, SOLUTION], SOLUTION]] =
+      if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
+        Iterable.empty[Either[Node[F, SOLUTION], SOLUTION]].asInstanceOf[F[Either[Node[F, SOLUTION], SOLUTION]]]
+      else
+        throw new IllegalArgumentException("unknown Monad[F]")
+
+    override def allSolutions[F[_] : Monad, SOLUTION](
+      startNode: Node[F, SOLUTION]
+    ): F[SOLUTION] =
+      var seenNodes: Seq[Node[F, SOLUTION]] = Seq()
+      def isSeen(node: Node[F, SOLUTION]): Boolean =
+        if (seenNodes.contains(node))
+          true
+        else
+          seenNodes = node +: seenNodes
+          false
+
+      Monad[F].tailRecM[Node[F, SOLUTION], SOLUTION](startNode): node =>
+        if (isSeen(node))
+          getEmpty[F, SOLUTION]
+        else
+          node.explore
 
   object FancyFreeNodeSolver extends NodeSolver:
     override def allSolutions[F[_] : Monad, SOLUTION](
