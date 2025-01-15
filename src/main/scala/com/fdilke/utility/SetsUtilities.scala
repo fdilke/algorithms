@@ -1,5 +1,7 @@
 package com.fdilke.utility
 
+import scala.language.postfixOps
+
 // edited snapshot of bewl2's SetsUtilities
 
 object SetsUtilities:
@@ -97,3 +99,21 @@ object SetsUtilities:
   extension(letters: Seq[Char])
     inline def string: String =
       new String(letters.toArray)
+
+  def intSqrt(square: Int): Int =
+    ((0 to square) find: n =>
+      n * n == square
+    ).getOrElse
+      { throw new IllegalArgumentException(s"$square is not a square") }
+
+  def squareUp[X](
+    square: X*
+  ): Seq[Seq[X]] =
+    val root = intSqrt(square.size)
+    for
+      i <- 0 until root
+    yield
+      for
+        j <- 0 until root
+      yield
+        square(i * root + j)
