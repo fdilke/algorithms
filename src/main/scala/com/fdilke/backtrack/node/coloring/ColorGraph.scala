@@ -3,11 +3,13 @@ package com.fdilke.backtrack.node.coloring
 import com.fdilke.backtrack.node.NodeIterable
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import com.fdilke.backtrack.node.MonadIterable.*
+import com.fdilke.utility.SetsUtilities
+import com.fdilke.utility.SetsUtilities.squareUp
 
 import scala.annotation.targetName
 
 object ColorGraph:
-  @targetName("applyWithAdjecencyPairs")
+  @targetName("applyWithAdjacencyPairs")
   def apply(
     numColors: Int,
     adjacencyPairs: (Int, Int)*
@@ -26,6 +28,13 @@ object ColorGraph:
       override def explore: NodeStatus =
         Iterable.empty[NodeChoice]
     Some(adjacencyTable.indices)
+
+  @targetName("applyWithUnpackedAdjacencyTable")
+  def apply(
+     numColors: Int,
+     unpackedAdjacencyTable: Boolean*
+   ): Option[Seq[Int]] =
+    apply(numColors, packAdjacencyTable(unpackedAdjacencyTable))
 
   private def checkAntireflexive(
     adjacencyTable: Seq[Seq[Boolean]]
@@ -77,3 +86,10 @@ object ColorGraph:
       yield
         adjacencyPairs.contains(i -> j) ||
           adjacencyPairs.contains(j -> i)
+
+  def packAdjacencyTable(
+    unpackedAdjacencyTable: Seq[Boolean]
+  ): Seq[Seq[Boolean]] =
+    squareUp(unpackedAdjacencyTable*)
+
+        

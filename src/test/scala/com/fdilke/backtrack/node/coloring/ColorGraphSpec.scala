@@ -29,6 +29,13 @@ class ColorGraphSpec extends FunSuite:
     adjacencyTable: Seq[Seq[Boolean]]
   ): Unit =
     checkColoring(numColors, ColorGraph(numColors, adjacencyTable), adjacencyTable)
+    
+  @targetName("canColorWithUnpackedAdjacencyTable")
+  private def canColor(
+    numColors: Int,
+    unpackedAdjacencyTable: Boolean*
+  ): Unit =
+    canColor(numColors, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
 
   @targetName("canColorWithAdjacencyPairs")
   private def canColor(
@@ -85,6 +92,9 @@ class ColorGraphSpec extends FunSuite:
     
   test("Can color a graph with 2 joined vertexes"):
     canColor(2, Seq(Seq(false, true), Seq(true, false)))
+    
+  test("Can color a graph with 2 joined vertexes, using an unpacked adjacency table"):
+    canColor(2, false, true, true, false)
 
   test("Can color a graph with 2 joined vertexes by adjacencies"):
     canColor(2, 0 -> 1)
