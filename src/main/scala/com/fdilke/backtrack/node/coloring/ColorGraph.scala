@@ -13,7 +13,7 @@ object ColorGraph:
     adjacencyPairs: (Int, Int)*
   ): Option[Seq[Int]] =
     apply(numColors, adjacencyTableFromPairs(adjacencyPairs*))
-    
+
   def apply(
     numColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
@@ -40,5 +40,18 @@ object ColorGraph:
   def adjacencyTableFromPairs(
     adjacencyPairs: (Int, Int)*
   ): Seq[Seq[Boolean]] =
-//    val highest: Int =
-    Seq()      
+    val lastVertex: Int =
+      if adjacencyPairs.isEmpty then
+        -1
+      else
+        adjacencyPairs.flatMap: (v, w) =>
+          Seq(v, w)
+        .max
+    for
+      i <- 0 to lastVertex
+    yield
+      for
+        j <- 0 to lastVertex
+      yield
+        adjacencyPairs.contains(i -> j) ||
+          adjacencyPairs.contains(j -> i)

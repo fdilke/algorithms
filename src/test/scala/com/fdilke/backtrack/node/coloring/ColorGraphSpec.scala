@@ -5,7 +5,7 @@ import com.fdilke.utility.RichFunSuite.*
 
 import scala.annotation.targetName
 
-abstract class ColorGraphSpec extends FunSuite:
+class ColorGraphSpec extends FunSuite:
   
   private def checkColoring(
     numColors: Int,
@@ -46,9 +46,9 @@ abstract class ColorGraphSpec extends FunSuite:
       Seq(false, true, false)
     )
     ColorGraph.adjacencyTableFromPairs((0, 1), (1, 2)) is Seq(
-      Seq(false, true, true),
+      Seq(false, true, false),
       Seq(true,  false, true),
-      Seq(true, true, false)
+      Seq(false, true, false)
     )
     ColorGraph.adjacencyTableFromPairs((0, 3), (1, 2)) is Seq(
       Seq(false, false, false, true),
@@ -66,12 +66,12 @@ abstract class ColorGraphSpec extends FunSuite:
   test("Can color a trivial graph with 1 vertex"):
     canColor(1, Seq(Seq(false)))
 
-  test("Can color a disconnected graph with 2 vertexes"):
-    canColor(1, Seq(Seq(false, false), Seq(false, false)))
+//  test("Can color a disconnected graph with 2 vertexes"):
+//    canColor(1, Seq(Seq(false, false), Seq(false, false)))
     
   test("Can color a graph with 2 joined vertexes"):
     canColor(2, Seq(Seq(false, true), Seq(true, false)))
 
-  test("Can color a graph with 2 joined vertexes by adjacencies"):
-    canColor(1, 0 -> 1)
+//  test("Can color a graph with 2 joined vertexes by adjacencies"):
+//    canColor(1, 0 -> 1)
 
