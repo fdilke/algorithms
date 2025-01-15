@@ -18,6 +18,8 @@ object ColorGraph:
     numColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Option[Seq[Int]] =
+    checkAntireflexive(adjacencyTable)
+    checkSymmetric(adjacencyTable)
     class PartialColoring(
       colors: Seq[Int]
     ) extends NodeIterable[Seq[Int]]:
@@ -25,7 +27,27 @@ object ColorGraph:
         Iterable.empty[NodeChoice]
     Some(adjacencyTable.indices)
 
-//        val distinctColors: Seq[Int] = colors.distinct
+  private def checkAntireflexive(
+    adjacencyTable: Seq[Seq[Boolean]]
+  ): Unit =
+    for
+      i <- adjacencyTable.indices
+    do
+      if adjacencyTable(i)(i) then
+        throw new IllegalArgumentException(s"adjacency table must be antireflexive: fail at $i")
+
+  private def checkSymmetric(
+    adjacencyTable: Seq[Seq[Boolean]]
+  ): Unit =
+    for
+      i <- adjacencyTable.indices
+      j <- 0 until i
+    do
+      if adjacencyTable(j)(i) != adjacencyTable(i)(j) then
+        throw new IllegalArgumentException(s"adjacency table must be symmetric: fail at $j, $i")
+
+
+  //        val distinctColors: Seq[Int] = colors.distinct
 //        val possibleIdentifications =
 //          for
 //            c <- distinctColors
