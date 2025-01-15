@@ -11,7 +11,6 @@ import cats.arrow.FunctionK
 import MonadIterable._
 
 object NodeSolvers:
-  
   object NaiveNodeSolver extends NodeSolver:
     override def allSolutions[
       NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
@@ -21,15 +20,14 @@ object NodeSolvers:
       node: NODE[F, SOLUTION]
     ): F[SOLUTION] =
       val monad: Monad[F] = implicitly
-      monad.flatMap(node.explore) {
+      monad.flatMap(node.explore):
         case Right(solution) => monad.pure(solution)
         case Left(node) => allSolutions(node)
-      }
 
   object StackSafeNodeSolver extends NodeSolver:
     override def allSolutions[
       NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
-      F[_] : Monad, 
+      F[_] : Monad,
       SOLUTION
     ](
       node: NODE[F, SOLUTION]
@@ -40,32 +38,34 @@ object NodeSolvers:
   object StackSafeDedupNodeSolver extends NodeSolver:
     override def allSolutions[
       NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
-      F[_] : Monad, 
+      F[_] : Monad,
       SOLUTION
     ](
       startNode: NODE[F, SOLUTION]
     ): F[SOLUTION] =
-      lazy val emptyChoice: F[Either[NODE[F, SOLUTION], SOLUTION]] =
+      type NODE_FS = NODE[F, SOLUTION]
+      type CHOICE = Either[NODE_FS, SOLUTION]
+      lazy val emptyChoice: F[CHOICE] =
         if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
-          Iterable.empty[Either[NODE[F, SOLUTION], SOLUTION]].asInstanceOf[F[Either[NODE[F, SOLUTION], SOLUTION]]]
+          Iterable.empty[CHOICE].asInstanceOf[F[CHOICE]]
         else
           throw new IllegalArgumentException("unknown Monad[F]")
 
-      var seenNodes: Seq[NODE[F, SOLUTION]] = Seq()
-      def isSeen(node: NODE[F, SOLUTION]): Boolean =
+      var seenNodes: Seq[NODE_FS] = Seq()
+      def isSeen(node: NODE_FS): Boolean =
         if (seenNodes.contains(node))
           true
         else
           seenNodes = node +: seenNodes
           false
 
-      Monad[F].tailRecM[NODE[F, SOLUTION], SOLUTION](startNode): node =>
+      Monad[F].tailRecM[NODE_FS, SOLUTION](startNode): node =>
         if (isSeen(node))
           emptyChoice
         else
           node.explore
 
-  /* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.      
+  /* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.
   object FancyFreeNodeSolver extends NodeSolver:
     override def allSolutions[
       NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
