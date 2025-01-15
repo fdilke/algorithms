@@ -13,8 +13,12 @@ import MonadIterable._
 object NodeSolvers:
   
   object NaiveNodeSolver extends NodeSolver:
-    override def allSolutions[F[_] : Monad, SOLUTION](
-      node: Node[F, SOLUTION]
+    override def allSolutions[
+      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      F[_] : Monad,
+      SOLUTION
+    ](
+      node: NODE[F, SOLUTION]
     ): F[SOLUTION] =
       val monad: Monad[F] = implicitly
       monad.flatMap(node.explore) {
@@ -23,46 +27,59 @@ object NodeSolvers:
       }
 
   object StackSafeNodeSolver extends NodeSolver:
-    override def allSolutions[F[_] : Monad, SOLUTION](
-      node: Node[F, SOLUTION]
+    override def allSolutions[
+      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      F[_] : Monad, 
+      SOLUTION
+    ](
+      node: NODE[F, SOLUTION]
     ): F[SOLUTION] =
-      Monad[F].tailRecM[Node[F, SOLUTION], SOLUTION](node):
+      Monad[F].tailRecM[NODE[F, SOLUTION], SOLUTION](node):
         _.explore
 
   object StackSafeDedupNodeSolver extends NodeSolver:
-    private def getEmpty[F[_] : Monad, SOLUTION]: F[Either[Node[F, SOLUTION], SOLUTION]] =
-      if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
-        Iterable.empty[Either[Node[F, SOLUTION], SOLUTION]].asInstanceOf[F[Either[Node[F, SOLUTION], SOLUTION]]]
-      else
-        throw new IllegalArgumentException("unknown Monad[F]")
-
-    override def allSolutions[F[_] : Monad, SOLUTION](
-      startNode: Node[F, SOLUTION]
+    override def allSolutions[
+      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      F[_] : Monad, 
+      SOLUTION
+    ](
+      startNode: NODE[F, SOLUTION]
     ): F[SOLUTION] =
-      var seenNodes: Seq[Node[F, SOLUTION]] = Seq()
-      def isSeen(node: Node[F, SOLUTION]): Boolean =
+      lazy val emptyChoice: F[Either[NODE[F, SOLUTION], SOLUTION]] =
+        if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
+          Iterable.empty[Either[NODE[F, SOLUTION], SOLUTION]].asInstanceOf[F[Either[NODE[F, SOLUTION], SOLUTION]]]
+        else
+          throw new IllegalArgumentException("unknown Monad[F]")
+
+      var seenNodes: Seq[NODE[F, SOLUTION]] = Seq()
+      def isSeen(node: NODE[F, SOLUTION]): Boolean =
         if (seenNodes.contains(node))
           true
         else
           seenNodes = node +: seenNodes
           false
 
-      Monad[F].tailRecM[Node[F, SOLUTION], SOLUTION](startNode): node =>
+      Monad[F].tailRecM[NODE[F, SOLUTION], SOLUTION](startNode): node =>
         if (isSeen(node))
-          getEmpty[F, SOLUTION]
+          emptyChoice
         else
           node.explore
 
+  /* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.      
   object FancyFreeNodeSolver extends NodeSolver:
-    override def allSolutions[F[_] : Monad, SOLUTION](
-      node: Node[F, SOLUTION]
+    override def allSolutions[
+      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      F[_] : Monad,
+      SOLUTION
+    ](
+      node: NODE[F, SOLUTION]
     ): F[SOLUTION] =
-      type NodeF[S] = Node[F, S]
+      type NodeF[S] = NODE[F, S]
       type FreeNode[A] = Free[NodeF, A]
       def pure[S](s: S): FreeNode[S] =
-        liftF(Node.pure[F, S](s))
+        liftF(GenericNode.pure[F, S](s))
       def defer[S](
-        next: F[Either[Node[F, S], S]]
+        next: F[Either[NODE[F, S], S]]
       ): FreeNode[S] =
         liftF(
           new NodeF[S]:
@@ -79,7 +96,6 @@ object NodeSolvers:
         prog.foldMap(spikeCompiler)
       ???
 
-/* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.      
   object FancyFreeNodeSolver2 extends NodeSolver:
     override def allSolutions[F[_] : Monad, SOLUTION](
       node: Node[F, SOLUTION]
