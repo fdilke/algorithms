@@ -8,7 +8,9 @@ import cats.free.FreeT
 import cats.Functor
 import cats.Applicative
 import cats.arrow.FunctionK
-import MonadIterable._
+import MonadIterable.*
+
+import java.util
 
 object NodeSolvers:
   object NaiveNodeSolver extends NodeSolver:
@@ -50,7 +52,7 @@ object NodeSolvers:
         else
           throw new IllegalArgumentException("unknown Monad[F]")
 
-      var seenNodes: Seq[NODE] = Seq()
+      var seenNodes: List[NODE] = Nil
       def isSeen(node: NODE): Boolean =
         if (seenNodes.contains(node))
           true

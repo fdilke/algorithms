@@ -1,6 +1,6 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.backtrack.node.NodeIterable
+import com.fdilke.backtrack.node.GenericNodeIterable
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import com.fdilke.backtrack.node.MonadIterable.*
 import com.fdilke.utility.SetsUtilities
@@ -24,7 +24,7 @@ object ColorGraph:
     checkSymmetric(adjacencyTable)
     class PartialColoring(
       colors: Seq[Int]
-    ) extends NodeIterable[Seq[Int]]:
+    ) extends GenericNodeIterable[Seq[Int]]:
       override def explore: NodeStatus =
         Iterable.empty[NodeChoice]
     Some(adjacencyTable.indices)

@@ -2,7 +2,7 @@ package com.fdilke.backtrack.node
 
 import cats.Monad
 
-trait NodeIterable[SOLUTION] extends Node[NodeIterable[SOLUTION], Iterable, SOLUTION]
+trait GenericNodeIterable[SOLUTION] extends Node[GenericNodeIterable[SOLUTION], Iterable, SOLUTION]
 
 trait GenericNode[F[_], SOLUTION] extends Node[GenericNode[F, SOLUTION], F, SOLUTION]
 
