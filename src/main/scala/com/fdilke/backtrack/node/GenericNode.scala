@@ -2,26 +2,26 @@ package com.fdilke.backtrack.node
 
 import cats.Monad
 
-trait NodeIterable[SOLUTION] extends GenericNode[Iterable, SOLUTION]
+trait NodeIterable[SOLUTION] extends Node[NodeIterable[SOLUTION], Iterable, SOLUTION]
 
-trait GenericNode[F[_], SOLUTION] extends Node[GenericNode, F, SOLUTION]
+trait GenericNode[F[_], SOLUTION] extends Node[GenericNode[F, SOLUTION], F, SOLUTION]
 
-trait Node[NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2], F[_], SOLUTION]:
-  protected type NodeChoice = Either[NODE[F, SOLUTION], SOLUTION]
+trait Node[NODE <: Node[NODE, F, SOLUTION], F[_], SOLUTION]:
+  protected type NodeChoice = Either[NODE, SOLUTION]
   protected type NodeStatus = F[NodeChoice]
   final def solution(s: SOLUTION): NodeChoice =
-    Right[NODE[F, SOLUTION], SOLUTION](s)
-  final def node(n: NODE[F, SOLUTION]): NodeChoice =
-    Left[NODE[F, SOLUTION], SOLUTION](n)
+    Right[NODE, SOLUTION](s)
+  final def node(n: NODE): NodeChoice =
+    Left[NODE, SOLUTION](n)
   def explore: NodeStatus
 
 trait NodeSolver:
   def allSolutions[
-    NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2], 
+    NODE <: Node[NODE, F, SOLUTION], 
     F[_] : Monad, 
     SOLUTION
   ](
-    node: NODE[F ,SOLUTION]
+    node: NODE
   ): F[SOLUTION]
 
 // TODO: complete steps to making it into a monad. Make it into NodeMonad

@@ -17,7 +17,7 @@ object NodeDeBruijn extends DeBruijn:
         val wipLength = cycle.length
         val endTuple = cycle.slice(wipLength - n, wipLength)
         if (cycle.length == n_k)
-          println(s"n =$n, k = $k, cycle length: ${wipLength}, operations = ${operation.size}")
+          println(s"n =$n, k = $k, cycle length: $wipLength, operations = ${operation.size}")
           if (operation(endTuple) == cycle.head)
             Iterable(solution(this))
           else
@@ -32,7 +32,7 @@ object NodeDeBruijn extends DeBruijn:
                   operation + (endTuple -> possible),
                   cycle :+ possible
                 )
-    StackSafeNodeSolver.allSolutions[GenericNode, Iterable, OpCycle]:
+    StackSafeNodeSolver.allSolutions[NodeIterable[OpCycle], Iterable, OpCycle]:
       OpCycle(
         Map.empty,
         Seq.fill(n)(0)

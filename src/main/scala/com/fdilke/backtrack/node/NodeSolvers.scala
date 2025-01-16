@@ -13,11 +13,11 @@ import MonadIterable._
 object NodeSolvers:
   object NaiveNodeSolver extends NodeSolver:
     override def allSolutions[
-      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      NODE <: Node[NODE, F, SOLUTION],
       F[_] : Monad,
       SOLUTION
     ](
-      node: NODE[F, SOLUTION]
+      node: NODE
     ): F[SOLUTION] =
       val monad: Monad[F] = implicitly
       monad.flatMap(node.explore):
@@ -26,40 +26,39 @@ object NodeSolvers:
 
   object StackSafeNodeSolver extends NodeSolver:
     override def allSolutions[
-      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      NODE <: Node[NODE, F, SOLUTION],
       F[_] : Monad,
       SOLUTION
     ](
-      node: NODE[F, SOLUTION]
+      node: NODE
     ): F[SOLUTION] =
-      Monad[F].tailRecM[NODE[F, SOLUTION], SOLUTION](node):
+      Monad[F].tailRecM[NODE, SOLUTION](node):
         _.explore
 
   object StackSafeDedupNodeSolver extends NodeSolver:
     override def allSolutions[
-      NODE[F2[_], SOL2] <: Node[NODE, F2, SOL2],
+      NODE <: Node[NODE, F, SOLUTION],
       F[_] : Monad,
       SOLUTION
     ](
-      startNode: NODE[F, SOLUTION]
+      startNode: NODE
     ): F[SOLUTION] =
-      type NODE_FS = NODE[F, SOLUTION]
-      type CHOICE = Either[NODE_FS, SOLUTION]
+      type CHOICE = Either[NODE, SOLUTION]
       lazy val emptyChoice: F[CHOICE] =
         if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
           Iterable.empty[CHOICE].asInstanceOf[F[CHOICE]]
         else
           throw new IllegalArgumentException("unknown Monad[F]")
 
-      var seenNodes: Seq[NODE_FS] = Seq()
-      def isSeen(node: NODE_FS): Boolean =
+      var seenNodes: Seq[NODE] = Seq()
+      def isSeen(node: NODE): Boolean =
         if (seenNodes.contains(node))
           true
         else
           seenNodes = node +: seenNodes
           false
 
-      Monad[F].tailRecM[NODE_FS, SOLUTION](startNode): node =>
+      Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
         if (isSeen(node))
           emptyChoice
         else

@@ -2,7 +2,6 @@ package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.backtrack.node.MonadIterable.*
 import com.fdilke.backtrack.node.NodeIterable
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 
 case class PartialColoring(
   colors: Seq[Int],
@@ -44,9 +43,6 @@ case class PartialColoring(
           (e == c && colorAdjacencies(d)(f)) ||
           (f == c && colorAdjacencies(e)(d)) ||
           e == d || f == d
-//    println("New c adjs:")
-//    for (xx <- newColorAdjacencies)
-//      println(">> " + xx)
     PartialColoring(
       newColors,
       newColorAdjacencies
