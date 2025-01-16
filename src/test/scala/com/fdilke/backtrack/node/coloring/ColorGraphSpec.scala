@@ -34,8 +34,8 @@ class ColorGraphSpec extends FunSuite:
     numColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Unit =
-    if numColors > 0 then
-      ColorGraph(numColors - 1, adjacencyTable) is None
+    if numColors > 0 && ColorGraph(numColors - 1, adjacencyTable).isDefined then
+       fail("this many colors are not required")
     checkColoring(
       numColors,
       ColorGraph(numColors, adjacencyTable),
@@ -113,6 +113,44 @@ class ColorGraphSpec extends FunSuite:
   test("Can color a graph with 2 joined vertexes by adjacencies"):
     canJustColor(2, 0 -> 1)
 
-//  test("Can color a fancier graph"):
-//    canJustColor(2, 0 -> 1)
+  private def torus(
+    width: Int,
+    height: Int
+  ): Seq[(Int, Int)] =
+    def cellIndex(i: Int, j: Int): Int =
+      (i % width) * height + (j % height)
+    (for
+      i <- 0 to width
+      j <- 0 to height
+    yield
+      Seq(
+        cellIndex(i, j) -> cellIndex(i + 1, j),
+        cellIndex(i, j) -> cellIndex(i, j + 1)
+      )
+    ).flatten
+
+  test("torus(2,2) requires 2 colors"):
+    canJustColor(3, torus(2, 3)*)
+
+  test("torus(2,3) requires 3 colors"):
+    canJustColor(3, torus(2, 3)*)
+
+  test("torus(3,3) requires 3 colors"):
+    canJustColor(3, torus(3, 3)*)
+
+//  test("torus(5,2) requires 3 colors"):
+//    canJustColor(3, torus(5, 2)*)
+
+//  test("torus(2,5) requires 3 colors"):
+//    canJustColor(3, torus(2, 5)*)
+
+//  test("torus(3,4) requires 3 colors"):
+//    canJustColor(3, torus(3, 4)*)
+//
+//  test("torus(4, 3) requires 3 colors"):
+//    canJustColor(3, torus(4, 3)*)
+//
+//  test("torus(4, 4) requires 2 colors"):
+//    canJustColor(3, torus(4, 3)*)
+
 
