@@ -1,8 +1,10 @@
 package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.backtrack.node.Node
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.squareUp
+import com.fdilke.backtrack.node.MonadIterable._
 
 import scala.annotation.targetName
 
@@ -15,17 +17,19 @@ object ColorGraph:
     apply(numColors, adjacencyTableFromPairs(adjacencyPairs*))
 
   def apply(
-    numColors: Int,
+    targetNumColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Option[Seq[Int]] =
+    val numVertices: Int = adjacencyTable.size
     checkAntireflexive(adjacencyTable)
     checkSymmetric(adjacencyTable)
-    class PartialColoring(
-      colors: Seq[Int]
-    ) extends Node[PartialColoring, Iterable, Seq[Int]]:
-      override def explore: NodeStatus =
-        Iterable.empty[NodeChoice]
-    Some(adjacencyTable.indices)
+    StackSafeDedupNodeSolver.allSolutions[PartialColoring, Iterable, Seq[Int]]:
+      PartialColoring(
+        0 until numVertices,
+        adjacencyTable
+      )
+    .find: colors =>
+      colors.distinct.size <= targetNumColors
 
   @targetName("applyWithUnpackedAdjacencyTable")
   def apply(

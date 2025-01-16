@@ -66,29 +66,29 @@ class ColorGraphSpec extends FunSuite:
 
   test("Reject graphs unless they're antireflexive & symmetric"):
     intercept[IllegalArgumentException]:
-      ColorGraph(2, (1 -> 1))
+      ColorGraph(2, 1 -> 1)
     .getMessage is
       "adjacency table must be antireflexive: fail at 1"
 
     intercept[IllegalArgumentException]:
-      ColorGraph(2, Seq(
-        Seq(false, false),
-        Seq(true, false)
-      ))
+      ColorGraph(2,
+        false, false,
+        true, false
+      )
     .getMessage is
       "adjacency table must be symmetric: fail at 0, 1"
 
   test("Can color the empty graph (with 0 colors)"):
     canColor(0, Seq[Seq[Boolean]]())
 
-//  test("Can color the empty graph (with 0 colors) by adjacencies"):
-//    canColor(0)
+  test("Can color the empty graph (with 0 colors) by adjacencies"):
+    canColor(0, Seq.empty[Boolean]*)
 
   test("Can color a trivial graph with 1 vertex"):
     canColor(1, Seq(Seq(false)))
 
-//  test("Can color a disconnected graph with 2 vertexes"):
-//    canColor(1, Seq(Seq(false, false), Seq(false, false)))
+  test("Can color a disconnected graph with 2 vertexes"):
+    canColor(1, Seq(Seq(false, false), Seq(false, false)))
     
   test("Can color a graph with 2 joined vertexes"):
     canColor(2, Seq(Seq(false, true), Seq(true, false)))
