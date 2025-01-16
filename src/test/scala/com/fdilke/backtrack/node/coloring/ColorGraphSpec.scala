@@ -19,30 +19,44 @@ class ColorGraphSpec extends FunSuite:
           i <- coloring.indices
           j <- 0 until i
         do
-          if (adjacencyTable(i)(j) && (coloring(i) == coloring(j)))
+          if adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
             fail("adjacent vertices have same color")
-        if (coloring.distinct.length > numColors)
+        if coloring.distinct.size > numColors then
           fail("too many colors")
+        if PartialColoring(
+          coloring,
+          adjacencyTable
+        ).amalgamations.nonEmpty then
+          fail("not a minimal coloring: an amalgamation is possible")
 
-  private def canColor(
+  //noinspection AccessorLikeMethodIsUnit
+  private def canJustColor(
     numColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Unit =
-    checkColoring(numColors, ColorGraph(numColors, adjacencyTable), adjacencyTable)
+    if numColors > 0 then
+      ColorGraph(numColors - 1, adjacencyTable) is None
+    checkColoring(
+      numColors,
+      ColorGraph(numColors, adjacencyTable),
+      adjacencyTable
+    )
     
-  @targetName("canColorWithUnpackedAdjacencyTable")
-  private def canColor(
+  //noinspection AccessorLikeMethodIsUnit
+  @targetName("canJustColorWithUnpackedAdjacencyTable")
+  private def canJustColor(
     numColors: Int,
     unpackedAdjacencyTable: Boolean*
   ): Unit =
-    canColor(numColors, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
+    canJustColor(numColors, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
 
-  @targetName("canColorWithAdjacencyPairs")
-  private def canColor(
+  //noinspection AccessorLikeMethodIsUnit
+  @targetName("canJustColorWithAdjacencyPairs")
+  private def canJustColor(
     numColors: Int,
     adjacencyPairs: (Int, Int)*
   ): Unit =
-    canColor(numColors, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
+    canJustColor(numColors, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
 
   test("Can construct an adjacency table from pairs"):
     ColorGraph.adjacencyTableFromPairs() is Seq()
@@ -79,23 +93,26 @@ class ColorGraphSpec extends FunSuite:
       "adjacency table must be symmetric: fail at 0, 1"
 
   test("Can color the empty graph (with 0 colors)"):
-    canColor(0, Seq[Seq[Boolean]]())
+    canJustColor(0, Seq[Seq[Boolean]]())
 
   test("Can color the empty graph (with 0 colors) by adjacencies"):
-    canColor(0, Seq.empty[Boolean]*)
+    canJustColor(0, Seq.empty[Boolean]*)
 
   test("Can color a trivial graph with 1 vertex"):
-    canColor(1, Seq(Seq(false)))
+    canJustColor(1, Seq(Seq(false)))
 
   test("Can color a disconnected graph with 2 vertexes"):
-    canColor(1, Seq(Seq(false, false), Seq(false, false)))
+    canJustColor(1, Seq(Seq(false, false), Seq(false, false)))
     
   test("Can color a graph with 2 joined vertexes"):
-    canColor(2, Seq(Seq(false, true), Seq(true, false)))
+    canJustColor(2, Seq(Seq(false, true), Seq(true, false)))
     
   test("Can color a graph with 2 joined vertexes, using an unpacked adjacency table"):
-    canColor(2, false, true, true, false)
+    canJustColor(2, false, true, true, false)
 
   test("Can color a graph with 2 joined vertexes by adjacencies"):
-    canColor(2, 0 -> 1)
+    canJustColor(2, 0 -> 1)
+
+//  test("Can color a fancier graph"):
+//    canJustColor(2, 0 -> 1)
 
