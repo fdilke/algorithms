@@ -29,20 +29,20 @@ abstract class NodeSolverSpec(
   stackSafe: Boolean = true
 ) extends FunSuite:
   test("successfully fails at the first hurdle"):
-    class NonStarterNode extends GenericNodeIterable[Unit]:
+    class NonStarterNode extends Node[NonStarterNode, Iterable, Unit]:
       override def explore: NodeStatus =
         Iterable.empty
     solver.allSolutions(NonStarterNode()).headOption is None
 
   test("successfully succeeds at the first hurdle"):
-    class QuickWinNode extends GenericNodeIterable[Int]:
+    class QuickWinNode extends Node[QuickWinNode, Iterable, Int]:
       override def explore: NodeStatus =
         Iterable(solution(2))
     val node = QuickWinNode()
     solver.allSolutions(node).headOption is Some(2)
 
   test("successfully increments a value to 5"):
-    class SearchNode(i: Int) extends GenericNodeIterable[Boolean]:
+    class SearchNode(i: Int) extends Node[SearchNode, Iterable, Boolean]:
       override def explore: NodeStatus =
         if (i == 5)
           Iterable(solution(true))
@@ -56,7 +56,7 @@ abstract class NodeSolverSpec(
       Iterable(true, false)
     val explorations: AtomicReference[Seq[Seq[Boolean]]] =
       AtomicReference[Seq[Seq[Boolean]]](Seq.empty)
-    class SearchNode(prefix: Seq[Boolean]) extends GenericNodeIterable[Seq[Boolean]]:
+    class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Iterable, Seq[Boolean]]:
       override def explore: NodeStatus =
         explorations.set(explorations.get() :+ prefix)
         if (prefix.length == 3)
@@ -71,7 +71,7 @@ abstract class NodeSolverSpec(
 
   test("find all solutions in a branching search"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
-    class SearchNode(prefix: Seq[Boolean]) extends GenericNodeIterable[Seq[Boolean]]:
+    class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Iterable, Seq[Boolean]]:
       override def explore: NodeStatus =
         if (prefix.length == 3)
           Iterable(solution(prefix))
@@ -99,7 +99,7 @@ abstract class NodeSolverSpec(
       (stackUse(10) > stackUse(5)) is true
 
   private def stackUse(maxRecursions: Int): Int =
-    class DeepNode(recursions: Int = 0) extends GenericNodeIterable[Int]:
+    class DeepNode(recursions: Int = 0) extends Node[DeepNode, Iterable, Int]:
       override def explore: NodeStatus =
         if recursions == maxRecursions then
           Iterable(solution(stackDepth()))
@@ -112,7 +112,7 @@ class DupAndDedupSolversSpec extends FunSuite:
   private inline val targetSum = 7
   private case class SumNode(
     values: Set[Int]
-  ) extends GenericNodeIterable[Set[Int]]:
+  ) extends Node[SumNode, Iterable, Set[Int]]:
     override def explore: NodeStatus =
       // println("exploring: " + values)
       val sum = values.sum

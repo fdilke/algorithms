@@ -1,12 +1,12 @@
 package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.backtrack.node.MonadIterable.*
-import com.fdilke.backtrack.node.GenericNodeIterable
+import com.fdilke.backtrack.node.Node
 
 case class PartialColoring(
   colors: Seq[Int],
   colorAdjacencies: Seq[Seq[Boolean]]
-) extends GenericNodeIterable[Seq[Int]]:
+) extends Node[PartialColoring, Iterable, Seq[Int]]:
   lazy val distinctColors: Seq[Int] = colors.distinct
   private lazy val numVertices: Int = colors.size
 

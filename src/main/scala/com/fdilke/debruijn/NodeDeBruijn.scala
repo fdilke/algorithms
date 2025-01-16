@@ -1,9 +1,9 @@
 package com.fdilke.debruijn
 
-import com.fdilke.backtrack.node.{GenericNode, GenericNodeIterable}
-import com.fdilke.utility.SetsUtilities.*
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import com.fdilke.backtrack.node.MonadIterable.*
+import com.fdilke.backtrack.node.Node
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
+import com.fdilke.utility.SetsUtilities.*
 
 object NodeDeBruijn extends DeBruijn:
   def apply(n: Int, k: Int): Seq[Int] =
@@ -12,7 +12,7 @@ object NodeDeBruijn extends DeBruijn:
     case class OpCycle(
       operation: Map[NTuple, Int],
       cycle: Seq[Int]
-    ) extends GenericNodeIterable[OpCycle]:
+    ) extends Node[OpCycle, Iterable, OpCycle]:
       override def explore: NodeStatus =
         val wipLength = cycle.length
         val endTuple = cycle.slice(wipLength - n, wipLength)
@@ -32,7 +32,7 @@ object NodeDeBruijn extends DeBruijn:
                   operation + (endTuple -> possible),
                   cycle :+ possible
                 )
-    StackSafeNodeSolver.allSolutions[GenericNodeIterable[OpCycle], Iterable, OpCycle]:
+    StackSafeNodeSolver.allSolutions[OpCycle, Iterable, OpCycle]:
       OpCycle(
         Map.empty,
         Seq.fill(n)(0)
