@@ -67,10 +67,11 @@ object PartialColoring:
     for
       i <- 0 until numVertices
       c = colors(i)
-      j <- 0 until numVertices
+      j <- 0 until numVertices if j != i
       d = colors(j)
     do
       if vertexAdjacencies(i)(j) then
+          println(s"Joining $c,$d for $i, $j")
           colorAdjacencyArray(c)(d) = true
     val unusedColors: Set[Int] =
       (0 until numVertices).toSet diff colors.distinct.toSet
