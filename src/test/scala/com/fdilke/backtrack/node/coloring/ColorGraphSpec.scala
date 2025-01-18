@@ -23,7 +23,7 @@ class ColorGraphSpec extends FunSuite:
             fail("adjacent vertices have same color")
         if coloring.distinct.size > numColors then
           fail("too many colors")
-        if PartialColoring(
+        if PartialColoring.fromColorsAndAdjacencies(
           coloring,
           adjacencyTable
         ).amalgamations.nonEmpty then
@@ -138,8 +138,8 @@ class ColorGraphSpec extends FunSuite:
   test("torus(3,3) requires 3 colors"):
     canJustColor(3, torus(3, 3)*)
 
-//  test("torus(5,2) requires 3 colors"):
-//    canJustColor(3, torus(5, 2)*)
+  test("torus(5,2) requires 3 colors"):
+    canJustColor(3, torus(5, 2)*)
 
 //  test("torus(2,5) requires 3 colors"):
 //    canJustColor(3, torus(2, 5)*)
