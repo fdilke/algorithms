@@ -143,3 +143,49 @@ class PartialColoringSpec extends FunSuite:
           Seq(true, true, true, true)
         )
       )
+
+  test("can calculate color adjacencies from colors and adjacencies (advanced)"):
+    PartialColoring.fromColorsAndAdjacencies(
+      Seq(2, 1, 3, 3, 2),
+      Seq(
+        Seq(false, true, true, false, false),
+        Seq(true, false, false, true, true),
+        Seq(true, false, false, false, true),
+        Seq(false, true, false, false, true),
+        Seq(false, true, true, true, false)
+      )
+    ) is
+      PartialColoring(
+        colors = Seq(2, 1, 3, 3, 2),
+        colorAdjacencies = Seq(
+          Seq(true, true, true, true, true),
+          Seq(true, false, true, true, true),
+          Seq(true, true, false, true, true),
+          Seq(true, true, true, false, true),
+          Seq(true, true, true, true, true)
+        )
+      )
+
+  test("can calculate color adjacencies from colors and adjacencies (more advanced)"):
+    PartialColoring.fromColorsAndAdjacencies(
+      Seq(2, 0, 0, 2, 4, 0),
+      Seq(
+        Seq(false, true, true, false, false, true),
+        Seq(true, false, false, true, false, false),
+        Seq(true, false, false, true, true, false),
+        Seq(false, true, false, false, true, true),
+        Seq(false, false, true, true, false, true),
+        Seq(true, false, false, true, true, false)
+      )
+    ) is
+      PartialColoring(
+        colors = Seq(2, 0, 0, 2, 4, 0),
+        colorAdjacencies = Seq(
+          Seq(false, true, true, true, true, true),
+          Seq(true, true, true, true, true, true),
+          Seq(true, true, false, true, true, true),
+          Seq(true, true, true, true, true, true),
+          Seq(true, true, true, true, false, true),
+          Seq(true, true, true, true, true, true),
+        )
+      )

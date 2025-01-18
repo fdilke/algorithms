@@ -64,14 +64,14 @@ object PartialColoring:
     val numVertices = colors.size
     val colorAdjacencyArray: Array[Array[Boolean]] =
       Array.fill(numVertices, numVertices)(false)
-    for 
+    for
       i <- 0 until numVertices
       c = colors(i)
       j <- 0 until numVertices
-      d = colors(i)
+      d = colors(j)
     do
       if vertexAdjacencies(i)(j) then
-          colorAdjacencyArray(i)(j) = true
+          colorAdjacencyArray(c)(d) = true
     val unusedColors: Set[Int] =
       (0 until numVertices).toSet diff colors.distinct.toSet
     for
@@ -83,7 +83,6 @@ object PartialColoring:
     PartialColoring(
       colors = colors,
       colorAdjacencies =
-        colorAdjacencyArray.toSeq.map: 
-          _.toSeq   
+        colorAdjacencyArray.toSeq.map:
+          _.toSeq
     )
-    
