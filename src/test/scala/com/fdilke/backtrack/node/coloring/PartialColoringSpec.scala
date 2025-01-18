@@ -123,3 +123,23 @@ class PartialColoringSpec extends FunSuite:
         Left(amalgamate13Graph),
         Left(amalgamate14Graph)
       )
+
+  test("can calculate color adjacencies from colors and adjacencies"):
+    PartialColoring.fromColorsAndAdjacencies(
+      Seq(1, 0, 2, 0),
+      Seq(
+        Seq(false, true, true, true),
+        Seq(true, false, true, false),
+        Seq(true, true, false, true),
+        Seq(true, false, false, true)
+      )
+    ) is
+      PartialColoring(
+        colors = Seq(1, 0, 2, 0),
+        colorAdjacencies = Seq(
+          Seq(false, true, true, true),
+          Seq(true, false, true, true),
+          Seq(true, true, false, true),
+          Seq(true, true, true, true)
+        )
+      )

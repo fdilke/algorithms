@@ -55,3 +55,35 @@ case class PartialColoring(
       case ams =>
         ams.map: am =>
           node(amalgamate(am))
+
+object PartialColoring:
+  def fromColorsAndAdjacencies(
+    colors: Seq[Int],
+    vertexAdjacencies: Seq[Seq[Boolean]]
+  ): PartialColoring =
+    val numVertices = colors.size
+    val colorAdjacencyArray: Array[Array[Boolean]] =
+      Array.fill(numVertices, numVertices)(false)
+    for 
+      i <- 0 until numVertices
+      c = colors(i)
+      j <- 0 until numVertices
+      d = colors(i)
+    do
+      if vertexAdjacencies(i)(j) then
+          colorAdjacencyArray(i)(j) = true
+    val unusedColors: Set[Int] =
+      (0 until numVertices).toSet diff colors.distinct.toSet
+    for
+      u <- unusedColors
+      i <- 0 until numVertices
+    do
+      colorAdjacencyArray(u)(i) = true
+      colorAdjacencyArray(i)(u) = true
+    PartialColoring(
+      colors = colors,
+      colorAdjacencies =
+        colorAdjacencyArray.toSeq.map: 
+          _.toSeq   
+    )
+    
