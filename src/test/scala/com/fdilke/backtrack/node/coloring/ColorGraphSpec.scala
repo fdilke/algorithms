@@ -4,6 +4,7 @@ import munit.FunSuite
 import com.fdilke.utility.RichFunSuite.*
 
 import scala.annotation.targetName
+import GraphConstructions.torus
 
 class ColorGraphSpec extends FunSuite:
   
@@ -117,22 +118,6 @@ class ColorGraphSpec extends FunSuite:
 
   test("Can color a graph with 2 joined vertexes by adjacencies"):
     canColor(2, true, 0 -> 1)
-
-  private def torus(
-    width: Int,
-    height: Int
-  ): Seq[(Int, Int)] =
-    def cellIndex(i: Int, j: Int): Int =
-      (i % width) * height + (j % height)
-    (for
-      i <- 0 to width
-      j <- 0 to height
-    yield
-      Seq(
-        cellIndex(i, j) -> cellIndex(i + 1, j),
-        cellIndex(i, j) -> cellIndex(i, j + 1)
-      )
-    ).flatten
 
   test("chi(torus(2,2)) == 3"):
     canColor(2, true, torus(2, 2)*)
