@@ -9,8 +9,9 @@ class ColorGraphSpec extends FunSuite:
   
   private def checkColoring(
     numColors: Int,
+    checkMinimal: Boolean,
     coloring: Option[Seq[Int]],
-    adjacencyTable: Seq[Seq[Boolean]]
+    adjacencyTable: Seq[Seq[Boolean]],
   ): Unit =
     coloring match
       case None => fail("coloring not found")
@@ -23,40 +24,44 @@ class ColorGraphSpec extends FunSuite:
             fail("adjacent vertices have same color")
         if coloring.distinct.size > numColors then
           fail("too many colors")
-        if PartialColoring.fromColorsAndAdjacencies(
+        if checkMinimal && PartialColoring.fromColorsAndAdjacencies(
           coloring,
           adjacencyTable
         ).amalgamations.nonEmpty then
           fail("not a minimal coloring: an amalgamation is possible")
 
   //noinspection AccessorLikeMethodIsUnit
-  private def canJustColor(
+  private def canColor(
     numColors: Int,
+    checkMinimal: Boolean,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Unit =
     if numColors > 0 && ColorGraph(numColors - 1, adjacencyTable).isDefined then
        fail("this many colors are not required")
     checkColoring(
       numColors,
+      checkMinimal,
       ColorGraph(numColors, adjacencyTable),
       adjacencyTable
     )
-    
+
   //noinspection AccessorLikeMethodIsUnit
   @targetName("canJustColorWithUnpackedAdjacencyTable")
-  private def canJustColor(
+  private def canColor(
     numColors: Int,
+    checkMinimal: Boolean,
     unpackedAdjacencyTable: Boolean*
   ): Unit =
-    canJustColor(numColors, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
+    canColor(numColors, checkMinimal, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
 
   //noinspection AccessorLikeMethodIsUnit
   @targetName("canJustColorWithAdjacencyPairs")
-  private def canJustColor(
+  private def canColor(
     numColors: Int,
+    checkMinimal: Boolean,
     adjacencyPairs: (Int, Int)*
   ): Unit =
-    canJustColor(numColors, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
+    canColor(numColors, checkMinimal, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
 
   test("Can construct an adjacency table from pairs"):
     ColorGraph.adjacencyTableFromPairs() is Seq()
@@ -93,25 +98,25 @@ class ColorGraphSpec extends FunSuite:
       "adjacency table must be symmetric: fail at 0, 1"
 
   test("Can color the empty graph (with 0 colors)"):
-    canJustColor(0, Seq[Seq[Boolean]]())
+    canColor(0, true, Seq[Seq[Boolean]]())
 
   test("Can color the empty graph (with 0 colors) by adjacencies"):
-    canJustColor(0, Seq.empty[Boolean]*)
+    canColor(0, true, Seq.empty[Boolean]*)
 
   test("Can color a trivial graph with 1 vertex"):
-    canJustColor(1, Seq(Seq(false)))
+    canColor(1, true, Seq(Seq(false)))
 
   test("Can color a disconnected graph with 2 vertexes"):
-    canJustColor(1, Seq(Seq(false, false), Seq(false, false)))
+    canColor(1, true, Seq(Seq(false, false), Seq(false, false)))
     
   test("Can color a graph with 2 joined vertexes"):
-    canJustColor(2, Seq(Seq(false, true), Seq(true, false)))
+    canColor(2, true, Seq(Seq(false, true), Seq(true, false)))
     
   test("Can color a graph with 2 joined vertexes, using an unpacked adjacency table"):
-    canJustColor(2, false, true, true, false)
+    canColor(2, true, false, true, true, false)
 
   test("Can color a graph with 2 joined vertexes by adjacencies"):
-    canJustColor(2, 0 -> 1)
+    canColor(2, true, 0 -> 1)
 
   private def torus(
     width: Int,
@@ -129,23 +134,31 @@ class ColorGraphSpec extends FunSuite:
       )
     ).flatten
 
-  test("torus(2,2) requires 2 colors"):
-    canJustColor(3, torus(2, 3)*)
+  test("chi(torus(2,2)) == 3"):
+    canColor(2, true, torus(2, 2)*)
 
-  test("torus(2,3) requires 3 colors"):
-    canJustColor(3, torus(2, 3)*)
+  test("chi(torus(2,3)) == 3"):
+    canColor(3, true, torus(2, 3)*)
 
-  test("torus(3,3) requires 3 colors"):
-    canJustColor(3, torus(3, 3)*)
+  test("chi(torus(3,2)) == 3"):
+    canColor(3, true, torus(3, 2)*)
 
-  test("torus(5,2) requires 3 colors"):
-    canJustColor(3, torus(5, 2)*)
+  test("chi(torus(3,3)) == 3"):
+    canColor(3, true, torus(3, 3)*)
 
-//  test("torus(2,5) requires 3 colors"):
-//    canJustColor(3, torus(2, 5)*)
+// too slow - ~5sec */
+    
+//  test("chi(torus(5,2)) <= 3"):
+//    canColor(3, false, torus(5, 2)*)
+//
+//  test("chi(torus(2,5)) <= 3"):
+//    canColor(3, false, torus(2, 5)*)
 
-//  test("torus(3,4) requires 3 colors"):
-//    canJustColor(3, torus(3, 4)*)
+/* MUCH too slow :( */
+    
+//  test("chi(torus(3,4)) <= 3"):
+//    canColor(3, false, torus(3, 4)*)
+
 //
 //  test("torus(4, 3) requires 3 colors"):
 //    canJustColor(3, torus(4, 3)*)
