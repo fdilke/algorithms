@@ -4,7 +4,7 @@ import munit.FunSuite
 import com.fdilke.utility.RichFunSuite.*
 
 import scala.annotation.targetName
-import GraphConstructions.torus
+import GraphConstructions.{oddGraph, torus}
 
 class ColorGraphSpec extends FunSuite:
   
@@ -130,6 +130,11 @@ class ColorGraphSpec extends FunSuite:
 
   test("chi(torus(3,3)) == 3"):
     canColor(3, true, torus(3, 3)*)
+
+// too slow: 3.2 sec
+//  test("chi(Petersen) == 3"):
+//    val petersen = oddGraph(3)
+//    canColor(3, true, petersen*)
 
 // too slow - ~5sec */
     

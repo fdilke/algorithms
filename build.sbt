@@ -9,7 +9,7 @@ lazy val root = project
     ThisBuild/scalacOptions ++= Seq(
       "-unchecked", 
       "-deprecation", 
-      "-Ykind-projector:underscores" // to allow C{*}/C[_] as a synonym for [A] =>> C[A]
+      "-Xkind-projector:underscores" // to allow C{*}/C[_] as a synonym for [A] =>> C[A]
     ),
     libraryDependencies ++= Seq(
         "org.scalameta" %% "munit" % "1.0.0-M3" % Test,

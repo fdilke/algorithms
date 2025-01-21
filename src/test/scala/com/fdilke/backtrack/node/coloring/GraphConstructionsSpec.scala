@@ -36,6 +36,21 @@ class GraphConstructionsSpec extends FunSuite:
     )
 
   // todo: add more adequate torus tests... but this is better than nothing
+  test("The first odd graph is empty (should really be a singleton)"):
+    oddGraph(1) is Seq.empty
 
+  test("The second odd graph is a triangle"):
+    oddGraph(2).sorted is Seq(
+      (0, 1), (0, 2), (1, 2)
+    )
+
+  test("The second odd graph is Petersen"):
+    oddGraph(3).sorted is Seq(
+      (0, 7), (0, 8), (0, 9),
+      (1, 5), (1, 6), (1, 9),
+      (2, 4), (2, 6), (2, 8),
+      (3, 4), (3, 5), (3, 7),
+      (4, 9), (5, 8), (6, 7)
+    )
 
 

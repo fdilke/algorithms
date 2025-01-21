@@ -25,4 +25,11 @@ object GraphConstructions:
 //Two vertices are connected by an edge if and only if the corresponding subsets are disjoint."
 
   def oddGraph(n: Int): Seq[(Int, Int)] =
-    Seq.empty
+    val tuples: Seq[Seq[Int]] =
+      (0 until (2*n - 1)).combinations(n - 1).toSeq
+    for
+      i <- tuples.indices
+      tupleI = tuples(i)
+      j <- 0 until i if tupleI.intersect(tuples(j)).isEmpty
+    yield
+      (j, i)
