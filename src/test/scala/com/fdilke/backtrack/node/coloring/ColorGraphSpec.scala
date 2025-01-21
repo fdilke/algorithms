@@ -156,4 +156,8 @@ class ColorGraphSpec extends FunSuite:
 //  test("torus(4, 4) requires 2 colors"):
 //    canJustColor(3, torus(4, 3)*)
 
+  // Making sure the iteration works as it should - currently doesn't
+  test("can quickly color a graph with enough colors".ignore):
+    canColor(25, false, torus(5, 5)*)
+//    canColor(100, false, torus(10, 10)*)
 
