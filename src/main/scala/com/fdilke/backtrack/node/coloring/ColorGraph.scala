@@ -70,16 +70,20 @@ object ColorGraph:
 //      PartialColoring(0 until numVertexes)
 //    .head
 
+  def lastVertexFromPairs(
+     adjacencyPairs: (Int, Int)*
+   ): Int =
+    if adjacencyPairs.isEmpty then
+      -1
+    else
+      adjacencyPairs.flatMap: (v, w) =>
+        Seq(v, w)
+      .max
+
   def adjacencyTableFromPairs(
     adjacencyPairs: (Int, Int)*
   ): Seq[Seq[Boolean]] =
-    val lastVertex: Int =
-      if adjacencyPairs.isEmpty then
-        -1
-      else
-        adjacencyPairs.flatMap: (v, w) =>
-          Seq(v, w)
-        .max
+    val lastVertex: Int = lastVertexFromPairs(adjacencyPairs*)
     for
       i <- 0 to lastVertex
     yield

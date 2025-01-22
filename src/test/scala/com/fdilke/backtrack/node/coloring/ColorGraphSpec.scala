@@ -5,6 +5,12 @@ import com.fdilke.utility.RichFunSuite.*
 
 import scala.annotation.targetName
 import GraphConstructions.{oddGraph, torus}
+import cats.Monad
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
+import com.fdilke.backtrack.node.coloring.ColorGraph.{adjacencyTableFromPairs, lastVertexFromPairs}
+import com.fdilke.backtrack.node.coloring.NodeLazyFail.node
+import com.fdilke.backtrack.node.MonadIterable.*
+import com.fdilke.backtrack.node.Node
 
 class ColorGraphSpec extends FunSuite:
   
@@ -63,6 +69,12 @@ class ColorGraphSpec extends FunSuite:
     adjacencyPairs: (Int, Int)*
   ): Unit =
     canColor(numColors, checkMinimal, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
+
+  test("Can compute the last vertex from pairs"):
+    ColorGraph.lastVertexFromPairs() is -1
+    ColorGraph.lastVertexFromPairs(0 -> 1) is 1
+    ColorGraph.lastVertexFromPairs(7 -> 8, 0 -> 1) is 8
+    ColorGraph.lastVertexFromPairs(2 -> 3, 4 -> 0, 5 -> 6, 0 -> 1) is 6
 
   test("Can construct an adjacency table from pairs"):
     ColorGraph.adjacencyTableFromPairs() is Seq()
@@ -161,3 +173,42 @@ class ColorGraphSpec extends FunSuite:
     canColor(25, false, torus(5, 5)*)
 //    canColor(100, false, torus(10, 10)*)
 
+
+object NodeLazyFail extends App:
+  def lazyExplode[
+    NODE <: Node[NODE, Iterable, SOLUTION],
+    SOLUTION
+  ](
+    node: NODE
+  ): Iterable[SOLUTION] =
+    node.explore.flatMap:
+      case Left(node2) => lazyExplode(node2)
+      case Right(solution) => Iterable(solution)
+      
+//    Iterable.unfold()
+//  Monad[Iterable].tailRecM[PartialColoring, Seq[Int]](node):
+//    _.explore
+
+  val adjacencyPairs: Seq[(Int, Int)] = torus(1, 11) // torus(5, 5)
+  val adjacencyTable: Seq[Seq[Boolean]] = adjacencyTableFromPairs(adjacencyPairs*)
+  val lastVertex = lastVertexFromPairs(adjacencyPairs*)
+  // StackSafeDedupNodeSolver.allSolutions[PartialColoring, Iterable, Seq[Int]]:
+  val node: PartialColoring =
+    PartialColoring(
+      0 to lastVertex,
+      adjacencyTable
+    )
+  println("Exploring...")
+  val exp: Iterable[Either[PartialColoring, Seq[Int]]] =
+    node.explore
+  println("Taking the head...")
+  val h: Either[PartialColoring, Seq[Int]] = exp.head
+  h match
+    case Left(coloring) =>
+      println("coloring: " + coloring)
+    case Right(solution) =>
+      println("solution: " + solution)
+  println("Exploding...")
+  val exploded: Iterable[Seq[Int]] =
+    lazyExplode(node)
+  println("Exploding...done")
