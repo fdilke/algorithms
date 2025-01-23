@@ -12,9 +12,9 @@ lazy val root = project
       "-Xkind-projector:underscores" // to allow C{*}/C[_] as a synonym for [A] =>> C[A]
     ),
     libraryDependencies ++= Seq(
-        "org.scalameta" %% "munit" % "1.0.0-M3" % Test,
-        "org.typelevel" % "cats-core_3" % "2.10.0",
-        "org.typelevel" % "cats-free_3" % "2.10.0"
+        "org.scalameta" %% "munit" % "1.1.0" % Test,
+        "org.typelevel" % "cats-core_3" % "2.13.0",
+        "org.typelevel" % "cats-free_3" % "2.13.0"
     )
   )
 
