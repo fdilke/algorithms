@@ -4,7 +4,7 @@ import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.squareUp
-import com.fdilke.backtrack.node.MonadIterable._
+import com.fdilke.backtrack.node.MonadIterable
 
 import scala.annotation.targetName
 

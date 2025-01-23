@@ -1,9 +1,9 @@
 package com.fdilke.debruijn
 
-import com.fdilke.backtrack.node.MonadIterable.*
+import com.fdilke.backtrack.node.MonadIterable
 import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
-import com.fdilke.utility.SetsUtilities.*
+import com.fdilke.utility.SetsUtilities._
 
 object NodeDeBruijn extends DeBruijn:
   def apply(n: Int, k: Int): Seq[Int] =
