@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.node.coloring
 
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 
 import scala.annotation.targetName
 import GraphConstructions.{oddGraph, torus}
@@ -9,8 +9,7 @@ import cats.Monad
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 import com.fdilke.backtrack.node.coloring.ColorGraph.{adjacencyTableFromPairs, lastVertexFromPairs}
 import com.fdilke.backtrack.node.coloring.NodeLazyFail.node
-import com.fdilke.backtrack.node.MonadIterable.*
-import com.fdilke.backtrack.node.Node
+import com.fdilke.backtrack.node.{MonadIterable, Node}
 
 class ColorGraphSpec extends FunSuite:
   
@@ -210,5 +209,7 @@ object NodeLazyFail extends App:
       println("solution: " + solution)
   println("Exploding...")
   val exploded: Iterable[Seq[Int]] =
-    lazyExplode(node)
+    Monad[Iterable].tailRecM[PartialColoring, Seq[Int]](node):
+      _.explore
+//    lazyExplode(node)
   println("Exploding...done")

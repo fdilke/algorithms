@@ -1,11 +1,11 @@
 package com.fdilke.backtrack.node
 
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite._
+import com.fdilke.utility.RichFunSuite.*
 
-import java.util.concurrent.atomic.AtomicReference
+import java.util.concurrent.atomic.{AtomicInteger, AtomicReference}
 import cats.Monad
-import com.fdilke.utility.Handy._
+import com.fdilke.utility.Handy.*
 
 // implementing this myself because cats, and even alleycats, doesn't provide an implementation -
 // (because Iterable is considered mutable and therefore unclean, or something)
@@ -48,14 +48,37 @@ class MonadIterableSpec extends FunSuite:
 
   test("has tailRecM, using fixed stack size"):
     def testDepth(maxDepth: Int): Long =
-      monad.tailRecM[Int, Long](0) { (depth : Int) =>
-        Iterable[Either[Int, Long]](
+      monad.tailRecM[Int, Long](0): (depth : Int) =>
+        Iterable[Either[Int, Long]]:
           if depth < maxDepth then
             Left(depth + 1)
           else
             Right(stackDepth() : Long)
-        )
-      }.head
+      .head
     val startDepth = stackDepth()
     testDepth(5) is testDepth(10)
+
+  test("has tailRecM, adequately lazy".ignore):
+    val maxDepth = 3
+    val invocations: AtomicInteger = AtomicInteger(0)
+    class Bifurcate(
+      val depth: Int
+    ) extends Node[Bifurcate, Iterable, Int]:
+      def explore: Iterable[Either[Bifurcate, Int]] =
+        invocations.incrementAndGet()
+        if depth < maxDepth then
+          Iterable(
+            node(Bifurcate(depth + 1)),
+            node(Bifurcate(depth + 1))
+          )
+        else
+          Iterable(solution(depth))
+    val results: Iterable[(Int, Int)] =
+      monad.tailRecM[Bifurcate, Int](Bifurcate(0)):
+        _.explore
+      .map: depth =>
+        depth -> invocations.get()
+    results.size is 8
+    results.forall( _._1 == maxDepth ) is true
+    results.map( _._2 ) is (1 to results.size)
 
