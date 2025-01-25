@@ -64,7 +64,14 @@ abstract class NodeSolverSpec(
         else
           seqValues.map { v => node(SearchNode(prefix :+ v)) }
     val initialNode = SearchNode(Seq.empty)
-    solver.allSolutions(initialNode).headOption is Some(
+    solver.allSolutions(initialNode).toSet is Set(
+      Seq(false, false, false),
+      Seq(false, false, true),
+      Seq(false, true, false),
+      Seq(false, true, true),
+      Seq(true, false, false),
+      Seq(true, false, true),
+      Seq(true, true, false),
       Seq(true, true, true)
     )
     explorations.get().size is 15
