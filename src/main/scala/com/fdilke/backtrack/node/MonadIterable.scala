@@ -3,7 +3,6 @@ package com.fdilke.backtrack.node
 import cats.Monad
 
 import scala.annotation.tailrec
-import scala.util.Try
 
 implicit object MonadIterable extends Monad[Iterable]:
   override def pure[A](
@@ -30,16 +29,66 @@ implicit object MonadIterable extends Monad[Iterable]:
   )(
     f: A => Iterable[Either[A, B]]
   ): Iterable[B] =
-    @tailrec def loop(
+    Iterable.unfold[
+      Iterable[B],
+      Iterable[A]
+    ](Iterable(a)): (s: Iterable[A]) =>
+      if (s.isEmpty)
+        None
+      else
+        val eithers: Iterable[Either[A, B]] = s flatMap f
+        val (
+          runningI: Iterable[Either[A, B]],
+          convergedI: Iterable[Either[A, B]]
+        ) =
+          eithers.partition:
+            _.isLeft
+        val running: Iterable[A] =
+          runningI.map:
+            _.swap.toOption.get
+        val converged: Iterable[B] =
+          convergedI.map:
+            _.toOption.get
+        Some(converged -> running)
+    .flatten
+
+
+  private def failRecM[A, B](
+    a: A
+  )(
+    f: A => Iterable[Either[A, B]]
+  ): Iterable[B] =
+    def loop(
       value: Iterable[Either[A, B]]
     ): Iterable[B] =
-      if value.forall { _.isRight } then
-        value.collect:
-          case Right(b) => b
+      val (
+        runningI: Iterable[Either[A, B]],
+        convergedI: Iterable[Either[A, B]]
+      ) =
+        value.partition:
+          _.isLeft
+      val running: Iterable[A] =
+          runningI.map:
+            _.swap.toOption.get
+      val converged: Iterable[B] =
+          convergedI.map:
+            _.toOption.get
+
+      if running.isEmpty then
+        converged
       else
-        loop(
-          value.flatMap:
-            case Left(aa) => f(aa)
-            case Right(b) => pure(Right(b))
-        )
+        converged ++ running.flatMap:
+          a => loop(f(a))
+
     loop(f(a))
+
+//      if value.forall { _.isRight } then
+//        value.collect:
+//          case Right(b) => b
+//      else
+//        loop(
+//          value.flatMap:
+//            case Left(aa) => f(aa)
+//            case Right(b) => pure(Right(b))
+//        )
+//    loop(f(a))

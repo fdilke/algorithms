@@ -119,19 +119,19 @@ class DupAndDedupSolversSpec extends FunSuite:
       if (sum == targetSum)
         Iterable(solution(values))
       else
-        (1 to (targetSum - sum)) filterNot(values.contains) map: value =>
+        (1 to (targetSum - sum)) filterNot values.contains map: value =>
           node(SumNode(values + value))
 
   private val sumNode: SumNode = SumNode(Set())
 
   test("vanilla stacksafe solver enumerates solutions redundantly"):
-    StackSafeNodeSolver.allSolutions(sumNode) is Seq(
+    StackSafeNodeSolver.allSolutions(sumNode).toSet is Set(
       Set(1, 2, 4), Set(1, 4, 2), Set(1, 6), Set(2, 1, 4), Set(2, 4, 1), Set(2, 5),
       Set(3, 4), Set(4, 1, 2), Set(4, 2, 1), Set(4, 3), Set(5, 2), Set(6, 1), Set(7)
     )
 
   test("vanilla stacksafe solver enumerates solutions redundantly"):
-    StackSafeDedupNodeSolver.allSolutions(sumNode) is Seq(
+    StackSafeDedupNodeSolver.allSolutions(sumNode).toSet is Set(
       Set(1, 2, 4), Set(1, 6), Set(2, 5), Set(3, 4), Set(7)
     )
 

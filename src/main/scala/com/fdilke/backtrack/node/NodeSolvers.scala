@@ -1,16 +1,6 @@
 package com.fdilke.backtrack.node
 
 import cats.Monad
-import cats.free.Free
-import Free.liftF
-import cats.{Id, ~>}
-import cats.free.FreeT
-import cats.Functor
-import cats.Applicative
-import cats.arrow.FunctionK
-import MonadIterable.*
-
-import java.util
 
 object NodeSolvers:
   object NaiveNodeSolver extends NodeSolver:
@@ -47,7 +37,7 @@ object NodeSolvers:
     ): F[SOLUTION] =
       type CHOICE = Either[NODE, SOLUTION]
       lazy val emptyChoice: F[CHOICE] =
-        if (implicitly[Monad[F]] == implicitly[Monad[Iterable]])
+        if (Monad[F] == Monad[Iterable])
           Iterable.empty[CHOICE].asInstanceOf[F[CHOICE]]
         else
           throw new IllegalArgumentException("unknown Monad[F]")
@@ -144,7 +134,6 @@ object NodeSolvers:
           case Right(s: S) => ???
         }
       ???
-*/
 
   object FreeFireT:
     type S[A] = List[A]
@@ -178,6 +167,7 @@ object NodeSolvers:
       st: FunctionK[S, T]
     ): FunctionK[FreeT[S, M, *], FreeT[T, M, *]] =
       ???
+*/
 
 
 

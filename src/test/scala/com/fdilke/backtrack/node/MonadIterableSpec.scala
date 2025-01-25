@@ -4,15 +4,14 @@ import munit.FunSuite
 import com.fdilke.utility.RichFunSuite._
 
 import java.util.concurrent.atomic.AtomicReference
-import MonadIterable.*
 import cats.Monad
 import com.fdilke.utility.Handy._
 
-// implementing this myself because cats,, and even alleycats, doesn't provide an implementation -
+// implementing this myself because cats, and even alleycats, doesn't provide an implementation -
 // (because Iterable is considered mutable and therefore unclean, or something)
 
 class MonadIterableSpec extends FunSuite:
-  private val monad: Monad[Iterable] = implicitly // check 'using'
+  private val monad: Monad[Iterable] = Monad[Iterable] // check 'using'
 
   test("has pure"):
     val pure: Iterable[Int] = monad.pure[Int](3)
@@ -51,7 +50,7 @@ class MonadIterableSpec extends FunSuite:
     def testDepth(maxDepth: Int): Long =
       monad.tailRecM[Int, Long](0) { (depth : Int) =>
         Iterable[Either[Int, Long]](
-          if (depth < maxDepth) then
+          if depth < maxDepth then
             Left(depth + 1)
           else
             Right(stackDepth() : Long)
