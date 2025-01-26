@@ -1,5 +1,6 @@
 package com.fdilke.truchet
 
+import com.fdilke.backtrack.node.coloring.GraphColoringAlgo
 import com.fdilke.truchet.Orientation.Forward
 import com.fdilke.utility.BuildEquivalence
 import com.fdilke.utility.NumberCrunch.confineTo
@@ -43,7 +44,8 @@ class TruchetGrid(
   height: Int,
   toroidal: Boolean,
   boolStream: BoolStream,
-  colorGenerator: () => Color
+  colorGenerator: Int => Color,
+  algo: GraphColoringAlgo
 ) extends SquareHolder with TileHolder:
   grid =>
   override val squares: Seq[Square] =
@@ -98,7 +100,7 @@ class TruchetGrid(
     
   override val regionColors: Seq[Color] =
     tileRegions.distinct.indices.map:
-      _ => colorGenerator()
+      colorGenerator
 
   override val regionAdjacencies: Seq[Seq[Boolean]]  =
     val adjacencyRecords: Seq[(Int, Int)] =
@@ -128,13 +130,20 @@ class TruchetGrid(
       for
         s <- regionColors.indices
       yield
-        fullRecords.contains (r -> s)
+        fullRecords contains (r -> s)
     
 //  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
 //  println("There are " + regionColors.size + " regions")
 
+  private val colorIndices: Seq[Int] =
+    algo(
+      4,
+      regionAdjacencies
+    ) getOrElse:
+      throw new IllegalArgumentException("Cannot color the graph")
+
   private def colorTile(tile: Tile): Color =
-    regionColors(tileRegions(tile.index))
+    regionColors(colorIndices(tileRegions(tile.index)))
 
   override def draw(graphics: Graphics, dimension: Dimension): Unit =
     graphics.setColor(Color.BLACK)
@@ -149,8 +158,14 @@ object TruchetGrid:
   private val randomColors = Random(0L)
   private def colorIndexGenerator(): Int =
     randomColors.nextInt(256)
-  def colorGenerator(): Color =
-    Color(colorIndexGenerator(), colorIndexGenerator(), colorIndexGenerator())
+  private val standardColors: Seq[Color] = Seq(
+    Color.BLACK, Color(125, 0, 0), Color.WHITE, Color.LIGHT_GRAY
+  )
+  def colorGenerator(n: Int): Color =
+    if n < standardColors.size then
+      standardColors(n)
+    else
+      Color(colorIndexGenerator(), colorIndexGenerator(), colorIndexGenerator())
 
 class Square(
   val xPosition: Int,

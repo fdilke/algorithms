@@ -23,3 +23,10 @@ trait GraphColoringAlgo:
    ): Option[Seq[Int]] =
     apply(numColors, packAdjacencyTable(unpackedAdjacencyTable))
 
+object NoEffortColoring extends GraphColoringAlgo:
+  override def apply(
+     targetNumColors: Int,
+     adjacencyTable: Seq[Seq[Boolean]]
+   ): Option[Seq[Int]] =
+    Some(adjacencyTable.indices)
+  

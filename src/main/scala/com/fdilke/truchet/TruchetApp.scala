@@ -1,5 +1,7 @@
 package com.fdilke.truchet
 
+import com.fdilke.backtrack.node.coloring.{ColorGraphTweakedLoop, NoEffortColoring}
+
 import java.awt.*
 import javax.swing.{JFrame, JPanel, WindowConstants}
 import scala.util.Random
@@ -8,11 +10,12 @@ object TruchetApp extends App:
   val device: GraphicsDevice =
     GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
   val grid = new TruchetGrid(
-    width = 60,
-    height = 45,
+    width = 50, // 75,
+    height = 30, // 45,
     toroidal = false,
     boolStream = new Random(0L),
-    colorGenerator = TruchetGrid.colorGenerator
+    colorGenerator = TruchetGrid.colorGenerator,
+    algo = ColorGraphTweakedLoop
   )
   new TruchetFrame(device, grid)
 
