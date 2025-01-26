@@ -102,3 +102,33 @@ class GraphConstructionsSpec extends FunSuite:
       Seq(false, true, false, false),
       Seq(true,  false, false, false)
     )
+
+  test("Can sort the vertices of a graph by descending degree"):
+    val (order, inverse): (Seq[Int], Seq[Int]) =
+      sortByDescDegree(Seq(
+        Seq(false, true, false),
+        Seq(true,  false, true),
+        Seq(false, true, false)
+      ))
+    order.size is 3
+    inverse.size is 3
+    val diagonal: Seq[Int] = 0 until 3
+    diagonal.map { i => order(inverse(i)) } is diagonal
+    diagonal.map { i => inverse(order(i)) } is diagonal
+    order(0) is 1
+
+  test("Can sort the vertices of a graph by descending degree (2)"):
+    val (order, inverse): (Seq[Int], Seq[Int]) =
+      sortByDescDegree(Seq(
+        Seq(false, true, true, false, false),
+        Seq(true, false, false, true, true),
+        Seq(true, false, false, false, true),
+        Seq(false, true, false, false, true),
+        Seq(false, true, true, true, false)
+      ))
+    order.size is 5
+    inverse.size is 5
+    val diagonal: Seq[Int] = 0 until 3
+    diagonal.map { i => order(inverse(i)) } is diagonal
+    diagonal.map { i => inverse(order(i)) } is diagonal
+    Set(order(0), order(1)) is Set(1,4)

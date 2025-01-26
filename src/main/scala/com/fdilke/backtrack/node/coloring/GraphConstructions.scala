@@ -82,3 +82,18 @@ object GraphConstructions:
     unpackedAdjacencyTable: Seq[Boolean]
   ): Seq[Seq[Boolean]] =
     squareUp(unpackedAdjacencyTable*)
+
+  def sortByDescDegree(
+    adjacencyTable: Seq[Seq[Boolean]]
+  ): (Seq[Int], Seq[Int]) =
+    val indices: Seq[Int] = adjacencyTable.indices
+    def degree(vertex: Int): Int =
+      adjacencyTable(vertex).count(identity)
+    val order: Seq[Int] =
+      indices.sortBy(degree).reverse
+    val inverse: Array[Int] = Array[Int](indices*)
+    for
+      i <- indices
+    do
+      inverse(order(i)) = i
+    (order, inverse.toSeq)
