@@ -7,11 +7,13 @@ import scala.annotation.targetName
 import GraphConstructions.{oddGraph, torus}
 import cats.Monad
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
-import com.fdilke.backtrack.node.coloring.ColorGraph.{adjacencyTableFromPairs, lastVertexFromPairs}
-import com.fdilke.backtrack.node.coloring.NodeLazyFail.node
 import com.fdilke.backtrack.node.{MonadIterable, Node}
 
-class ColorGraphSpec extends FunSuite:
+class ColorGraphJoinSpec extends ColorGraphSpec(ColorGraphByJoins)
+
+class ColorGraphSpec(
+  algo: GraphColoringAlgo
+) extends FunSuite:
   
   private def checkColoring(
     numColors: Int,
@@ -42,12 +44,12 @@ class ColorGraphSpec extends FunSuite:
     checkMinimal: Boolean,
     adjacencyTable: Seq[Seq[Boolean]]
   ): Unit =
-    if numColors > 0 && ColorGraph(numColors - 1, adjacencyTable).isDefined then
+    if checkMinimal && numColors > 0 && algo(numColors - 1, adjacencyTable).isDefined then
        fail("this many colors are not required")
     checkColoring(
       numColors,
       checkMinimal,
-      ColorGraph(numColors, adjacencyTable),
+      algo(numColors, adjacencyTable),
       adjacencyTable
     )
 
@@ -58,7 +60,7 @@ class ColorGraphSpec extends FunSuite:
     checkMinimal: Boolean,
     unpackedAdjacencyTable: Boolean*
   ): Unit =
-    canColor(numColors, checkMinimal, ColorGraph.packAdjacencyTable(unpackedAdjacencyTable))
+    canColor(numColors, checkMinimal, GraphConstructions.packAdjacencyTable(unpackedAdjacencyTable))
 
   //noinspection AccessorLikeMethodIsUnit
   @targetName("canJustColorWithAdjacencyPairs")
@@ -67,42 +69,16 @@ class ColorGraphSpec extends FunSuite:
     checkMinimal: Boolean,
     adjacencyPairs: (Int, Int)*
   ): Unit =
-    canColor(numColors, checkMinimal, ColorGraph.adjacencyTableFromPairs(adjacencyPairs*))
-
-  test("Can compute the last vertex from pairs"):
-    ColorGraph.lastVertexFromPairs() is -1
-    ColorGraph.lastVertexFromPairs(0 -> 1) is 1
-    ColorGraph.lastVertexFromPairs(7 -> 8, 0 -> 1) is 8
-    ColorGraph.lastVertexFromPairs(2 -> 3, 4 -> 0, 5 -> 6, 0 -> 1) is 6
-
-  test("Can construct an adjacency table from pairs"):
-    ColorGraph.adjacencyTableFromPairs() is Seq()
-    ColorGraph.adjacencyTableFromPairs((0, 1)) is Seq(Seq(false, true), Seq(true, false))
-    ColorGraph.adjacencyTableFromPairs((1, 2)) is Seq(
-      Seq(false, false, false),
-      Seq(false, false, true),
-      Seq(false, true, false)
-    )
-    ColorGraph.adjacencyTableFromPairs((0, 1), (1, 2)) is Seq(
-      Seq(false, true, false),
-      Seq(true,  false, true),
-      Seq(false, true, false)
-    )
-    ColorGraph.adjacencyTableFromPairs((0, 3), (1, 2)) is Seq(
-      Seq(false, false, false, true),
-      Seq(false, false, true, false),
-      Seq(false, true, false, false),
-      Seq(true,  false, false, false)
-    )
+    canColor(numColors, checkMinimal, GraphConstructions.adjacencyTableFromPairs(adjacencyPairs*))
 
   test("Reject graphs unless they're antireflexive & symmetric"):
     intercept[IllegalArgumentException]:
-      ColorGraph(2, 1 -> 1)
+      algo(2, 1 -> 1)
     .getMessage is
       "adjacency table must be antireflexive: fail at 1"
 
     intercept[IllegalArgumentException]:
-      ColorGraph(2,
+      algo(2,
         false, false,
         true, false
       )
@@ -143,73 +119,31 @@ class ColorGraphSpec extends FunSuite:
     canColor(3, true, torus(3, 3)*)
 
 // too slow: 3.2 sec
-//  test("chi(Petersen) == 3"):
-//    val petersen = oddGraph(3)
-//    canColor(3, true, petersen*)
+  test("chi(Petersen) <= 3"):
+    val petersen = oddGraph(3)
+    canColor(3, false, petersen*)
 
 // too slow - ~5sec */
     
-//  test("chi(torus(5,2)) <= 3"):
-//    canColor(3, false, torus(5, 2)*)
-//
-//  test("chi(torus(2,5)) <= 3"):
-//    canColor(3, false, torus(2, 5)*)
+  test("chi(torus(5,2)) <= 3"):
+    canColor(3, false, torus(5, 2)*)
+
+  test("chi(torus(2,5)) <= 3"):
+    canColor(3, false, torus(2, 5)*)
 
 /* MUCH too slow :( */
     
-//  test("chi(torus(3,4)) <= 3"):
-//    canColor(3, false, torus(3, 4)*)
+  test("chi(torus(3,4)) <= 3"):
+    canColor(3, false, torus(3, 4)*)
 
-//
-//  test("torus(4, 3) requires 3 colors"):
-//    canJustColor(3, torus(4, 3)*)
-//
-//  test("torus(4, 4) requires 2 colors"):
-//    canJustColor(3, torus(4, 3)*)
+  test("chi(torus(4, 3)) <= 3"):
+    canColor(3, false, torus(4, 3)*)
 
-  // Making sure the iteration works as it should - currently doesn't
-  test("can quickly color a graph with enough colors".ignore):
+  test("chi(torus(4, 4)) <= 3"):
+    canColor(3, false, torus(4, 3)*)
+
+  test("can quickly color a graph with enough colors"):
     canColor(25, false, torus(5, 5)*)
 //    canColor(100, false, torus(10, 10)*)
 
 
-object NodeLazyFail extends App:
-  def lazyExplode[
-    NODE <: Node[NODE, Iterable, SOLUTION],
-    SOLUTION
-  ](
-    node: NODE
-  ): Iterable[SOLUTION] =
-    node.explore.flatMap:
-      case Left(node2) => lazyExplode(node2)
-      case Right(solution) => Iterable(solution)
-      
-//    Iterable.unfold()
-//  Monad[Iterable].tailRecM[PartialColoring, Seq[Int]](node):
-//    _.explore
-
-  val adjacencyPairs: Seq[(Int, Int)] = torus(1, 11) // torus(5, 5)
-  val adjacencyTable: Seq[Seq[Boolean]] = adjacencyTableFromPairs(adjacencyPairs*)
-  val lastVertex = lastVertexFromPairs(adjacencyPairs*)
-  // StackSafeDedupNodeSolver.allSolutions[PartialColoring, Iterable, Seq[Int]]:
-  val node: PartialColoring =
-    PartialColoring(
-      0 to lastVertex,
-      adjacencyTable
-    )
-  println("Exploring...")
-  val exp: Iterable[Either[PartialColoring, Seq[Int]]] =
-    node.explore
-  println("Taking the head...")
-  val h: Either[PartialColoring, Seq[Int]] = exp.head
-  h match
-    case Left(coloring) =>
-      println("coloring: " + coloring)
-    case Right(solution) =>
-      println("solution: " + solution)
-  println("Exploding...")
-  val exploded: Iterable[Seq[Int]] =
-    Monad[Iterable].tailRecM[PartialColoring, Seq[Int]](node):
-      _.explore
-//    lazyExplode(node)
-  println("Exploding...done")

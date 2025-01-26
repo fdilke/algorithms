@@ -53,4 +53,52 @@ class GraphConstructionsSpec extends FunSuite:
       (4, 9), (5, 8), (6, 7)
     )
 
+  test("check a graph is antireflexive"):
+    checkAntireflexive(Seq(
+      Seq(false, true, false),
+      Seq(true, false, true),
+      Seq(false, true, false)
+    ))
+    intercept[IllegalArgumentException]:
+      checkAntireflexive(Seq(
+        Seq(true, false),
+        Seq(true, false)
+      ))
 
+  test("check a graph is antireflexive"):
+    checkSymmetric(Seq(
+      Seq(false, true, false),
+      Seq(true, false, true),
+      Seq(false, true, false)
+    ))
+    intercept[IllegalArgumentException]:
+      checkSymmetric(Seq(
+        Seq(true, false),
+        Seq(true, false)
+      ))
+
+  test("Can compute the last vertex from pairs"):
+    lastVertexFromPairs() is -1
+    lastVertexFromPairs(0 -> 1) is 1
+    lastVertexFromPairs(7 -> 8, 0 -> 1) is 8
+    lastVertexFromPairs(2 -> 3, 4 -> 0, 5 -> 6, 0 -> 1) is 6
+
+  test("Can construct an adjacency table from pairs"):
+    adjacencyTableFromPairs() is Seq()
+    adjacencyTableFromPairs((0, 1)) is Seq(Seq(false, true), Seq(true, false))
+    adjacencyTableFromPairs((1, 2)) is Seq(
+      Seq(false, false, false),
+      Seq(false, false, true),
+      Seq(false, true, false)
+    )
+    adjacencyTableFromPairs((0, 1), (1, 2)) is Seq(
+      Seq(false, true, false),
+      Seq(true,  false, true),
+      Seq(false, true, false)
+    )
+    adjacencyTableFromPairs((0, 3), (1, 2)) is Seq(
+      Seq(false, false, false, true),
+      Seq(false, false, true, false),
+      Seq(false, true, false, false),
+      Seq(true,  false, false, false)
+    )

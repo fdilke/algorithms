@@ -1,5 +1,7 @@
 package com.fdilke.backtrack.node.coloring
 
+import com.fdilke.utility.SetsUtilities.squareUp
+
 object GraphConstructions:
   def torus(
     width: Int,
@@ -33,3 +35,50 @@ object GraphConstructions:
       j <- 0 until i if tupleI.intersect(tuples(j)).isEmpty
     yield
       (j, i)
+
+  def checkAntireflexive(
+    adjacencyTable: Seq[Seq[Boolean]]
+  ): Unit =
+    for
+      i <- adjacencyTable.indices
+    do
+      if adjacencyTable(i)(i) then
+        throw new IllegalArgumentException(s"adjacency table must be antireflexive: fail at $i")
+
+  def checkSymmetric(
+    adjacencyTable: Seq[Seq[Boolean]]
+  ): Unit =
+    for
+      i <- adjacencyTable.indices
+      j <- 0 until i
+    do
+      if adjacencyTable(j)(i) != adjacencyTable(i)(j) then
+        throw new IllegalArgumentException(s"adjacency table must be symmetric: fail at $j, $i")
+
+  def lastVertexFromPairs(
+     adjacencyPairs: (Int, Int)*
+   ): Int =
+    if adjacencyPairs.isEmpty then
+      -1
+    else
+      adjacencyPairs.flatMap: (v, w) =>
+        Seq(v, w)
+      .max
+
+  def adjacencyTableFromPairs(
+    adjacencyPairs: (Int, Int)*
+  ): Seq[Seq[Boolean]] =
+    val lastVertex: Int = lastVertexFromPairs(adjacencyPairs*)
+    for
+      i <- 0 to lastVertex
+    yield
+      for
+        j <- 0 to lastVertex
+      yield
+        adjacencyPairs.contains(i -> j) ||
+          adjacencyPairs.contains(j -> i)
+
+  def packAdjacencyTable(
+    unpackedAdjacencyTable: Seq[Boolean]
+  ): Seq[Seq[Boolean]] =
+    squareUp(unpackedAdjacencyTable*)
