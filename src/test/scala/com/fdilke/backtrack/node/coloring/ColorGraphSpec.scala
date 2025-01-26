@@ -11,6 +11,8 @@ import com.fdilke.backtrack.node.{MonadIterable, Node}
 
 class ColorGraphJoinSpec extends ColorGraphSpec(ColorGraphByJoins)
 
+class ColorGraphLoopSpec extends ColorGraphSpec(ColorGraphLoop)
+
 class ColorGraphSpec(
   algo: GraphColoringAlgo
 ) extends FunSuite:
