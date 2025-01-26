@@ -1,17 +1,16 @@
 package com.fdilke.backtrack.node.coloring
 
+import com.fdilke.backtrack.node.coloring.GraphConstructions.{oddGraph, torus}
+import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite._
 
 import scala.annotation.targetName
-import GraphConstructions.{oddGraph, torus}
-import cats.Monad
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
-import com.fdilke.backtrack.node.{MonadIterable, Node}
 
 class ColorGraphJoinSpec extends ColorGraphSpec(ColorGraphByJoins)
 
 class ColorGraphLoopSpec extends ColorGraphSpec(ColorGraphLoop)
+
+class ColorGraphTweakedLoopSpec extends ColorGraphSpec(ColorGraphTweakedLoop)
 
 class ColorGraphSpec(
   algo: GraphColoringAlgo
@@ -76,8 +75,7 @@ class ColorGraphSpec(
   test("Reject graphs unless they're antireflexive & symmetric"):
     intercept[IllegalArgumentException]:
       algo(2, 1 -> 1)
-    .getMessage is
-      "adjacency table must be antireflexive: fail at 1"
+    .getMessage startsWith "adjacency table must be antireflexive: fail at" is true
 
     intercept[IllegalArgumentException]:
       algo(2,

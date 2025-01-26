@@ -35,6 +35,6 @@ object ColorGraphLoop extends GraphColoringAlgo:
       )
     .headOption
 
-
+object ColorGraphTweakedLoop extends DescendingDegree(ColorGraphLoop)
 
         
