@@ -19,7 +19,7 @@ class DescendingDegreeSpec  extends FunSuite:
       new AtomicInteger(-1)
     val saveAdjacencyTable: AtomicReference[Seq[Seq[Boolean]]] =
       new AtomicReference[Seq[Seq[Boolean]]](Seq.empty)
-    val algo: GraphColoringAlgo =
+    val algo: ColoringAlgo =
       (targetNumColors: Int, adjacencyTable: Seq[Seq[Boolean]]) =>
         saveColors.set(targetNumColors)
         saveAdjacencyTable.set(adjacencyTable)

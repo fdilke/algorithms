@@ -3,7 +3,7 @@ package com.fdilke.backtrack.node.coloring
 import scala.annotation.targetName
 import com.fdilke.backtrack.node.coloring.GraphConstructions._
 
-trait GraphColoringAlgo:
+trait ColoringAlgo:
   def apply(
     targetNumColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
@@ -23,7 +23,7 @@ trait GraphColoringAlgo:
    ): Option[Seq[Int]] =
     apply(numColors, packAdjacencyTable(unpackedAdjacencyTable))
 
-object NoEffortColoring extends GraphColoringAlgo:
+object NoEffortColoring extends ColoringAlgo:
   override def apply(
      targetNumColors: Int,
      adjacencyTable: Seq[Seq[Boolean]]

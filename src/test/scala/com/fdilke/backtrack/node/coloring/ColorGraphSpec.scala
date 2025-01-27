@@ -13,7 +13,7 @@ class ColorGraphLoopSpec extends ColorGraphSpec(ColorGraphLoop)
 class ColorGraphTweakedLoopSpec extends ColorGraphSpec(ColorGraphTweakedLoop)
 
 class ColorGraphSpec(
-  algo: GraphColoringAlgo
+  algo: ColoringAlgo
 ) extends FunSuite:
   
   private def checkColoring(

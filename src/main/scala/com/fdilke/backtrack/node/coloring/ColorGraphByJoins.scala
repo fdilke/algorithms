@@ -5,7 +5,7 @@ import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 import com.fdilke.backtrack.node.MonadIterable
 import com.fdilke.backtrack.node.coloring.GraphConstructions._
 
-object ColorGraphByJoins extends GraphColoringAlgo:
+object ColorGraphByJoins extends ColoringAlgo:
   override def apply(
     targetNumColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]

@@ -1,6 +1,6 @@
 package com.fdilke.truchet
 
-import com.fdilke.backtrack.node.coloring.GraphColoringAlgo
+import com.fdilke.backtrack.node.coloring.ColoringAlgo
 import com.fdilke.truchet.Orientation.Forward
 import com.fdilke.utility.BuildEquivalence
 import com.fdilke.utility.NumberCrunch.confineTo
@@ -45,7 +45,7 @@ class TruchetGrid(
   toroidal: Boolean,
   boolStream: BoolStream,
   colorGenerator: Int => Color,
-  algo: GraphColoringAlgo
+  algo: ColoringAlgo
 ) extends SquareHolder with TileHolder:
   grid =>
   override val squares: Seq[Square] =
@@ -158,8 +158,12 @@ object TruchetGrid:
   private val randomColors = Random(0L)
   private def colorIndexGenerator(): Int =
     randomColors.nextInt(256)
+  private val darkRed: Color = Color(125, 0, 0)
+  private val darkGreen: Color = Color(0, 125, 0)
+  private val darkBlue: Color = Color(0, 0, 125)
   private val standardColors: Seq[Color] = Seq(
-    Color.BLACK, Color(125, 0, 0), Color.WHITE, Color.LIGHT_GRAY
+    darkRed, darkGreen, Color.ORANGE, Color(125, 125, 0) // darkBlue // Color.YELLOW,
+//    Color.BLACK, darkRed, Color.WHITE, Color.LIGHT_GRAY
   )
   def colorGenerator(n: Int): Color =
     if n < standardColors.size then

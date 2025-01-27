@@ -1,10 +1,10 @@
 package com.fdilke.backtrack.node.coloring
 
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
+import com.fdilke.backtrack.node.coloring.GraphConstructions._
 import com.fdilke.backtrack.node.{MonadIterable, Node}
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
-import com.fdilke.backtrack.node.coloring.GraphConstructions.*
 
-object ColorGraphLoop extends GraphColoringAlgo:
+object ColorGraphLoop extends ColoringAlgo:
   override def apply(
     targetNumColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
@@ -29,7 +29,7 @@ object ColorGraphLoop extends GraphColoringAlgo:
             color <- 0 until targetNumColors if safeToColor(nextVertex, color)
           yield
             node(PartialVertexColoring(coloring :+ color))
-    StackSafeDedupNodeSolver.allSolutions[PartialVertexColoring, Iterable, Seq[Int]]:
+    StackSafeNodeSolver.allSolutions[PartialVertexColoring, Iterable, Seq[Int]]:
       PartialVertexColoring(
         Seq.empty
       )

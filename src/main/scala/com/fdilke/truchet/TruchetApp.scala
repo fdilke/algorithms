@@ -9,11 +9,13 @@ import scala.util.Random
 object TruchetApp extends App:
   val device: GraphicsDevice =
     GraphicsEnvironment.getLocalGraphicsEnvironment.getDefaultScreenDevice
+  // good sizes include (50, 30),
+  // too much: (75, 45)
   val grid = new TruchetGrid(
-    width = 50, // 75,
-    height = 30, // 45,
-    toroidal = false,
-    boolStream = new Random(0L),
+    width = 80,
+    height = 50,
+    toroidal = true, // false,
+    boolStream = Random(System.currentTimeMillis()), // Random(0L),
     colorGenerator = TruchetGrid.colorGenerator,
     algo = ColorGraphTweakedLoop
   )

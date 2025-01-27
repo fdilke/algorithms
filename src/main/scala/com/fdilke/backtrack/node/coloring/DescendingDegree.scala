@@ -1,8 +1,8 @@
 package com.fdilke.backtrack.node.coloring
 
 class DescendingDegree(
-  algo: GraphColoringAlgo
-) extends GraphColoringAlgo:
+  algo: ColoringAlgo
+) extends ColoringAlgo:
   def apply(
     targetNumColors: Int,
     adjacencyTable: Seq[Seq[Boolean]]
