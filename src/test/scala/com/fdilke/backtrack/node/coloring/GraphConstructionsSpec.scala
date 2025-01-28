@@ -168,6 +168,16 @@ class GraphConstructionsSpec extends FunSuite:
       Seq(6 -> 0, 7 -> 0)
     )
 
+  test("Algorithm for layering: wrapping cases of varying coverLengths"):
+    addLayer(Seq(3, 4, 5, 6, 7, 8, 9), 0, 4, 4) is (
+      Seq(0, 3, 4, 5, 6, 7),
+      Seq(7 -> 0, 8 -> 0, 9 -> 0, 3 -> 0)
+    )
+    addLayer(Seq(3, 4, 5, 6, 7, 8, 9), 0, 4, 3) is (
+      Seq(0, 9, 3, 4, 5, 6, 7),
+      Seq(7 -> 0, 8 -> 0, 9 -> 0)
+    )
+
 //    addLayer(Seq(3, 4, 5, 6), 7, 1, 1) is (Seq(3, 4, 7, 5, 6), Seq(4 -> 7, 5 -> 7))
 //  addLayer(Seq(3, 4), 7, 0, 1) is(Seq(3, 7, 4), Seq(3 -> 7, 4 -> 7))
 //  addLayer(Seq(3, 4, 5, 6), 7, 0, 1) is(Seq(3, 7, 4, 5, 6), Seq(3 -> 7, 4 -> 7))

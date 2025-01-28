@@ -116,17 +116,29 @@ object GraphConstructions:
       throw new IllegalArgumentException("startIndex >= circle size")
     else
       val afterRegion: Int =
-        startIndex + coverLength - 1
+        startIndex + coverLength
       println("afterRegion = " + afterRegion)
-      if (afterRegion + 1 < circleSize) then
+      if (afterRegion < circleSize) then
         (
-          (circle.take(startIndex + 1) :+ newVertex) ++ circle.slice(afterRegion, circleSize),
-          (startIndex to afterRegion) map: i =>
+          (circle.take(startIndex + 1) :+ newVertex) ++ circle.slice(afterRegion - 1, circleSize),
+          (startIndex until afterRegion) map: i =>
             println("i = " + i)
             println("circle = " + circle)
             println("circle(i) = " + circle(i))
             circle(i) -> newVertex
         )
       else
-        (circle :+ newVertex, Seq(-1 -> newVertex))
-      // (circle :+ newVertex, Seq(0 -> newVertex))
+        val wrap: Int =
+          afterRegion - circleSize
+        val decAfterRegion: Int =
+          (afterRegion + circleSize - 1) % circleSize
+        println("wrap = " + wrap)
+        (
+          newVertex +: circle(decAfterRegion) +: circle.slice(wrap, startIndex + 1),
+          (startIndex until circleSize) ++ (0 until wrap) map : i =>
+            println("i = " + i)
+            println ("circle = " + circle)
+            println ("circle(i) = " + circle(i))
+            circle (i) -> newVertex
+        )
+// (circle :+ newVertex, Seq(0 -> newVertex))
