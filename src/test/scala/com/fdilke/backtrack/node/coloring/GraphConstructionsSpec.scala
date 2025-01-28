@@ -133,9 +133,13 @@ class GraphConstructionsSpec extends FunSuite:
     diagonal.map { i => inverse(order(i)) } is diagonal
     Set(order(0), order(1)) is Set(1,4)
 
-  test("Algorithm for creating random planar graphs via layering"):
-//    addLayer(Seq(0), 1, 0, 1) is (Seq(0, 1), Seq(0 -> 1))
-//    addLayer(Seq(0), 2, 0, 1) is (Seq(0, 2), Seq(0 -> 2))
+  test("Algorithm for creating random planar graphs via layering: exclude freak cases"):
+    intercept[IllegalArgumentException]:
+      addLayer(Seq(0), 1, -1, 0)
+    .getMessage is "startIndex < 0"
+    intercept[IllegalArgumentException]:
+      addLayer(Seq(0), 1, 1, 0)
+    .getMessage is "startIndex >= circle size"
     intercept[IllegalArgumentException]:
       addLayer(Seq(0), 1, 0, 0)
     .getMessage is "coverLength <= 0"
@@ -145,4 +149,42 @@ class GraphConstructionsSpec extends FunSuite:
     intercept[IllegalArgumentException]:
       addLayer(Seq(0), 1, 1, 1)
     .getMessage is "startIndex >= circle size"
-    addLayer(Seq(3, 4), 7, 0, 1) is (Seq(3, 7, 4), Seq(3 -> 7, 4 -> 7))
+
+//  test("Algorithm for layering: low order cases with wrapping"):
+//    addLayer(Seq(0), 1, 0, 1) is (Seq(0, 1), Seq(0 -> 1))
+//    addLayer(Seq(0), 2, 0, 1) is (Seq(0, 2), Seq(0 -> 2))
+
+  test("Algorithm for layering: low order cases without wrapping"):
+    addLayer(Seq(1, 2), 3, 0, 1) is (Seq(1, 3, 1, 2), Seq(1 -> 3))
+    addLayer(Seq(1, 2), 0, 0, 1) is (Seq(1, 0, 1, 2), Seq(1 -> 0))
+
+  test("Algorithm for layering: non-wrapping cases of varying coverLengths"):
+    addLayer(Seq(3, 4, 5, 6, 7, 8, 9), 0, 3, 1) is (
+      Seq(3, 4, 5, 6, 0, 6, 7, 8, 9),
+      Seq(6 -> 0)
+    )
+    addLayer(Seq(3, 4, 5, 6, 7, 8, 9), 0, 3, 2) is (
+      Seq(3, 4, 5, 6, 0, 7, 8, 9),
+      Seq(6 -> 0, 7 -> 0)
+    )
+
+//    addLayer(Seq(3, 4, 5, 6), 7, 1, 1) is (Seq(3, 4, 7, 5, 6), Seq(4 -> 7, 5 -> 7))
+//  addLayer(Seq(3, 4), 7, 0, 1) is(Seq(3, 7, 4), Seq(3 -> 7, 4 -> 7))
+//  addLayer(Seq(3, 4, 5, 6), 7, 0, 1) is(Seq(3, 7, 4, 5, 6), Seq(3 -> 7, 4 -> 7))
+
+//  test("Algorithm for creating random planar graphs via layering 2"):
+//    addLayer(Seq(1, 2, 3, 4, 5, 6, 7, 8, 9), 0, 2, 3) is(
+//      Seq(1, 2, 3, 0, 5, 6, 7, 8, 9),
+//      Seq(3 -> 0, 4 -> 0, 5 -> 0)
+//    )
+//
+//  test("Algorithm for creating random planar graphs via layering 3"):
+//    addLayer(Seq(3, 4, 5, 6, 7, 8, 9), 0, 1, 1) is(
+//      Seq(3, 4, 0, 4, 5, 6, 7, 8, 9),
+//      Seq(4 -> 0, 5 -> 0)
+//    )
+//
+//  test("Algorithm for creating random planar graphs via layering 4"):
+//    addLayer(Seq(3, 4, 5, 6, 7, 8), 0, 0, 1) is(Seq(3, 0, 4, 5, 6, 7, 8), Seq(3 -> 0, 4 -> 0))
+////    addLayer(Seq(3, 4), 7, 0, 1) is(Seq(3, 7, 4), Seq(3 -> 7, 4 -> 7))
+//

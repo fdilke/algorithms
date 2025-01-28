@@ -104,27 +104,29 @@ object GraphConstructions:
     coverLength: Int
   ): (Seq[Int], Seq[(Int, Int)]) =
     val circleSize = circle.size
-    if coverLength <= 0 then
+    if startIndex < 0 then
+      throw new IllegalArgumentException("startIndex < 0")
+    else if startIndex >= circleSize then
+      throw new IllegalArgumentException("startIndex >= circle size")
+    else if coverLength <= 0 then
       throw new IllegalArgumentException("coverLength <= 0")
     else if coverLength > circleSize then
       throw new IllegalArgumentException("coverLength > circle size")
     else if startIndex >= circleSize then
       throw new IllegalArgumentException("startIndex >= circle size")
     else
-      val circle2: Seq[Int] =
-        circle ++ circle
       val afterRegion: Int =
         startIndex + coverLength - 1
       println("afterRegion = " + afterRegion)
-      if (afterRegion < circleSize) then
+      if (afterRegion + 1 < circleSize) then
         (
-          (circle.take(startIndex + 1) :+ newVertex) ++ circle2.slice(afterRegion + 1, circleSize - afterRegion),
-          (startIndex to (afterRegion + 1)) map: i =>
+          (circle.take(startIndex + 1) :+ newVertex) ++ circle.slice(afterRegion, circleSize),
+          (startIndex to afterRegion) map: i =>
             println("i = " + i)
             println("circle = " + circle)
             println("circle(i) = " + circle(i))
             circle(i) -> newVertex
         )
       else
-        (circle :+ newVertex, Seq(0 -> newVertex))
+        (circle :+ newVertex, Seq(-1 -> newVertex))
       // (circle :+ newVertex, Seq(0 -> newVertex))
