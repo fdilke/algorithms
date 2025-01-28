@@ -94,3 +94,21 @@ object GraphConstructions:
       indices.sortBy(degree).reverse
     val inverse = SetsUtilities.invertPermutation(order)
     (order, inverse)
+
+  // Add a new "layer" (1 cell) to a circle of cells, at the specified index and length.
+  // We return the new "outer layer" and a list of any new edges.
+  def addLayer(
+    circle: Seq[Int],
+    newVertex: Int,
+    startIndex: Int,
+    coverLength: Int
+  ): (Seq[Int], Seq[(Int, Int)]) =
+    val circleSize = circle.size
+    if coverLength <= 0 then
+      throw new IllegalArgumentException("coverLength <= 0")
+    else if coverLength > circleSize then
+      throw new IllegalArgumentException("coverLength > circle size")
+    else if startIndex >= circleSize then
+      throw new IllegalArgumentException("startIndex >= circle size")
+    else
+      (circle :+ newVertex, Seq(0 -> newVertex))
