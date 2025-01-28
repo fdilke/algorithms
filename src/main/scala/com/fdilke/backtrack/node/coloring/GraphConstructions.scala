@@ -111,4 +111,20 @@ object GraphConstructions:
     else if startIndex >= circleSize then
       throw new IllegalArgumentException("startIndex >= circle size")
     else
-      (circle :+ newVertex, Seq(0 -> newVertex))
+      val circle2: Seq[Int] =
+        circle ++ circle
+      val afterRegion: Int =
+        startIndex + coverLength - 1
+      println("afterRegion = " + afterRegion)
+      if (afterRegion < circleSize) then
+        (
+          (circle.take(startIndex + 1) :+ newVertex) ++ circle2.slice(afterRegion + 1, circleSize - afterRegion),
+          (startIndex to (afterRegion + 1)) map: i =>
+            println("i = " + i)
+            println("circle = " + circle)
+            println("circle(i) = " + circle(i))
+            circle(i) -> newVertex
+        )
+      else
+        (circle :+ newVertex, Seq(0 -> newVertex))
+      // (circle :+ newVertex, Seq(0 -> newVertex))
