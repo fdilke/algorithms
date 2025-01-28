@@ -12,9 +12,9 @@ object TruchetApp extends App:
   // good sizes include (50, 30),
   // too much: (75, 45)
   val grid = new TruchetGrid(
-    width = 80,
-    height = 50,
-    toroidal = true, // false,
+    width = 60,
+    height = 45,
+    toroidal = false,
     boolStream = Random(System.currentTimeMillis()), // Random(0L),
     colorGenerator = TruchetGrid.colorGenerator,
     algo = ColorGraphTweakedLoop

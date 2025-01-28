@@ -162,7 +162,7 @@ object TruchetGrid:
   private val darkGreen: Color = Color(0, 125, 0)
   private val darkBlue: Color = Color(0, 0, 125)
   private val standardColors: Seq[Color] = Seq(
-    darkRed, darkGreen, Color.ORANGE, Color(125, 125, 0) // darkBlue // Color.YELLOW,
+    darkRed, darkGreen, Color.ORANGE, Color(0, 63, 255) // darkBlue // Color.YELLOW,
 //    Color.BLACK, darkRed, Color.WHITE, Color.LIGHT_GRAY
   )
   def colorGenerator(n: Int): Color =
