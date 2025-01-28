@@ -132,3 +132,7 @@ class GraphConstructionsSpec extends FunSuite:
     diagonal.map { i => order(inverse(i)) } is diagonal
     diagonal.map { i => inverse(order(i)) } is diagonal
     Set(order(0), order(1)) is Set(1,4)
+
+  test("Algorithm for creating random planar graphs via layering"):
+    ()
+    

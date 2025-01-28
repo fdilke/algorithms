@@ -1,7 +1,7 @@
 package com.fdilke.utility
 
 import com.fdilke.utility.RichFunSuite.*
-import com.fdilke.utility.SetsUtilities.{allMaps, allNaryOps, bulkJoin, intSqrt, sequencesOfLength, squareUp, subsetsOf}
+import com.fdilke.utility.SetsUtilities.{allMaps, allNaryOps, bulkJoin, intSqrt, invertPermutation, sequencesOfLength, squareUp, subsetsOf}
 import munit.FunSuite
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -153,3 +153,10 @@ class SetsUtilitiesSpec extends FunSuite:
       Seq(8, 2)
     )
     
+  test("can invert a permutation"):
+    invertPermutation(Seq(0)) is Seq(0)
+    invertPermutation(Seq(0, 1)) is Seq(0, 1)
+    invertPermutation(Seq(1, 0)) is Seq(1, 0)
+    invertPermutation(Seq(1, 2, 0)) is Seq(2, 0, 1)
+    invertPermutation(Seq(2, 1, 0)) is Seq(2, 1, 0)
+    invertPermutation(Seq(2, 3, 1, 0)) is Seq(3, 2, 0, 1)

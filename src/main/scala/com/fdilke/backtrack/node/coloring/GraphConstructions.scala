@@ -1,5 +1,6 @@
 package com.fdilke.backtrack.node.coloring
 
+import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.squareUp
 
 object GraphConstructions:
@@ -91,9 +92,5 @@ object GraphConstructions:
       adjacencyTable(vertex).count(identity)
     val order: Seq[Int] =
       indices.sortBy(degree).reverse
-    val inverse: Array[Int] = Array[Int](indices*)
-    for
-      i <- indices
-    do
-      inverse(order(i)) = i
-    (order, inverse.toSeq)
+    val inverse = SetsUtilities.invertPermutation(order)
+    (order, inverse)

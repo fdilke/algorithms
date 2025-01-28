@@ -35,7 +35,7 @@ object SetsUtilities:
     letters: Seq[H],
     length: Int
   ): Iterable[Seq[H]] =
-    if (letters.isEmpty || length == 0) then
+    if letters.isEmpty || length == 0 then
       Iterable(Seq.empty)
     else
       for
@@ -54,8 +54,8 @@ object SetsUtilities:
     arity: Int,
     order: Int
   ): Iterable[VarArgFunc[Int, Int]] =
-    val toOrder: Seq[Int] = (0 until order)
-    val toArity: Seq[Int] = (0 until arity)
+    val toOrder: Seq[Int] = 0 until order
+    val toArity: Seq[Int] = 0 until arity
 
     allMaps(
       allMaps(toArity, toOrder),
@@ -69,7 +69,7 @@ object SetsUtilities:
     if (set.isEmpty)
       Iterable(Set.empty[H])
     else for
-      element <- (set : Iterable[H])
+      element <- set : Iterable[H]
       theRest <- subsetsOf(set - element)
       both <- Iterable[Set[H]](theRest, theRest + element)
     yield both
@@ -117,3 +117,15 @@ object SetsUtilities:
         j <- 0 until root
       yield
         square(i * root + j)
+
+  def invertPermutation(
+    permutation: Seq[Int]
+  ): Seq[Int] =
+    val inverse: Array[Int] =
+      Array[Int](permutation*)
+    for
+      i <- permutation.indices
+    do
+      inverse(permutation(i)) = i
+    inverse.toSeq
+    
