@@ -115,3 +115,6 @@ object GroupSugar:
     @targetName("unaryInverse")
     def unary_~ : T =
       implicitly[Group[T]].invert(element)
+      
+    def order: Int =
+      implicitly[Group[T]].orderOf(element)
