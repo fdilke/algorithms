@@ -8,39 +8,50 @@ object ColoringOlympics extends App:
   val sampleWidth = 19
   val sampleHeight = 19
   val numIterations = 10000
+  val sampleNumVertices = 60
 
-  val algos: Seq[(String, ColoringAlgo)] =
-    Seq(
-      "TweakLoop" -> ColorGraphTweakedLoop,
-      "Loop" -> ColorGraphLoop,
-      // "Joins" -> ColorGraphByJoins
+  val truchetGenerator: () => Seq[Seq[Boolean]] = () =>
+      new TruchetGrid(
+        width = sampleWidth,
+        height = sampleHeight,
+        toroidal = false,
+        boolStream = Random(System.currentTimeMillis()),
+        colorGenerator = TruchetGrid.colorGenerator,
+        algo = NoEffortColoring
+      ).regionAdjacencies
+  val rndPlanarGenerator: () => Seq[Seq[Boolean]] = () =>
+    GraphConstructions.randomPlanar(
+      sampleNumVertices,
+      Random(System.currentTimeMillis())
     )
-  val numAlgos: Int =
-    algos.size
-  val timings: Array[Long] =
-    Array[Long](Seq.fill(numAlgos)(0)*)
-  for (i <- 0 until numIterations) do
-    print(".")
-    val grid = new TruchetGrid(
-      width = sampleWidth,
-      height = sampleHeight,
-      toroidal = false,
-      boolStream = Random(System.currentTimeMillis()),
-      colorGenerator = TruchetGrid.colorGenerator,
-      algo = NoEffortColoring
-    )
-    for (((_, algo), j) <- algos.zipWithIndex) do
-      print("<")
-      val startTime = System.currentTimeMillis()
-      if algo(4, grid.regionAdjacencies).isEmpty then
-        throw new IllegalArgumentException("cannot color graph")
-      val endTime = System.currentTimeMillis()
-      val time = endTime - startTime
-      timings(j) += time
-      print(">")
-    println(";")
-  for (((name, _), j) <- algos.zipWithIndex) do
-    println(s"$name\t${timings(j).toDouble / numIterations}ms") //  / numIterations
+  runIterations(rndPlanarGenerator)
+
+  def runIterations(generator: () => Seq[Seq[Boolean]]): Unit =
+    val algos: Seq[(String, ColoringAlgo)] =
+      Seq(
+        "TweakLoop" -> ColorGraphTweakedLoop,
+        "Loop" -> ColorGraphLoop,
+        // "Joins" -> ColorGraphByJoins
+      )
+    val numAlgos: Int =
+      algos.size
+    val timings: Array[Long] =
+      Array[Long](Seq.fill(numAlgos)(0)*)
+    for (i <- 0 until numIterations) do
+      print(".")
+      val graph = generator()
+      for (((_, algo), j) <- algos.zipWithIndex) do
+        print("<")
+        val startTime = System.currentTimeMillis()
+        if algo(4, graph).isEmpty then
+          throw new IllegalArgumentException("cannot color graph")
+        val endTime = System.currentTimeMillis()
+        val time = endTime - startTime
+        timings(j) += time
+        print(">")
+      println(";")
+    for (((name, _), j) <- algos.zipWithIndex) do
+      println(s"$name\t${timings(j).toDouble / numIterations}ms")
 
 
 

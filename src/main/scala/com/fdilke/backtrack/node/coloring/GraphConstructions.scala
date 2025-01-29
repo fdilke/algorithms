@@ -3,6 +3,9 @@ package com.fdilke.backtrack.node.coloring
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.squareUp
 
+import java.util.concurrent.atomic.AtomicInteger
+import scala.util.Random
+
 object GraphConstructions:
   def torus(
     width: Int,
@@ -117,14 +120,10 @@ object GraphConstructions:
     else
       val afterRegion: Int =
         startIndex + coverLength
-      println("afterRegion = " + afterRegion)
       if (afterRegion < circleSize) then
         (
           (circle.take(startIndex + 1) :+ newVertex) ++ circle.slice(afterRegion - 1, circleSize),
           (startIndex until afterRegion) map: i =>
-            println("i = " + i)
-            println("circle = " + circle)
-            println("circle(i) = " + circle(i))
             circle(i) -> newVertex
         )
       else
@@ -132,13 +131,26 @@ object GraphConstructions:
           afterRegion - circleSize
         val decAfterRegion: Int =
           (afterRegion + circleSize - 1) % circleSize
-        println("wrap = " + wrap)
         (
           newVertex +: circle(decAfterRegion) +: circle.slice(wrap, startIndex + 1),
           (startIndex until circleSize) ++ (0 until wrap) map : i =>
-            println("i = " + i)
-            println ("circle = " + circle)
-            println ("circle(i) = " + circle(i))
             circle (i) -> newVertex
         )
-// (circle :+ newVertex, Seq(0 -> newVertex))
+
+  def randomPlanar(
+    numVertices: Int,
+    random: Random
+  ): Seq[Seq[Boolean]] =
+    val adjacencies: (Seq[Int], Seq[(Int, Int)]) =
+      (1 until numVertices).foldLeft[(Seq[Int], Seq[(Int, Int)])]((Seq(0), Seq.empty)):
+        case ((cycle, edges), v) =>
+          val start = random.nextInt(cycle.size)
+          val coverLength =
+            if cycle.size > 1 then
+              1 + random.nextInt(cycle.size - 1)
+            else
+              1
+          val (newCycle, moreEdges) =
+            addLayer(cycle, v, start, coverLength)
+          (newCycle, edges ++ moreEdges)
+    adjacencyTableFromPairs(adjacencies._2*)

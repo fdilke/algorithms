@@ -5,6 +5,7 @@ import munit.FunSuite
 import GraphConstructions.*
 
 import scala.Seq
+import scala.util.Random
 
 class GraphConstructionsSpec extends FunSuite:
   
@@ -196,3 +197,15 @@ class GraphConstructionsSpec extends FunSuite:
     addLayer(Seq(3, 4, 5), 7, 1, 2) is (Seq(7, 5, 3, 4), Seq(4 -> 7, 5 -> 7))
     addLayer(Seq(3, 4, 5), 7, 1, 3) is (Seq(7, 3, 4), Seq(4 -> 7, 5 -> 7, 3 -> 7))
 
+  test("Generating random planar graphs"):
+    val size = 10
+    val graph: Seq[Seq[Boolean]] =
+      randomPlanar(size, Random(0L))
+    graph.size is size
+    (graph forall:
+      _.size == size
+    ) is true
+    ColorGraphLoop(
+      targetNumColors = 4,
+      adjacencyTable = graph
+    ).isDefined is true
