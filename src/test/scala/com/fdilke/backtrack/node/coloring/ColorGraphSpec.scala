@@ -75,7 +75,7 @@ class ColorGraphSpec(
   test("Reject graphs unless they're antireflexive & symmetric"):
     intercept[IllegalArgumentException]:
       algo(2, 1 -> 1)
-    .getMessage startsWith "adjacency table must be antireflexive: fail at" is true
+    .getMessage.startsWith("adjacency table must be antireflexive: fail at") is true
 
     intercept[IllegalArgumentException]:
       algo(2,

@@ -1,8 +1,8 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 import munit.FunSuite
-import GraphConstructions.*
+import GraphConstructions._
 
 import scala.Seq
 import scala.util.Random
@@ -116,7 +116,7 @@ class GraphConstructionsSpec extends FunSuite:
     val diagonal: Seq[Int] = 0 until 3
     diagonal.map { i => order(inverse(i)) } is diagonal
     diagonal.map { i => inverse(order(i)) } is diagonal
-    order(0) is 1
+    order.head is 1
 
   test("Can sort the vertices of a graph by descending degree (2)"):
     val (order, inverse): (Seq[Int], Seq[Int]) =
@@ -132,7 +132,7 @@ class GraphConstructionsSpec extends FunSuite:
     val diagonal: Seq[Int] = 0 until 3
     diagonal.map { i => order(inverse(i)) } is diagonal
     diagonal.map { i => inverse(order(i)) } is diagonal
-    Set(order(0), order(1)) is Set(1,4)
+    order.take(2).toSet is Set(1,4)
 
   test("Algorithm for creating random planar graphs via layering: exclude freak cases"):
     intercept[IllegalArgumentException]:
