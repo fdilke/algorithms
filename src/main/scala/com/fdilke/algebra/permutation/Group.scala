@@ -98,23 +98,3 @@ trait Group[T]:
   def commutes(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
 
-object GroupSugar:
-  implicit class MultiplicationWrapper[
-    T : Group
-  ](
-    element: T
-  ):
-    @targetName("star")
-    def *(element2: T): T =
-      implicitly[Group[T]].multiply(element, element2)
-
-    @targetName("exponentConjugate")
-    def ^(element2: T): T =
-      implicitly[Group[T]].conjugate(element, element2)
-
-    @targetName("unaryInverse")
-    def unary_~ : T =
-      implicitly[Group[T]].invert(element)
-      
-    def order: Int =
-      implicitly[Group[T]].orderOf(element)
