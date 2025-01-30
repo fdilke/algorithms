@@ -1,10 +1,11 @@
 package com.fdilke.algebra.permutation
 
 import scala.language.postfixOps
+import scala.math.Ordered.orderingToOrdered
 
 case class Permutation(
   images: Int*
-):
+) extends Comparable[Permutation]:
   val degree: Int = images.size
 
   def apply(index: Int): Int =
@@ -23,12 +24,18 @@ case class Permutation(
       array(this(index)) = index
     Permutation(array*)
 
+  override def compareTo(that: Permutation): Int =
+    if degree != that.degree then
+      throw new IllegalArgumentException("cannot compare permutations of different degrees")
+    else
+      images.compareTo(that.images)
+
 object Permutation:
   def identity(degree: Int): Permutation =
     Permutation(
       0 until degree *
     )
-    
+
   def enumerate(degree: Int): Set[Permutation] =
     ((0 until degree) permutations).map:
       p => Permutation(p.toSeq *)

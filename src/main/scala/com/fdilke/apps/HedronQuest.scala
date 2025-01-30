@@ -7,7 +7,7 @@ import GroupSugar._
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
 
 object HedronQuest extends App:
-  private val searchDegree = 7
+  private val searchDegree = 5
   val group = Permutation.group(searchDegree)
   given Group[Permutation] = group
   private def elementsOfOrder(n: Int) =
@@ -15,7 +15,11 @@ object HedronQuest extends App:
       _.order == n
   val order4s = elementsOfOrder(4)
   val order5s = elementsOfOrder(5)
+  println(s"${order4s.size} elements of order 4")
+  println(s"${order5s.size} elements of order 5")
   case class Hedron(
+    f: Permutation,
+    v: Permutation,
     subgroup: group.Subgroup
   ):
     val order: Int =
@@ -27,7 +31,7 @@ object HedronQuest extends App:
       e = f * v if e.order == 2
     yield
       val subgroup = group.generateSubgroup(f, v)
-      Hedron(subgroup)
+      Hedron(f, v, subgroup)
   private val orders: Seq[Int] =
     hedrons.map { _.order }.toSeq.sorted
   println("Sorted orders: " + orders.mkString(","))

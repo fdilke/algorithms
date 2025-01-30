@@ -3,6 +3,7 @@ package com.fdilke.algebra.permutation
 import munit.FunSuite
 
 import com.fdilke.utility.RichFunSuite._
+import scala.math.Ordered.orderingToOrdered
 
 class PermutationSpec extends FunSuite:
   test("Permutations of a given degree can be created and composed"):
@@ -42,3 +43,18 @@ class PermutationSpec extends FunSuite:
       Permutation.group(degree = 4)
     GroupVerifier.checkGroupOf[Permutation](group)
     group.order is 24
+
+  test("Permutations can be ordered"):
+    Permutation(0, 1) <  Permutation(1, 0) is true
+    Permutation(0, 1) >=  Permutation(1, 0) is false
+    intercept[IllegalArgumentException]:
+      Permutation(0, 1) <  Permutation(0)
+    .getMessage is "cannot compare permutations of different degrees"
+    val group: Group[Permutation] =
+      Permutation.group(degree = 3)
+    group.unit.isInstanceOf[Comparable[Permutation]] is true
+    group.elements.toSeq.sorted is Seq(
+      Permutation(0,1,2), Permutation(0,2,1),
+      Permutation(1,0,2), Permutation(1,2,0),
+      Permutation(2,0,1), Permutation(2,1,0)
+    )
