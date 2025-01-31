@@ -7,7 +7,7 @@ import GroupSugar._
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
 
 object HedronQuest extends App:
-  private val searchDegree = 10
+  private val searchDegree = 5
   val group = Permutation.group(searchDegree)
   given Group[Permutation] = group
   private def elementsOfOrder(n: Int) =
@@ -48,5 +48,20 @@ object HedronQuest extends App:
   private val orders: Seq[Int] =
     hedrons.map { _.order }.toSeq.sorted
   println("Sorted orders: " + orders.mkString(","))
-    
-  
+  val smallestOrder = orders.head
+  val plushie: Hedron =
+    hedrons.find:
+      _.order == smallestOrder
+    .getOrElse:
+      throw new IllegalArgumentException("can't find smallest plushie")
+  println("for the small plushie:")
+  println("f = " + plushie.f)
+  println("v = " + plushie.v)
+
+object PlushiePlayground extends App:
+  val group: Group[Permutation] = Permutation.group(5)
+  given Group[Permutation] = group
+  val f = Permutation(0, 2, 3, 4, 1)
+  val v = Permutation(2, 4, 1, 0, 3)
+  println("Product order = " + (f * v).order)
+  println("Group order = " + group.generateSubgroup(f, v).order)
