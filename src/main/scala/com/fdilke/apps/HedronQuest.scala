@@ -1,7 +1,8 @@
 package com.fdilke.apps
 
 import com.fdilke.algebra.permutation.{Group, GroupSugar, Permutation}
-import GroupSugar._
+import GroupSugar.*
+import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, GraphConstructions, PartialColoring}
 
 // Attempt to find permutations f, v, e of order 4, 5, 2 respectively with fv = e
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
@@ -135,3 +136,56 @@ object PlushiePlayground extends App:
     println("Every edge is incident to 2 vertexes")
   if checkIncidences(vertexes, edges, 4) then
     println("Every vertex is incident to 4 edges")
+
+  def adjacentFaces(f1: Coset, f2: Coset): Boolean =
+    edges.exists: edge =>
+      incident(edge, f1) && incident(edge, f2)
+
+  val faceAdjacencies: Seq[(Int, Int)] =
+    for
+      (faceI, i) <- faces.zipWithIndex
+      (faceJ, j) <- faces.take(i).zipWithIndex if adjacentFaces(faceI, faceJ)
+    yield
+      (i, j)
+  println("# face adjacencies: " + faceAdjacencies.size)
+  def label(i: Int): Char =
+    (65 + i).toChar
+
+  for
+    i <- faces.indices
+  do
+    print(s"${label(i)}: ")
+    for
+      j <- faces.indices if faceAdjacencies.contains(i, j) || faceAdjacencies.contains(j, i)
+    do
+      print(s"${label(j)} ")
+    println("")
+  for (n <- 1 to 6) do
+    if ColorGraphLoop(n, faceAdjacencies*).isDefined then
+      println(s"Plushie can be $n-colored")
+    else
+      println(s"Plushie cannot be $n-colored")
+  private def checkMinColoring(
+     numColors: Int,
+     coloring: Seq[Int],
+     adjacencyTable: Seq[Seq[Boolean]],
+   ): Unit =
+      for
+        i <- coloring.indices
+        j <- 0 until i
+      do
+        if adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
+          throw new IllegalArgumentException("adjacent vertices have same color")
+      if coloring.distinct.size > numColors then
+        throw new IllegalArgumentException("too many colors")
+      if PartialColoring.fromColorsAndAdjacencies(
+        coloring,
+        adjacencyTable
+      ).amalgamations.nonEmpty then
+        throw new IllegalArgumentException("not a minimal coloring: an amalgamation is possible")
+
+  ColorGraphLoop(2, faceAdjacencies *) match
+    case None => throw new IllegalArgumentException("no coloring after all")
+    case Some(coloring) =>
+      checkMinColoring(2, coloring, GraphConstructions.adjacencyTableFromPairs(faceAdjacencies*))
+      println("the 2-coloring: " + coloring.map{ c => label(c) }.mkString(""))
