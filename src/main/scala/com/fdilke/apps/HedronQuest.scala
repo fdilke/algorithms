@@ -189,3 +189,39 @@ object PlushiePlayground extends App:
     case Some(coloring) =>
       checkMinColoring(2, coloring, GraphConstructions.adjacencyTableFromPairs(faceAdjacencies*))
       println("the 2-coloring: " + coloring.map{ c => label(c) }.mkString(""))
+
+  def adjacentVertexes(v1: Coset, v2: Coset): Boolean =
+    edges.exists: edge =>
+      incident(edge, v1) && incident(edge, v2)
+
+  val vertexAdjacencies: Seq[(Int, Int)] =
+    for
+      (vertexI, i) <- vertexes.zipWithIndex
+      (vertexJ, j) <- vertexes.take(i).zipWithIndex if adjacentVertexes(vertexI, vertexJ)
+    yield
+      (i, j)
+  println("# vertex adjacencies: " + vertexAdjacencies.size)
+
+  ColorGraphLoop(3, vertexAdjacencies *) match
+    case None => throw new IllegalArgumentException("no coloring")
+    case Some(coloring) =>
+      checkMinColoring(3, coloring, GraphConstructions.adjacencyTableFromPairs(vertexAdjacencies *))
+      println("the vertex coloring: " + coloring.map { c => label(c) }.mkString(""))
+
+  def adjacentEdges(e1: Coset, e2: Coset): Boolean =
+    vertexes.exists: vertex =>
+      incident(vertex, e1) && incident(vertex, e2)
+
+  val edgeAdjacencies: Seq[(Int, Int)] =
+    for
+      (edgeI, i) <- edges.zipWithIndex
+      (edgeJ, j) <- edges.take(i).zipWithIndex if adjacentEdges(edgeI, edgeJ)
+    yield
+      (i, j)
+  println("# edge adjacencies: " + edgeAdjacencies.size)
+
+  ColorGraphLoop(4, edgeAdjacencies *) match
+    case None => throw new IllegalArgumentException("no coloring")
+    case Some(coloring) =>
+      checkMinColoring(4, coloring, GraphConstructions.adjacencyTableFromPairs(edgeAdjacencies *))
+      println("the edge coloring: " + coloring.map { c => label(c) }.mkString(""))
