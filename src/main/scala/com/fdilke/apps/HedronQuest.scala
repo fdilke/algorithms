@@ -189,7 +189,7 @@ object PlushiePlayground extends App:
     case None => throw new IllegalArgumentException("no coloring after all")
     case Some(coloring) =>
       checkMinColoring(2, coloring, faceGraph)
-      println("the 2-coloring: " + coloring.map{ c => label(c) }.mkString(""))
+      println("the 2-coloring: " + coloring.map{ label }.mkString(""))
 
   def adjacentVertexes(v1: Coset, v2: Coset): Boolean =
     edges.exists: edge =>
@@ -207,22 +207,43 @@ object PlushiePlayground extends App:
     case None => throw new IllegalArgumentException("no coloring")
     case Some(coloring) =>
       checkMinColoring(3, coloring, vertexGraph)
-      println("the vertex coloring: " + coloring.map { c => label(c) }.mkString(""))
+      println("the vertex coloring: " + coloring.map { label }.mkString(""))
 
   def adjacentEdges(e1: Coset, e2: Coset): Boolean =
     vertexes.exists: vertex =>
       incident(vertex, e1) && incident(vertex, e2)
-
-  val edgeAdjacencies: Seq[(Int, Int)] =
+  if false then // a bit of a slow calculation
+    val edgeAdjacencies: Seq[(Int, Int)] =
+      for
+        (edgeI, i) <- edges.zipWithIndex
+        (edgeJ, j) <- edges.take(i).zipWithIndex if adjacentEdges(edgeI, edgeJ)
+      yield
+        (i, j)
+    println("# edge adjacencies: " + edgeAdjacencies.size)
+    val edgeGraph = Graph(edgeAdjacencies*)
+    ColorGraphLoop(4, edgeGraph) match
+      case None => throw new IllegalArgumentException("no coloring")
+      case Some(coloring) =>
+        checkMinColoring(4, coloring, edgeGraph)
+        println("the edge coloring: " + coloring.map { label }.mkString(""))
+  val distanceMaps: Seq[Seq[Int]] =
     for
-      (edgeI, i) <- edges.zipWithIndex
-      (edgeJ, j) <- edges.take(i).zipWithIndex if adjacentEdges(edgeI, edgeJ)
+      i <- faces.indices
     yield
-      (i, j)
-  println("# edge adjacencies: " + edgeAdjacencies.size)
-  val edgeGraph = Graph(edgeAdjacencies*)
-  ColorGraphLoop(4, edgeGraph) match
-    case None => throw new IllegalArgumentException("no coloring")
-    case Some(coloring) =>
-      checkMinColoring(4, coloring, edgeGraph)
-      println("the edge coloring: " + coloring.map { c => label(c) }.mkString(""))
+      val map: Map[Int, Int] =
+        faceGraph.distanceMap(i)
+      faces.indices.map { map }
+  for
+    i <- faces.indices
+    j <- 0 until i
+  do
+    val distance = distanceMaps(i)(j)
+    for
+      k <- faces.indices
+      l <- 0 until k if distanceMaps(k)(l) == distance
+    do
+      if !plushieGroup.elements.exists: g =>
+        multiplyCoset(faces(i), g) == faces(k) &&
+          multiplyCoset(faces(j), g) == faces(l)
+      then
+        throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")
