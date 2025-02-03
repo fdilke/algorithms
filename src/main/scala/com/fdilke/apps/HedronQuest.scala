@@ -2,7 +2,7 @@ package com.fdilke.apps
 
 import com.fdilke.algebra.permutation.{Group, GroupSugar, Permutation}
 import GroupSugar.*
-import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, GraphConstructions, PartialColoring}
+import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, Graph, PartialColoring}
 
 // Attempt to find permutations f, v, e of order 4, 5, 2 respectively with fv = e
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
@@ -160,34 +160,35 @@ object PlushiePlayground extends App:
     do
       print(s"${label(j)} ")
     println("")
+  val faceGraph = Graph(faceAdjacencies*)
   for (n <- 1 to 6) do
-    if ColorGraphLoop(n, faceAdjacencies*).isDefined then
+    if ColorGraphLoop(n, faceGraph).isDefined then
       println(s"Plushie can be $n-colored")
     else
       println(s"Plushie cannot be $n-colored")
   private def checkMinColoring(
      numColors: Int,
      coloring: Seq[Int],
-     adjacencyTable: Seq[Seq[Boolean]],
+     graph: Graph,
    ): Unit =
       for
         i <- coloring.indices
         j <- 0 until i
       do
-        if adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
+        if graph.adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
           throw new IllegalArgumentException("adjacent vertices have same color")
       if coloring.distinct.size > numColors then
         throw new IllegalArgumentException("too many colors")
-      if PartialColoring.fromColorsAndAdjacencies(
+      if PartialColoring.fromColorsAndGraph(
         coloring,
-        adjacencyTable
+        graph
       ).amalgamations.nonEmpty then
         throw new IllegalArgumentException("not a minimal coloring: an amalgamation is possible")
 
-  ColorGraphLoop(2, faceAdjacencies *) match
+  ColorGraphLoop(2, faceGraph) match
     case None => throw new IllegalArgumentException("no coloring after all")
     case Some(coloring) =>
-      checkMinColoring(2, coloring, GraphConstructions.adjacencyTableFromPairs(faceAdjacencies*))
+      checkMinColoring(2, coloring, faceGraph)
       println("the 2-coloring: " + coloring.map{ c => label(c) }.mkString(""))
 
   def adjacentVertexes(v1: Coset, v2: Coset): Boolean =
@@ -201,11 +202,11 @@ object PlushiePlayground extends App:
     yield
       (i, j)
   println("# vertex adjacencies: " + vertexAdjacencies.size)
-
-  ColorGraphLoop(3, vertexAdjacencies *) match
+  val vertexGraph = Graph(vertexAdjacencies*)
+  ColorGraphLoop(3, vertexGraph) match
     case None => throw new IllegalArgumentException("no coloring")
     case Some(coloring) =>
-      checkMinColoring(3, coloring, GraphConstructions.adjacencyTableFromPairs(vertexAdjacencies *))
+      checkMinColoring(3, coloring, vertexGraph)
       println("the vertex coloring: " + coloring.map { c => label(c) }.mkString(""))
 
   def adjacentEdges(e1: Coset, e2: Coset): Boolean =
@@ -219,9 +220,9 @@ object PlushiePlayground extends App:
     yield
       (i, j)
   println("# edge adjacencies: " + edgeAdjacencies.size)
-
-  ColorGraphLoop(4, edgeAdjacencies *) match
+  val edgeGraph = Graph(edgeAdjacencies*)
+  ColorGraphLoop(4, edgeGraph) match
     case None => throw new IllegalArgumentException("no coloring")
     case Some(coloring) =>
-      checkMinColoring(4, coloring, GraphConstructions.adjacencyTableFromPairs(edgeAdjacencies *))
+      checkMinColoring(4, coloring, edgeGraph)
       println("the edge coloring: " + coloring.map { c => label(c) }.mkString(""))

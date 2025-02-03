@@ -1,6 +1,6 @@
 package com.fdilke.truchet
 
-import com.fdilke.backtrack.node.coloring.ColoringAlgo
+import com.fdilke.backtrack.node.coloring.{ColoringAlgo, Graph}
 import com.fdilke.truchet.Orientation.Forward
 import com.fdilke.utility.BuildEquivalence
 import com.fdilke.utility.NumberCrunch.confineTo
@@ -22,7 +22,7 @@ trait TileHolder:
   val tileAdjacencies: Seq[(Tile, Tile)]
   val tileRegions: Seq[Int]
   val regionColors: Seq[Color]
-  val regionAdjacencies: Seq[Seq[Boolean]]
+  val regionGraph: Graph
 
 type BoolStream = { def nextBoolean(): Boolean }
 
@@ -102,7 +102,7 @@ class TruchetGrid(
     tileRegions.distinct.indices.map:
       colorGenerator
 
-  override val regionAdjacencies: Seq[Seq[Boolean]]  =
+  override val regionGraph: Graph =
     val adjacencyRecords: Seq[(Int, Int)] =
       squares.map:
         square =>
@@ -112,33 +112,23 @@ class TruchetGrid(
         (r, s) => r == s
     val fullRecords: Seq[(Int, Int)] =
       adjacencyRecords ++ adjacencyRecords.map { case (r, s) => s -> r }
-//    println("Initial adj records = " + adjacencyRecords)
-//    for
-//      r <- regionColors.indices
-//    do
-//      for
-//        s <- regionColors.indices
-//      do
-//        if (fullRecords.contains (r -> s))
-//          print("X")
-//        else
-//          print("_")
-//      println("")
-    for
-      r <- regionColors.indices
-    yield
+    val adjacencyTable: Seq[Seq[Boolean]] =
       for
-        s <- regionColors.indices
+        r <- regionColors.indices
       yield
-        fullRecords contains (r -> s)
-    
+        for
+          s <- regionColors.indices
+        yield
+          fullRecords contains (r -> s)
+    Graph(adjacencyTable*)
+  
 //  println("Tile adjacencies = " + tileAdjacencies.map { case (t, u) => (t.index, u.index)})
 //  println("There are " + regionColors.size + " regions")
 
   private val colorIndices: Seq[Int] =
     algo(
       4,
-      regionAdjacencies
+      regionGraph
     ) getOrElse:
       throw new IllegalArgumentException("Cannot color the graph")
 

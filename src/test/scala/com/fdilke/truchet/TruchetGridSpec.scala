@@ -156,7 +156,7 @@ class TruchetGridSpec extends FunSuite:
     )
 
   test("square grid models region adjacencies"):
-    squareGrid.regionAdjacencies is Seq(
+    squareGrid.regionGraph.adjacencyTable is Seq(
       Seq(  false,  true,   false,  false,  false,  false,  false,  false ),
       Seq(  true,  false,   true,   false,  false,  true,   false,  false ),
       Seq(  false, true,   false,   true,   false,  true,   true,   false ),
@@ -176,7 +176,7 @@ class TruchetGridSpec extends FunSuite:
     )
 
   test("toroidal grid models region adjacencies"):
-    torusGrid.regionAdjacencies is Seq(
+    torusGrid.regionGraph.adjacencyTable is Seq(
       Seq(false, true),
       Seq(true, false)
     )

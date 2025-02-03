@@ -10,7 +10,7 @@ object ColoringOlympics extends App:
   val numIterations = 10000
   val sampleNumVertices = 60
 
-  val truchetGenerator: () => Seq[Seq[Boolean]] = () =>
+  val truchetGenerator: () => Graph = () =>
       new TruchetGrid(
         width = sampleWidth,
         height = sampleHeight,
@@ -18,15 +18,15 @@ object ColoringOlympics extends App:
         boolStream = Random(System.currentTimeMillis()),
         colorGenerator = TruchetGrid.colorGenerator,
         algo = NoEffortColoring
-      ).regionAdjacencies
-  val rndPlanarGenerator: () => Seq[Seq[Boolean]] = () =>
-    GraphConstructions.randomPlanar(
+      ).regionGraph
+  val rndPlanarGenerator: () => Graph = () =>
+    Graph.randomPlanar(
       sampleNumVertices,
       Random(System.currentTimeMillis())
     )
   runIterations(rndPlanarGenerator)
 
-  def runIterations(generator: () => Seq[Seq[Boolean]]): Unit =
+  def runIterations(generator: () => Graph): Unit =
     val algos: Seq[(String, ColoringAlgo)] =
       Seq(
         "TweakLoop" -> ColorGraphTweakedLoop,

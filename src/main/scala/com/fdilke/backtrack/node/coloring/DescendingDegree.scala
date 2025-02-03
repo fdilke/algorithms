@@ -5,17 +5,17 @@ class DescendingDegree(
 ) extends ColoringAlgo:
   def apply(
     targetNumColors: Int,
-    adjacencyTable: Seq[Seq[Boolean]]
+    graph: Graph
   ): Option[Seq[Int]] =
     val indices: Seq[Int] =
-      adjacencyTable.indices
+      graph.adjacencyTable.indices
     val (order, inverse): (Seq[Int], Seq[Int]) =
-      GraphConstructions.sortByDescDegree(adjacencyTable)
+      graph.sortByDescDegree()
     val remappedAdjs: Seq[Seq[Boolean]] =
       for
         i <- indices
         oi = order(i)
-        atoi = adjacencyTable(oi)
+        atoi = graph.adjacencyTable(oi)
       yield
         for
           j <- indices
@@ -24,7 +24,7 @@ class DescendingDegree(
           atoi(oj)
     algo.apply(
       targetNumColors,
-      remappedAdjs
+      Graph(remappedAdjs*)
     ) map: remappedColors =>
       indices.map:
         i => remappedColors(inverse(i))

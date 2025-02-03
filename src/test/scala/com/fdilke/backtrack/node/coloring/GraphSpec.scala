@@ -1,82 +1,90 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.utility.RichFunSuite._
+import com.fdilke.backtrack.node.coloring.Graph.{addLayer, adjacencyTableFromPairs, lastVertexFromPairs, oddGraph, randomPlanar, torus}
 import munit.FunSuite
-import GraphConstructions._
+import com.fdilke.utility.RichFunSuite.*
 
-import scala.Seq
 import scala.util.Random
 
-class GraphConstructionsSpec extends FunSuite:
-  
-  test("torus(0, 0) is empty"):
-    torus(0, 0).isEmpty is true
-
-  test("torus(0, 3) is empty"):
-    torus(0, 3).isEmpty is true
-
-  test("torus(3, 0) is empty"):
-    torus(3, 0).isEmpty is true
-
-  test("torus(1, 1) has 1 vertex"):
-    torus(1, 1) is Seq(0 -> 0)
-
-  test("torus(3, 2) has 6 vertices and 12 edges"):
-    val torus32: Seq[(Int, Int)] = torus(3, 2)
-    torus32.flatMap:
-      case (v: Int, w: Int) => Seq(v, w).toSet
-    .distinct.sorted is (0 until 6)
-    torus32.size is 12
-    torus32.sorted is Seq(
-      (0, 1), (0, 2),
-      (1, 0), (1, 3),
-      (2, 3), (2, 4),
-      (3, 2), (3, 5),
-      (4, 0), (4, 5),
-      (5, 1), (5, 4)
-    )
-
-  // todo: add more adequate torus tests... but this is better than nothing
-  test("The first odd graph is empty (should really be a singleton)"):
-    oddGraph(1) is Seq.empty
-
-  test("The second odd graph is a triangle"):
-    oddGraph(2).sorted is Seq(
-      (0, 1), (0, 2), (1, 2)
-    )
-
-  test("The second odd graph is Petersen"):
-    oddGraph(3).sorted is Seq(
-      (0, 7), (0, 8), (0, 9),
-      (1, 5), (1, 6), (1, 9),
-      (2, 4), (2, 6), (2, 8),
-      (3, 4), (3, 5), (3, 7),
-      (4, 9), (5, 8), (6, 7)
-    )
-
-  test("check a graph is antireflexive"):
-    checkAntireflexive(Seq(
+class GraphSpec extends FunSuite:
+  test("can construct an adjacency table from a list of edges"):
+    Graph((0, 1), (1,2)).adjacencyTable is Seq(
       Seq(false, true, false),
       Seq(true, false, true),
-      Seq(false, true, false)
-    ))
-    intercept[IllegalArgumentException]:
-      checkAntireflexive(Seq(
-        Seq(true, false),
-        Seq(true, false)
-      ))
+      Seq(false, true, false),
+    )
+
+  test("can construct a list of edges from an adjacency table"):
+    Graph(
+      false, true, false,
+      true, false, true,
+      false, true, false
+    ).edges is Seq(
+      (0, 1), (1, 2)
+    )
+
+  test("can construct a list of edges from an unpacked adjacency table"):
+    Graph(
+      false, true, false,
+      true, false, true,
+      false, true, false
+    ).edges is Seq(
+      (0, 1), (1, 2)
+    )
+
+  test("Can sort the vertices of a graph by descending degree"):
+    val (order, inverse): (Seq[Int], Seq[Int]) =
+      Graph(
+        false, true, false,
+        true,  false, true,
+        false, true, false
+      ).sortByDescDegree()
+    order.size is 3
+    inverse.size is 3
+    val diagonal: Seq[Int] = 0 until 3
+    diagonal.map { i => order(inverse(i)) } is diagonal
+    diagonal.map { i => inverse(order(i)) } is diagonal
+    order.head is 1
+
+  test("Can sort the vertices of a graph by descending degree (2)"):
+    val (order, inverse): (Seq[Int], Seq[Int]) =
+      Graph(
+        false, true, true, false, false,
+        true, false, false, true, true,
+        true, false, false, false, true,
+        false, true, false, false, true,
+        false, true, true, true, false
+      ).sortByDescDegree()
+    order.size is 5
+    inverse.size is 5
+    val diagonal: Seq[Int] = 0 until 3
+    diagonal.map { i => order(inverse(i)) } is diagonal
+    diagonal.map { i => inverse(order(i)) } is diagonal
+    order.take(2).toSet is Set(1,4)
 
   test("check a graph is antireflexive"):
-    checkSymmetric(Seq(
-      Seq(false, true, false),
-      Seq(true, false, true),
-      Seq(false, true, false)
-    ))
+    Graph(
+      false, true, false,
+      true, false, true,
+      false, true, false
+    ).checkAntireflexive()
     intercept[IllegalArgumentException]:
-      checkSymmetric(Seq(
-        Seq(true, false),
-        Seq(true, false)
-      ))
+      Graph(
+        true, false,
+        true, false
+      ).checkAntireflexive()
+
+  test("check a graph is antireflexive"):
+    Graph(
+      false, true, false,
+      true, false, true,
+      false, true, false
+    ).checkSymmetric()
+    intercept[IllegalArgumentException]:
+      Graph(
+        true, false,
+        true, false
+      ).checkSymmetric()
 
   test("Can compute the last vertex from pairs"):
     lastVertexFromPairs() is -1
@@ -103,36 +111,6 @@ class GraphConstructionsSpec extends FunSuite:
       Seq(false, true, false, false),
       Seq(true,  false, false, false)
     )
-
-  test("Can sort the vertices of a graph by descending degree"):
-    val (order, inverse): (Seq[Int], Seq[Int]) =
-      sortByDescDegree(Seq(
-        Seq(false, true, false),
-        Seq(true,  false, true),
-        Seq(false, true, false)
-      ))
-    order.size is 3
-    inverse.size is 3
-    val diagonal: Seq[Int] = 0 until 3
-    diagonal.map { i => order(inverse(i)) } is diagonal
-    diagonal.map { i => inverse(order(i)) } is diagonal
-    order.head is 1
-
-  test("Can sort the vertices of a graph by descending degree (2)"):
-    val (order, inverse): (Seq[Int], Seq[Int]) =
-      sortByDescDegree(Seq(
-        Seq(false, true, true, false, false),
-        Seq(true, false, false, true, true),
-        Seq(true, false, false, false, true),
-        Seq(false, true, false, false, true),
-        Seq(false, true, true, true, false)
-      ))
-    order.size is 5
-    inverse.size is 5
-    val diagonal: Seq[Int] = 0 until 3
-    diagonal.map { i => order(inverse(i)) } is diagonal
-    diagonal.map { i => inverse(order(i)) } is diagonal
-    order.take(2).toSet is Set(1,4)
 
   test("Algorithm for creating random planar graphs via layering: exclude freak cases"):
     intercept[IllegalArgumentException]:
@@ -199,13 +177,59 @@ class GraphConstructionsSpec extends FunSuite:
 
   test("Generating random planar graphs"):
     val size = 10
-    val graph: Seq[Seq[Boolean]] =
+    val graph: Graph =
       randomPlanar(size, Random(0L))
-    graph.size is size
-    (graph forall:
+    graph.numVertices is size
+    graph.adjacencyTable.size is size
+    (graph.adjacencyTable forall:
       _.size == size
     ) is true
     ColorGraphLoop(
-      targetNumColors = 4,
-      adjacencyTable = graph
+      4,
+      graph
     ).isDefined is true
+
+  test("torus(0, 0) is empty"):
+    torus(0, 0).numVertices is 0
+
+  test("torus(0, 3) is empty"):
+    torus(0, 3).numVertices is 0
+
+  test("torus(3, 0) is empty"):
+    torus(3, 0).numVertices is 0
+
+  test("torus(1, 1) has 1 vertex"):
+    torus(1, 1).edges is Seq(0 -> 0)
+
+  test("torus(3, 2) has 6 vertices and 12 edges"):
+    val torus32: Graph = torus(3, 2)
+    torus32.edges.flatMap:
+      case (v: Int, w: Int) => Seq(v, w).toSet
+    .distinct.sorted is (0 until 6)
+    torus32.edges.size is 12
+    torus32.edges.sorted is Seq(
+      (0, 1), (0, 2),
+      (1, 0), (1, 3),
+      (2, 3), (2, 4),
+      (3, 2), (3, 5),
+      (4, 0), (4, 5),
+      (5, 1), (5, 4)
+    )
+
+  // todo: add more adequate torus tests... but this is better than nothing
+  test("The first odd graph is empty (should really be a singleton)"):
+    oddGraph(1).numVertices is 0
+
+  test("The second odd graph is a triangle"):
+    oddGraph(2).edges.sorted is Seq(
+      (0, 1), (0, 2), (1, 2)
+    )
+
+  test("The second odd graph is Petersen"):
+    oddGraph(3).edges.sorted is Seq(
+      (0, 7), (0, 8), (0, 9),
+      (1, 5), (1, 6), (1, 9),
+      (2, 4), (2, 6), (2, 8),
+      (3, 4), (3, 5), (3, 7),
+      (4, 9), (5, 8), (6, 7)
+    )

@@ -57,11 +57,11 @@ case class PartialColoring(
           node(amalgamate(am))
 
 object PartialColoring:
-  def fromColorsAndAdjacencies(
+  def fromColorsAndGraph(
     colors: Seq[Int],
-    vertexAdjacencies: Seq[Seq[Boolean]]
+    graph: Graph
   ): PartialColoring =
-    val numVertices = colors.size
+    val numVertices = graph.numVertices
     val colorAdjacencyArray: Array[Array[Boolean]] =
       Array.fill(numVertices, numVertices)(false)
     for
@@ -70,7 +70,7 @@ object PartialColoring:
       j <- 0 until i
       d = colors(j)
     do
-      if vertexAdjacencies(i)(j) then
+      if graph.adjacencyTable(i)(j) then
         colorAdjacencyArray(c)(d) = true
         colorAdjacencyArray(d)(c) = true
     val unusedColors: Set[Int] =

@@ -125,13 +125,13 @@ class PartialColoringSpec extends FunSuite:
       )
 
   test("can calculate color adjacencies from colors and adjacencies"):
-    PartialColoring.fromColorsAndAdjacencies(
+    PartialColoring.fromColorsAndGraph(
       Seq(1, 0, 2, 0),
-      Seq(
-        Seq(false, true, true, true),
-        Seq(true, false, true, false),
-        Seq(true, true, false, true),
-        Seq(true, false, false, true)
+      Graph(
+        false, true, true, true,
+        true, false, true, false,
+        true, true, false, true,
+        true, false, false, true
       )
     ) is
       PartialColoring(
@@ -144,15 +144,15 @@ class PartialColoringSpec extends FunSuite:
         )
       )
 
-  test("can calculate color adjacencies from colors and adjacencies (advanced)"):
-    PartialColoring.fromColorsAndAdjacencies(
+  test("can calculate color adjacencies from colors and graph (advanced)"):
+    PartialColoring.fromColorsAndGraph(
       Seq(2, 1, 3, 3, 2),
-      Seq(
-        Seq(false, true, true, false, false),
-        Seq(true, false, false, true, true),
-        Seq(true, false, false, false, true),
-        Seq(false, true, false, false, true),
-        Seq(false, true, true, true, false)
+      Graph(
+        false, true, true, false, false,
+        true, false, false, true, true,
+        true, false, false, false, true,
+        false, true, false, false, true,
+        false, true, true, true, false
       )
     ) is
       PartialColoring(
@@ -166,16 +166,16 @@ class PartialColoringSpec extends FunSuite:
         )
       )
 
-  test("can calculate color adjacencies from colors and adjacencies (more advanced)"):
-    PartialColoring.fromColorsAndAdjacencies(
+  test("can calculate color adjacencies from colors and graph (more advanced)"):
+    PartialColoring.fromColorsAndGraph(
       Seq(2, 0, 0, 2, 4, 0),
-      Seq(
-        Seq(false, true, true, false, false, true),
-        Seq(true, false, false, true, false, false),
-        Seq(true, false, false, true, true, false),
-        Seq(false, true, false, false, true, true),
-        Seq(false, false, true, true, false, true),
-        Seq(true, false, false, true, true, false)
+      Graph(
+        false, true, true, false, false, true,
+        true, false, false, true, false, false,
+        true, false, false, true, true, false,
+        false, true, false, false, true, true,
+        false, false, true, true, false, true,
+        true, false, false, true, true, false
       )
     ) is
       PartialColoring(
