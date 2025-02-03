@@ -233,3 +233,28 @@ class GraphSpec extends FunSuite:
       (3, 4), (3, 5), (3, 7),
       (4, 9), (5, 8), (6, 7)
     )
+
+  test("calculate the neighbors of a node"):
+    val graph: Graph =
+      Graph(
+        (1, 2), (3, 4), (4, 5), (4, 6), (5, 6)
+      )
+    graph.neighborsOf(0) is Seq()
+    graph.neighborsOf(1) is Seq(2)
+    graph.neighborsOf(2) is Seq(1)
+    graph.neighborsOf(3) is Seq(4)
+    graph.neighborsOf(4) is Seq(3, 5, 6)
+    graph.neighborsOf(5) is Seq(4, 6)
+    graph.neighborsOf(6) is Seq(4, 5)
+    
+  test("calculate distance maps"):
+    val graph: Graph =
+      Graph(
+        (1, 2), (3, 4), (4, 5)
+      )
+    graph.distanceMap(0) is Map(0 -> 0)
+    graph.distanceMap(1) is Map(1 -> 0, 2 -> 1)
+    graph.distanceMap(2) is Map(1 -> 1, 2 -> 0)
+    graph.distanceMap(3) is Map(3 -> 0, 4 -> 1, 5 -> 2)
+    graph.distanceMap(4) is Map(3 -> 1, 4 -> 0, 5 -> 1)
+    graph.distanceMap(5) is Map(3 -> 2, 4 -> 1, 5 -> 0)

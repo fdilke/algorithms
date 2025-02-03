@@ -1,8 +1,9 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.utility.SetsUtilities._
+import com.fdilke.backtrack.node.coloring.Graph.adjacencyTableFromPairs
+import com.fdilke.utility.SetsUtilities.*
 
-import scala.annotation.targetName
+import scala.annotation.{tailrec, targetName}
 import scala.util.Random
 
 class Graph(
@@ -35,6 +36,44 @@ class Graph(
     do
       if adjacencyTable(j)(i) != adjacencyTable(i)(j) then
         throw new IllegalArgumentException(s"adjacency table must be symmetric: fail at $j, $i")
+  
+  def neighborsOf(vertex: Int): Seq[Int] =
+    (0 until numVertices) filter
+      adjacencyTable(vertex)
+    
+  def distanceMap(
+    home: Int
+  ): Map[Int, Int] =
+    @tailrec def distanceMapSub(
+      level: Int,
+      visited: Set[Int],
+      frontier: Set[Int],
+      accumulate: Map[Int, Int]                            
+    ): Map[Int, Int] =
+      if frontier.isEmpty then
+        accumulate
+      else
+        val newVisited: Set[Int] =
+          visited union frontier
+        val newFrontier: Set[Int] =
+          frontier.flatMap:
+            neighborsOf
+          .diff(newVisited)
+        val newAccumulate =
+          accumulate ++
+            frontier.map ( v => v -> level ).toMap
+        distanceMapSub(
+          level = level + 1,
+          visited = newVisited,
+          frontier = newFrontier,
+          accumulate = newAccumulate
+        )
+    distanceMapSub(
+      level = 0,
+      visited = Set.empty,
+      frontier = Set(home),
+      accumulate = Map(home -> 0)
+    )
 
 object Graph:
   @targetName("applyWithEdges")
