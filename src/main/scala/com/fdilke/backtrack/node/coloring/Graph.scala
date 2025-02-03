@@ -36,11 +36,11 @@ class Graph(
     do
       if adjacencyTable(j)(i) != adjacencyTable(i)(j) then
         throw new IllegalArgumentException(s"adjacency table must be symmetric: fail at $j, $i")
-  
+
   def neighborsOf(vertex: Int): Seq[Int] =
     (0 until numVertices) filter
       adjacencyTable(vertex)
-    
+
   def distanceMap(
     home: Int
   ): Map[Int, Int] =
@@ -48,25 +48,23 @@ class Graph(
       level: Int,
       visited: Set[Int],
       frontier: Set[Int],
-      accumulate: Map[Int, Int]                            
+      accumulate: Map[Int, Int]
     ): Map[Int, Int] =
       if frontier.isEmpty then
         accumulate
       else
         val newVisited: Set[Int] =
           visited union frontier
-        val newFrontier: Set[Int] =
-          frontier.flatMap:
-            neighborsOf
-          .diff(newVisited)
-        val newAccumulate =
-          accumulate ++
-            frontier.map ( v => v -> level ).toMap
         distanceMapSub(
           level = level + 1,
           visited = newVisited,
-          frontier = newFrontier,
-          accumulate = newAccumulate
+          frontier =
+            frontier.flatMap:
+              neighborsOf
+            .diff(newVisited),
+          accumulate =
+            accumulate ++
+              frontier.map ( v => v -> level ).toMap
         )
     distanceMapSub(
       level = 0,
