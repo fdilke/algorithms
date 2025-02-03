@@ -8,7 +8,7 @@ object ColoringOlympics extends App:
   val sampleWidth = 19
   val sampleHeight = 19
   val numIterations = 10000
-  val sampleNumVertices = 60
+  val sampleNumVertices = 40
 
   val truchetGenerator: () => Graph = () =>
       new TruchetGrid(
