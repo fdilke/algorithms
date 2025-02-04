@@ -1,6 +1,6 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.backtrack.node.coloring.Graph.{addLayer, adjacencyTableFromPairs, lastVertexFromPairs, oddGraph, randomPlanar, torus}
+import com.fdilke.backtrack.node.coloring.Graph.{addLayer, adjacencyTableFromPairs, lastVertexFromPairs, oddGraph, petersen, randomPlanar, torus}
 import munit.FunSuite
 import com.fdilke.utility.RichFunSuite.*
 
@@ -284,19 +284,19 @@ class GraphSpec extends FunSuite:
       Graph(
         (0, 1), (0, 2)
       )
-    graph.fullExtensions(Seq()) is Iterable(
-      Seq(0, 1, 2), Seq(0, 2, 1)
+    graph.fullExtensions(Seq()).toSeq is Seq(
+      Seq(0, 2, 1), Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0)) is Iterable(
-      Seq(0, 1, 2), Seq(0, 2, 1)
+    graph.fullExtensions(Seq(0)).toSeq is Seq(
+      Seq(0, 2, 1), Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0, 1)) is Iterable(
+    graph.fullExtensions(Seq(0, 1)).toSeq is Seq(
       Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0, 2)) is Iterable(
+    graph.fullExtensions(Seq(0, 2)).toSeq is Seq(
       Seq(0, 2, 1)
     )
-    graph.fullExtensions(Seq(0, 2, 1)) is Iterable(
+    graph.fullExtensions(Seq(0, 2, 1)).toSeq is Seq(
       Seq(0, 2, 1)
     )
 
@@ -321,7 +321,7 @@ class GraphSpec extends FunSuite:
 
   test("enumerate full extensions of a partial automorphism (3)"):
     val graph: Graph =
-      oddGraph(3)
+      petersen
     graph.numVertices is 10
     graph.edges.size is 15
     graph.fullExtensions(Seq()).size is 120

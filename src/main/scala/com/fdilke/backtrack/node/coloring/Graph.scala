@@ -271,3 +271,6 @@ object Graph:
       yield
         (j, i)
     Graph(edges*)
+  
+  lazy val petersen: Graph = 
+    oddGraph(3)
