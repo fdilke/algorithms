@@ -258,3 +258,23 @@ class GraphSpec extends FunSuite:
     graph.distanceMap(3) is Map(3 -> 0, 4 -> 1, 5 -> 2)
     graph.distanceMap(4) is Map(3 -> 1, 4 -> 0, 5 -> 1)
     graph.distanceMap(5) is Map(3 -> 2, 4 -> 1, 5 -> 0)
+
+  test("enumerate single point extensions of a partial automorphism"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (0, 2)
+      )
+    graph.singlePointExtensions(Seq()) is Iterable(
+      Seq(0), Seq(1), Seq(2)
+    )
+    graph.singlePointExtensions(Seq(0)) is Iterable(
+      Seq(0, 1), Seq(0, 2)
+    )
+    graph.singlePointExtensions(Seq(0, 1)) is Iterable(
+      Seq(0, 1, 2)
+    )
+    graph.singlePointExtensions(Seq(0, 2)) is Iterable(
+      Seq(0, 2, 1)
+    )
+    intercept[IllegalArgumentException]:
+      graph.singlePointExtensions(Seq(0, 1, 2))

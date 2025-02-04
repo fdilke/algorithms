@@ -73,6 +73,22 @@ class Graph(
       accumulate = Map(home -> 0)
     )
 
+  def singlePointExtensions(
+    images: Seq[Int]
+  ): Iterable[Seq[Int]] =
+    val nextVertex = images.size
+    if nextVertex >= numVertices then
+      throw new IllegalArgumentException("map is already complete")
+    (0 until numVertices).filterNot: v =>
+      images contains v
+    .filter: v =>
+      images.zipWithIndex.forall:
+        (image, i) =>
+          adjacencyTable(nextVertex)(i) ==
+            adjacencyTable(v)(image)
+    .map: v =>
+      images :+ v
+
 object Graph:
   @targetName("applyWithEdges")
   def apply(
