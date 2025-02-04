@@ -1,8 +1,10 @@
 package com.fdilke.backtrack.node.coloring
 
+import com.fdilke.backtrack.node.Node
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import com.fdilke.backtrack.node.coloring.Graph.adjacencyTableFromPairs
 import com.fdilke.utility.SetsUtilities.*
-
+import com.fdilke.backtrack.node.MonadIterable
 import scala.annotation.{tailrec, targetName}
 import scala.util.Random
 
@@ -88,6 +90,22 @@ class Graph(
             adjacencyTable(v)(image)
     .map: v =>
       images :+ v
+
+  def fullExtensions(
+    images: Seq[Int]
+  ): Iterable[Seq[Int]] =
+    class Extension(
+      extendedImages: Seq[Int]
+    ) extends Node[Extension, Iterable, Seq[Int]]:
+      override def explore: Iterable[Either[Extension, Seq[Int]]] =
+        if extendedImages.size == numVertices then
+          Iterable(solution(extendedImages))
+        else
+          singlePointExtensions(extendedImages).map:
+            furtherExtension => node(Extension(furtherExtension))
+    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]](
+      Extension(images)
+    )
 
 object Graph:
   @targetName("applyWithEdges")

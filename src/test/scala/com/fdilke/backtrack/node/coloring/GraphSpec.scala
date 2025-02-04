@@ -278,3 +278,50 @@ class GraphSpec extends FunSuite:
     )
     intercept[IllegalArgumentException]:
       graph.singlePointExtensions(Seq(0, 1, 2))
+
+  test("enumerate full extensions of a partial automorphism"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (0, 2)
+      )
+    graph.fullExtensions(Seq()) is Iterable(
+      Seq(0, 1, 2), Seq(0, 2, 1)
+    )
+    graph.fullExtensions(Seq(0)) is Iterable(
+      Seq(0, 1, 2), Seq(0, 2, 1)
+    )
+    graph.fullExtensions(Seq(0, 1)) is Iterable(
+      Seq(0, 1, 2)
+    )
+    graph.fullExtensions(Seq(0, 2)) is Iterable(
+      Seq(0, 2, 1)
+    )
+    graph.fullExtensions(Seq(0, 2, 1)) is Iterable(
+      Seq(0, 2, 1)
+    )
+
+  test("enumerate full extensions of a partial automorphism (2)"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (1, 2), (2, 3), (3, 1)
+      )
+    graph.fullExtensions(Seq(0, 1)).toSeq is Seq(
+      Seq(0, 1, 3, 2), Seq(0, 1, 2, 3)
+    )
+    graph.fullExtensions(Seq(0, 2)).toSet is Set.empty
+    graph.fullExtensions(Seq(0, 1, 2)).toSet is Set(
+      Seq(0, 1, 2, 3)
+    )
+    graph.fullExtensions(Seq(0, 1, 3)).toSet is Set(
+      Seq(0, 1, 3, 2)
+    )
+    graph.fullExtensions(Seq()).toSet is Set(
+      Seq(0, 1, 3, 2), Seq(0, 1, 2, 3)
+    )
+
+  test("enumerate full extensions of a partial automorphism (3)"):
+    val graph: Graph =
+      oddGraph(3)
+    graph.numVertices is 10
+    graph.edges.size is 15
+    graph.fullExtensions(Seq()).size is 120
