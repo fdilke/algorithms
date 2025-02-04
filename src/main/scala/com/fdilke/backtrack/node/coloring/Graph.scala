@@ -107,6 +107,32 @@ class Graph(
       Extension(images)
     )
 
+/*
+  def isDistanceTransitive(): Boolean =
+    val vertices = adjacencyTable.indices
+    val distanceMaps: Seq[Seq[Int]] =
+      for
+        i <- vertices
+      yield
+        val map: Map[Int, Int] =
+          distanceMap(i)
+        vertices.map { map }
+    for
+      i <- vertices
+      j <- 0 until i
+    do
+      val distance = distanceMaps(i)(j)
+      for
+        k <- vertices
+        l <- 0 until k if distanceMaps(k)(l) == distance
+      do
+        if !plushieGroup.elements.exists: g =>
+          multiplyCoset(faces(i), g) == faces(k) &&
+            multiplyCoset(faces(j), g) == faces(l)
+        then
+          throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")
+*/
+
 object Graph:
   @targetName("applyWithEdges")
   def apply(
@@ -271,6 +297,17 @@ object Graph:
       yield
         (j, i)
     Graph(edges*)
-  
-  lazy val petersen: Graph = 
+
+  lazy val petersen: Graph =
     oddGraph(3)
+
+  lazy val heawood: Graph =
+    val vertices = 14
+    val circumference: Seq[(Int, Int)] =
+      0 until vertices map: v =>
+        (v, (v + 1) % vertices)
+    val crosslinks: Seq[(Int, Int)] =
+      0 until vertices map: v =>
+        val direction = if v % 2 == 0 then 5 else -5
+        (v, (v + vertices + direction) % vertices)
+    Graph(circumference ++ crosslinks *)

@@ -325,3 +325,25 @@ class GraphSpec extends FunSuite:
     graph.numVertices is 10
     graph.edges.size is 15
     graph.fullExtensions(Seq()).size is 120
+
+  /*
+  test("tell if a graph is distance-transitive"):
+    Graph(Seq.empty[Boolean]).isDistanceTransitive() is true
+    Graph(
+      false
+    ).isDistanceTransitive() is true
+    Graph(
+      (0, 1), (1, 2), (2, 3), (3, 1)
+    ).isDistanceTransitive() is false
+    Graph(
+      (0, 1)
+    ) .isDistanceTransitive() is true
+    Graph(
+      (0, 1), (1, 2)
+    ) .isDistanceTransitive() is false
+    Graph(
+      (0, 1), (1, 2), (2, 0)
+    ) .isDistanceTransitive() is true
+    petersen.isDistanceTransitive() is true
+    heawood.isDistanceTransitive() is true
+*/
