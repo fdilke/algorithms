@@ -10,13 +10,20 @@ object RichFunSuite:
     inline infix def isnt(b: A): Unit =
       assertNotEquals(a, b)
 
+  extension[A] (a: Iterable[A])
+    inline infix def isSet(b: Iterable[A]): Unit =
+      checkNoDuplicates(a)
+      checkNoDuplicates(b)
+      assertEquals(a.toSet, b.toSet)
+
+  private def checkNoDuplicates[A](a: Iterable[A]): Unit =
+    val seq: Seq[A] = a.toSeq
+    if (seq.size != seq.distinct.size)
+      throw new IllegalArgumentException(s"duplicates found in collection: $seq")
+
   extension(letters: Seq[Char])
     inline def be(text: String): Unit =
       assertEquals(letters.mkString, text)
-
-  def checkSameElementsAs[X](thing: Seq[X], other: Seq[X]): Unit =
-    thing.size is other.size
-    thing.toSet is other.toSet
 
 
 

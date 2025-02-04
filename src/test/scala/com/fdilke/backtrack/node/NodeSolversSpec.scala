@@ -84,9 +84,7 @@ abstract class NodeSolverSpec(
           Iterable(solution(prefix))
         else
           seqValues.map { v => node(SearchNode(prefix :+ v)) }
-    checkSameElementsAs(  
-      solver.allSolutions(SearchNode(Seq.empty)).toSeq,
-      Seq(
+      solver.allSolutions(SearchNode(Seq.empty)) isSet Seq(
         Seq(true, true, true),
         Seq(true, true, false),
         Seq(true, false, true),
@@ -96,7 +94,6 @@ abstract class NodeSolverSpec(
         Seq(false, false, true),
         Seq(false, false, false)
       )
-    )
 
   if stackSafe then
     test("is stack safe"):

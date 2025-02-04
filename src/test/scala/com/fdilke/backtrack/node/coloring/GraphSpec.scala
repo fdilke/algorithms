@@ -1,8 +1,8 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.backtrack.node.coloring.Graph.{addLayer, adjacencyTableFromPairs, lastVertexFromPairs, oddGraph, petersen, randomPlanar, torus}
+import com.fdilke.backtrack.node.coloring.Graph._
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 
 import scala.util.Random
 
@@ -60,7 +60,7 @@ class GraphSpec extends FunSuite:
     val diagonal: Seq[Int] = 0 until 3
     diagonal.map { i => order(inverse(i)) } is diagonal
     diagonal.map { i => inverse(order(i)) } is diagonal
-    order.take(2).toSet is Set(1,4)
+    order.take(2) isSet Set(1,4)
 
   test("check a graph is antireflexive"):
     Graph(
@@ -204,7 +204,7 @@ class GraphSpec extends FunSuite:
   test("torus(3, 2) has 6 vertices and 12 edges"):
     val torus32: Graph = torus(3, 2)
     torus32.edges.flatMap:
-      case (v: Int, w: Int) => Seq(v, w).toSet
+      case (v: Int, w: Int) => Seq(v, w)
     .distinct.sorted is (0 until 6)
     torus32.edges.size is 12
     torus32.edges.sorted is Seq(
@@ -284,19 +284,19 @@ class GraphSpec extends FunSuite:
       Graph(
         (0, 1), (0, 2)
       )
-    graph.fullExtensions(Seq()).toSeq is Seq(
+    graph.fullExtensions(Seq()) isSet Seq(
       Seq(0, 2, 1), Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0)).toSeq is Seq(
+    graph.fullExtensions(Seq(0)) isSet Seq(
       Seq(0, 2, 1), Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0, 1)).toSeq is Seq(
+    graph.fullExtensions(Seq(0, 1)) isSet Seq(
       Seq(0, 1, 2)
     )
-    graph.fullExtensions(Seq(0, 2)).toSeq is Seq(
+    graph.fullExtensions(Seq(0, 2)) isSet Seq(
       Seq(0, 2, 1)
     )
-    graph.fullExtensions(Seq(0, 2, 1)).toSeq is Seq(
+    graph.fullExtensions(Seq(0, 2, 1)) isSet Seq(
       Seq(0, 2, 1)
     )
 
@@ -305,17 +305,17 @@ class GraphSpec extends FunSuite:
       Graph(
         (0, 1), (1, 2), (2, 3), (3, 1)
       )
-    graph.fullExtensions(Seq(0, 1)).toSeq is Seq(
+    graph.fullExtensions(Seq(0, 1)) isSet Seq(
       Seq(0, 1, 3, 2), Seq(0, 1, 2, 3)
     )
-    graph.fullExtensions(Seq(0, 2)).toSet is Set.empty
-    graph.fullExtensions(Seq(0, 1, 2)).toSet is Set(
+    graph.fullExtensions(Seq(0, 2)) isSet Seq.empty
+    graph.fullExtensions(Seq(0, 1, 2)) isSet Set(
       Seq(0, 1, 2, 3)
     )
-    graph.fullExtensions(Seq(0, 1, 3)).toSet is Set(
+    graph.fullExtensions(Seq(0, 1, 3)) isSet Set(
       Seq(0, 1, 3, 2)
     )
-    graph.fullExtensions(Seq()).toSet is Set(
+    graph.fullExtensions(Seq()) isSet Set(
       Seq(0, 1, 3, 2), Seq(0, 1, 2, 3)
     )
 
