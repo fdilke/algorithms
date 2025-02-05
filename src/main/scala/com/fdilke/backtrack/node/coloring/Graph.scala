@@ -149,6 +149,9 @@ class Graph(
         distanceMap(i)
       vertices.map { map }
 
+  lazy val diameter =
+    distanceMaps.flatten.max
+
   def isDistanceTransitive(): Boolean =
     (for
       i <- vertices
@@ -345,6 +348,9 @@ object Graph:
 
   lazy val emptyGraph: Graph =
     Graph(Seq.empty[Seq[Boolean]]*)
+
+  lazy val onePointGraph: Graph =
+    Graph(false)
 
   lazy val petersen: Graph =
     oddGraph(3)

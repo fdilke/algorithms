@@ -266,6 +266,16 @@ class GraphSpec extends FunSuite:
     graph.distanceMap(4) is Map(3 -> 1, 4 -> 0, 5 -> 1)
     graph.distanceMap(5) is Map(3 -> 2, 4 -> 1, 5 -> 0)
 
+  test("calculate the complete set of distance maps"):
+    val graph: Graph =
+      Graph((0, 1))
+    graph.distanceMap(0) is Map(0 -> 0, 1 -> 1)
+    graph.distanceMap(1) is Map(0 -> 1, 1 -> 0)
+    graph.distanceMaps is Seq(
+      Seq(0, 1),
+      Seq(1, 0)
+    )
+
   test("enumerate single point extensions of a partial automorphism"):
     val graph: Graph =
       Graph(
@@ -435,9 +445,7 @@ class GraphSpec extends FunSuite:
 
   test("tell if a graph is distance-transitive"):
     emptyGraph.isDistanceTransitive() is true
-    Graph(
-      false
-    ).isDistanceTransitive() is true
+    onePointGraph.isDistanceTransitive() is true
     Graph(
       (0, 1), (1, 2), (2, 3), (3, 1)
     ).isDistanceTransitive() is false
@@ -457,3 +465,18 @@ class GraphSpec extends FunSuite:
     dodecahedralGraph.isDistanceTransitive() is true
     completeBipartite(2, 3).isDistanceTransitive() is false
     completeBipartite(3, 3).isDistanceTransitive() is true
+
+  test("can measure the diameter of a graph"):
+    onePointGraph.diameter is 0
+    Graph((0, 1)).diameter is 1
+    Graph((0, 1), (1, 2)).diameter is 2
+    Graph(
+      (0, 1), (1, 2), (2, 0)
+    ).diameter is 1
+    petersen.diameter is 2
+    heawood.diameter is 3
+    pappus.diameter is 4
+    cubicalGraph.diameter is 3
+    dodecahedralGraph.diameter is 5
+    completeBipartite(2, 3).diameter is 2
+    completeBipartite(3, 3).diameter is 2
