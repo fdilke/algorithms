@@ -352,7 +352,7 @@ class GraphSpec extends FunSuite:
     intercept[IllegalArgumentException]:
       graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1, 2 -> 2))
 
-  test("enumerate full extensions of a partial automorphism, by maps".ignore):
+  test("enumerate full extensions of a partial automorphism, by maps"):
     val graph: Graph =
       Graph(
         (0, 1), (0, 2)

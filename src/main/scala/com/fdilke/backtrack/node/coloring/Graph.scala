@@ -103,9 +103,8 @@ class Graph(
         else
           singlePointExtensions(extendedImages).map:
             furtherExtension => node(Extension(furtherExtension))
-    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]](
+    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]]:
       Extension(images)
-    )
 
   def singlePointExtensionsMap(
     images: Map[Int, Int]
@@ -129,19 +128,17 @@ class Graph(
   def fullExtensionsMap(
     imageMap: Map[Int, Int]
   ): Iterable[Map[Int, Int]] =
-    Iterable.empty
-//    class Extension(
-//      extendedImageMap: Map[Int, Int]
-//    ) extends Node[Extension, Iterable, Seq[Int]]:
-//      override def explore: Iterable[Either[Extension, Seq[Int]]] =
-//        if extendedImages.size == numVertices then
-//          Iterable(solution(extendedImages))
-//        else
-//          singlePointExtensions(extendedImages).map:
-//            furtherExtension => node(Extension(furtherExtension))
-//    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]](
-//      Extension(images)
-//    )
+    class Extension(
+      extendedImageMap: Map[Int, Int]
+    ) extends Node[Extension, Iterable, Map[Int, Int]]:
+      override def explore: Iterable[Either[Extension, Map[Int, Int]]] =
+        if extendedImageMap.size == numVertices then
+          Iterable(solution(extendedImageMap))
+        else
+          singlePointExtensionsMap(extendedImageMap).map:
+            furtherExtension => node(Extension(furtherExtension))
+    StackSafeNodeSolver.allSolutions[Extension, Iterable, Map[Int, Int]]:
+      Extension(imageMap)
 
 /*
   def isDistanceTransitive(): Boolean =
