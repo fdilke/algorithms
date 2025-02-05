@@ -326,6 +326,26 @@ class GraphSpec extends FunSuite:
     graph.edges.size is 15
     graph.fullExtensions(Seq()).size is 120
 
+  test("enumerate single point extensions of a partial automorphism via maps"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (0, 2)
+      )
+    graph.singlePointExtensionsMap(Map()) is Iterable(
+      Map(0 -> 0), Map(0 -> 1), Map(0 -> 2)
+    )
+    graph.singlePointExtensionsMap(Map(0 -> 0)) is Iterable(
+      Map(0 -> 0, 1 -> 1), Map(0 -> 0, 1 -> 2)
+    )
+    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1)) is Iterable(
+      Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
+    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 2)) is Iterable(
+      Map(0 -> 0, 1 -> 2, 2 -> 1)
+    )
+    intercept[IllegalArgumentException]:
+      graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1, 2 -> 2))
+
   /*
   test("tell if a graph is distance-transitive"):
     Graph(Seq.empty[Boolean]).isDistanceTransitive() is true
@@ -347,3 +367,4 @@ class GraphSpec extends FunSuite:
     petersen.isDistanceTransitive() is true
     heawood.isDistanceTransitive() is true
 */
+    

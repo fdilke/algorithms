@@ -107,6 +107,25 @@ class Graph(
       Extension(images)
     )
 
+  def singlePointExtensionsMap(
+    images: Map[Int, Int]
+  ): Iterable[Map[Int, Int]] =
+    val unusedVertexes: Seq[Int] =
+      adjacencyTable.indices.diff(images.keySet.toSeq)
+    if images.size >= numVertices then
+      throw new IllegalArgumentException("map is already complete")
+    val nextVertex: Int =
+      unusedVertexes.min
+    val unusedImages: Seq[Int] =
+      adjacencyTable.indices.diff(images.values.toSeq)
+    unusedImages.filter: v =>
+      images.forall:
+        (i, image) =>
+          adjacencyTable(nextVertex)(i) ==
+            adjacencyTable(v)(image)
+    .map: v =>
+      images + (nextVertex -> v)
+
 /*
   def isDistanceTransitive(): Boolean =
     val vertices = adjacencyTable.indices
