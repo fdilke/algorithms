@@ -352,6 +352,27 @@ class GraphSpec extends FunSuite:
     intercept[IllegalArgumentException]:
       graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1, 2 -> 2))
 
+  test("enumerate full extensions of a partial automorphism, by maps".ignore):
+    val graph: Graph =
+      Graph(
+        (0, 1), (0, 2)
+      )
+    graph.fullExtensionsMap(Map()) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 -> 1), Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0)) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 -> 1), Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 1)) isSet Seq(
+      Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 2)) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 -> 1)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 2, 2 -> 1)) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 ->1)
+    )
+
   /*
   test("tell if a graph is distance-transitive"):
     Graph(Seq.empty[Boolean]).isDistanceTransitive() is true

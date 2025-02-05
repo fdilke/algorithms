@@ -126,6 +126,23 @@ class Graph(
     .map: v =>
       images + (nextVertex -> v)
 
+  def fullExtensionsMap(
+    imageMap: Map[Int, Int]
+  ): Iterable[Map[Int, Int]] =
+    Iterable.empty
+//    class Extension(
+//      extendedImageMap: Map[Int, Int]
+//    ) extends Node[Extension, Iterable, Seq[Int]]:
+//      override def explore: Iterable[Either[Extension, Seq[Int]]] =
+//        if extendedImages.size == numVertices then
+//          Iterable(solution(extendedImages))
+//        else
+//          singlePointExtensions(extendedImages).map:
+//            furtherExtension => node(Extension(furtherExtension))
+//    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]](
+//      Extension(images)
+//    )
+
 /*
   def isDistanceTransitive(): Boolean =
     val vertices = adjacencyTable.indices
