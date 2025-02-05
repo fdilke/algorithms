@@ -234,6 +234,13 @@ class GraphSpec extends FunSuite:
       (4, 9), (5, 8), (6, 7)
     )
 
+  test("can construct complete bipartite graphs"):
+    completeBipartite(2, 3).edges isSet Set(
+      (0, 2), (1, 2),
+      (0, 3), (1, 3),
+      (0, 4), (1, 4)
+    )
+
   test("calculate the neighbors of a node"):
     val graph: Graph =
       Graph(
@@ -445,3 +452,8 @@ class GraphSpec extends FunSuite:
     ) .isDistanceTransitive() is true
     petersen.isDistanceTransitive() is true
     heawood.isDistanceTransitive() is true
+    pappus.isDistanceTransitive() is true
+    cubicalGraph.isDistanceTransitive() is true
+    dodecahedralGraph.isDistanceTransitive() is true
+    completeBipartite(2, 3).isDistanceTransitive() is false
+    completeBipartite(3, 3).isDistanceTransitive() is true

@@ -141,14 +141,15 @@ class Graph(
     StackSafeNodeSolver.allSolutions[Extension, Iterable, Map[Int, Int]]:
       Extension(imageMap)
 
+  lazy val distanceMaps: Seq[Seq[Int]] =
+    for
+      i <- vertices
+    yield
+      val map: Map[Int, Int] =
+        distanceMap(i)
+      vertices.map { map }
+
   def isDistanceTransitive(): Boolean =
-    val distanceMaps: Seq[Seq[Int]] =
-      for
-        i <- vertices
-      yield
-        val map: Map[Int, Int] =
-          distanceMap(i)
-        vertices.map { map }
     (for
       i <- vertices
       j <- 0 until i
@@ -330,6 +331,18 @@ object Graph:
         (j, i)
     Graph(edges*)
 
+  def completeBipartite(
+    from: Int,
+    to: Int
+  ): Graph =
+    val edges: Seq[(Int, Int)] =
+      for
+        i <- 0 until from
+        j <- 0 until to
+      yield
+        i -> (from + j)
+    Graph(edges*)
+
   lazy val emptyGraph: Graph =
     Graph(Seq.empty[Seq[Boolean]]*)
 
@@ -337,12 +350,27 @@ object Graph:
     oddGraph(3)
 
   lazy val heawood: Graph =
-    val vertices = 14
+    cubicCrossLinked(14, 5, -5)
+
+  def cubicCrossLinked(vertices: Int, cycle: Int*): Graph =
     val circumference: Seq[(Int, Int)] =
       0 until vertices map: v =>
         (v, (v + 1) % vertices)
     val crosslinks: Seq[(Int, Int)] =
       0 until vertices map: v =>
-        val direction = if v % 2 == 0 then 5 else -5
+        val direction = cycle(v % cycle.length)
         (v, (v + vertices + direction) % vertices)
     Graph(circumference ++ crosslinks *)
+
+  lazy val pappus: Graph =
+    cubicCrossLinked(18, -5, 5, 7, -7, 7, -7)
+
+  lazy val cubicalGraph: Graph =
+    Graph(
+      (0, 1), (1, 2), (2, 3), (3, 0),
+      (4, 5), (5, 6), (6, 7), (7, 4),
+      (0, 4), (1, 5), (2, 6), (3, 7)
+    )
+
+  lazy val dodecahedralGraph: Graph =
+    cubicCrossLinked(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
