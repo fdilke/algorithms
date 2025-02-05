@@ -366,12 +366,60 @@ class GraphSpec extends FunSuite:
     graph.fullExtensionsMap(Map(0 -> 0, 1 -> 1)) isSet Seq(
       Map(0 -> 0, 1 -> 1, 2 -> 2)
     )
+    graph.fullExtensionsMap(Map(1 -> 1)) isSet Seq(
+      Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
+    graph.fullExtensionsMap(Map(2 -> 2)) isSet Seq(
+      Map(0 -> 0, 1 -> 1, 2 -> 2)
+    )
     graph.fullExtensionsMap(Map(0 -> 0, 1 -> 2)) isSet Seq(
       Map(0 -> 0, 1 -> 2, 2 -> 1)
+    )
+    graph.fullExtensionsMap(Map(1 -> 2)) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 -> 1)
+    )
+    graph.fullExtensionsMap(Map(2 -> 1)) isSet Seq(
+      Map(0 -> 0, 1 -> 2, 2 ->1)
     )
     graph.fullExtensionsMap(Map(0 -> 0, 1 -> 2, 2 -> 1)) isSet Seq(
       Map(0 -> 0, 1 -> 2, 2 ->1)
     )
+
+  test("enumerate full extensions of a partial automorphism, by maps (2)"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (1, 2), (2, 3), (3, 1)
+      )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 1)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 3, 3 -> 2), Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+    graph.fullExtensionsMap(Map(1 -> 1)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 3, 3 -> 2), Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 2)) isSet Set.empty
+    graph.fullExtensionsMap(Map(1 -> 2)) isSet Set.empty
+    graph.fullExtensionsMap(Map(2 -> 2)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+    graph.fullExtensionsMap(Map(3 -> 3)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 1, 2 -> 2)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+    graph.fullExtensionsMap(Map(0 -> 0, 1 -> 1, 2 -> 3)) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 3, 3 -> 2)
+    )
+    graph.fullExtensionsMap(Map()) isSet Set(
+      Map(0 -> 0, 1 -> 1, 2 -> 3, 3 -> 2), Map(0 -> 0, 1 -> 1, 2 -> 2, 3 -> 3)
+    )
+
+  test("enumerate full extensions of a partial automorphism, by maps (3)"):
+    val graph: Graph =
+      petersen
+    graph.numVertices is 10
+    graph.edges.size is 15
+    graph.fullExtensionsMap(Map()).size is 120
 
   /*
   test("tell if a graph is distance-transitive"):
