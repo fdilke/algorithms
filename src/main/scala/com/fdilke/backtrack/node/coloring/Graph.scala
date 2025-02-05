@@ -350,9 +350,9 @@ object Graph:
     oddGraph(3)
 
   lazy val heawood: Graph =
-    cubicCrossLinked(14, 5, -5)
+    hamiltonianCubic(14, 5, -5)
 
-  def cubicCrossLinked(vertices: Int, cycle: Int*): Graph =
+  def hamiltonianCubic(vertices: Int, cycle: Int*): Graph =
     val circumference: Seq[(Int, Int)] =
       0 until vertices map: v =>
         (v, (v + 1) % vertices)
@@ -363,14 +363,10 @@ object Graph:
     Graph(circumference ++ crosslinks *)
 
   lazy val pappus: Graph =
-    cubicCrossLinked(18, -5, 5, 7, -7, 7, -7)
+    hamiltonianCubic(18, -5, 5, 7, -7, 7, -7)
 
   lazy val cubicalGraph: Graph =
-    Graph(
-      (0, 1), (1, 2), (2, 3), (3, 0),
-      (4, 5), (5, 6), (6, 7), (7, 4),
-      (0, 4), (1, 5), (2, 6), (3, 7)
-    )
+    hamiltonianCubic(8, 3, -3)
 
   lazy val dodecahedralGraph: Graph =
-    cubicCrossLinked(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
+    hamiltonianCubic(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
