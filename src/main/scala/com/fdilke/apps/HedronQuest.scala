@@ -212,38 +212,42 @@ object PlushiePlayground extends App:
   def adjacentEdges(e1: Coset, e2: Coset): Boolean =
     vertexes.exists: vertex =>
       incident(vertex, e1) && incident(vertex, e2)
+  val edgeAdjacencies: Seq[(Int, Int)] =
+    for
+      (edgeI, i) <- edges.zipWithIndex
+      (edgeJ, j) <- edges.take(i).zipWithIndex if adjacentEdges(edgeI, edgeJ)
+    yield
+      (i, j)
+  println("# edge adjacencies: " + edgeAdjacencies.size)
+  val edgeGraph = Graph(edgeAdjacencies*)
   if false then // a bit of a slow calculation
-    val edgeAdjacencies: Seq[(Int, Int)] =
-      for
-        (edgeI, i) <- edges.zipWithIndex
-        (edgeJ, j) <- edges.take(i).zipWithIndex if adjacentEdges(edgeI, edgeJ)
-      yield
-        (i, j)
-    println("# edge adjacencies: " + edgeAdjacencies.size)
-    val edgeGraph = Graph(edgeAdjacencies*)
     ColorGraphLoop(4, edgeGraph) match
       case None => throw new IllegalArgumentException("no coloring")
       case Some(coloring) =>
         checkMinColoring(4, coloring, edgeGraph)
         println("the edge coloring: " + coloring.map { label }.mkString(""))
-  val distanceMaps: Seq[Seq[Int]] =
-    for
-      i <- faces.indices
-    yield
-      val map: Map[Int, Int] =
-        faceGraph.distanceMap(i)
-      faces.indices.map { map }
-  for
-    i <- faces.indices
-    j <- 0 until i
-  do
-    val distance = distanceMaps(i)(j)
-    for
-      k <- faces.indices
-      l <- 0 until k if distanceMaps(k)(l) == distance
-    do
-      if !plushieGroup.elements.exists: g =>
-        multiplyCoset(faces(i), g) == faces(k) &&
-          multiplyCoset(faces(j), g) == faces(l)
-      then
-        throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")
+  println("faceGraph is distance-transitive:" + faceGraph.isDistanceTransitive())
+  println("vertexGraph is distance-transitive:" + vertexGraph.isDistanceTransitive())
+  println("edgeGraph is distance-transitive:" + edgeGraph.isDistanceTransitive())
+
+//  val distanceMaps: Seq[Seq[Int]] =
+//    for
+//      i <- faces.indices
+//    yield
+//      val map: Map[Int, Int] =
+//        faceGraph.distanceMap(i)
+//      faces.indices.map { map }
+//  for
+//    i <- faces.indices
+//    j <- 0 until i
+//  do
+//    val distance = distanceMaps(i)(j)
+//    for
+//      k <- faces.indices
+//      l <- 0 until k if distanceMaps(k)(l) == distance
+//    do
+//      if !plushieGroup.elements.exists: g =>
+//        multiplyCoset(faces(i), g) == faces(k) &&
+//          multiplyCoset(faces(j), g) == faces(l)
+//      then
+//        throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")

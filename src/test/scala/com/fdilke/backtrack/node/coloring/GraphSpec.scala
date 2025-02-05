@@ -421,9 +421,13 @@ class GraphSpec extends FunSuite:
     graph.edges.size is 15
     graph.fullExtensionsMap(Map()).size is 120
 
-  /*
+  test("vital stats of the empty graph"):
+    emptyGraph.edges.isEmpty is true
+    emptyGraph.vertices.isEmpty is true
+    emptyGraph.adjacencyTable.isEmpty is true
+
   test("tell if a graph is distance-transitive"):
-    Graph(Seq.empty[Boolean]).isDistanceTransitive() is true
+    emptyGraph.isDistanceTransitive() is true
     Graph(
       false
     ).isDistanceTransitive() is true
@@ -441,4 +445,3 @@ class GraphSpec extends FunSuite:
     ) .isDistanceTransitive() is true
     petersen.isDistanceTransitive() is true
     heawood.isDistanceTransitive() is true
-*/

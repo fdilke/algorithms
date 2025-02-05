@@ -2,8 +2,8 @@ package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
-import com.fdilke.backtrack.node.coloring.Graph.adjacencyTableFromPairs
-import com.fdilke.utility.SetsUtilities.*
+import Graph.adjacencyTableFromPairs
+import com.fdilke.utility.SetsUtilities._
 import com.fdilke.backtrack.node.MonadIterable
 import scala.annotation.{tailrec, targetName}
 import scala.util.Random
@@ -12,35 +12,36 @@ class Graph(
   val adjacencyTable: Seq[Seq[Boolean]],
   val edges: Seq[(Int, Int)]
 ):
+  val vertices: Seq[Int] =
+    adjacencyTable.indices
   val numVertices: Int =
-    adjacencyTable.size
+    vertices.size
 
   def sortByDescDegree(): (Seq[Int], Seq[Int]) =
-    val indices: Seq[Int] = adjacencyTable.indices
     def degree(vertex: Int): Int =
       adjacencyTable(vertex).count(identity)
     val order: Seq[Int] =
-      indices.sortBy(degree).reverse
+      vertices.sortBy(degree).reverse
     val inverse = invertPermutation(order)
     (order, inverse)
 
   def checkAntireflexive(): Unit =
     for
-      i <- adjacencyTable.indices
+      i <- vertices
     do
       if adjacencyTable(i)(i) then
         throw new IllegalArgumentException(s"adjacency table must be antireflexive: fail at $i")
 
   def checkSymmetric(): Unit =
     for
-      i <- adjacencyTable.indices
+      i <- vertices
       j <- 0 until i
     do
       if adjacencyTable(j)(i) != adjacencyTable(i)(j) then
         throw new IllegalArgumentException(s"adjacency table must be symmetric: fail at $j, $i")
 
   def neighborsOf(vertex: Int): Seq[Int] =
-    (0 until numVertices) filter
+    vertices filter
       adjacencyTable(vertex)
 
   def distanceMap(
@@ -110,13 +111,13 @@ class Graph(
     images: Map[Int, Int]
   ): Iterable[Map[Int, Int]] =
     val unusedVertexes: Seq[Int] =
-      adjacencyTable.indices.diff(images.keySet.toSeq)
+      vertices.diff(images.keySet.toSeq)
     if images.size >= numVertices then
       throw new IllegalArgumentException("map is already complete")
     val nextVertex: Int =
       unusedVertexes.min
     val unusedImages: Seq[Int] =
-      adjacencyTable.indices.diff(images.values.toSeq)
+      vertices.diff(images.values.toSeq)
     unusedImages.filter: v =>
       images.forall:
         (i, image) =>
@@ -140,9 +141,7 @@ class Graph(
     StackSafeNodeSolver.allSolutions[Extension, Iterable, Map[Int, Int]]:
       Extension(imageMap)
 
-/*
   def isDistanceTransitive(): Boolean =
-    val vertices = adjacencyTable.indices
     val distanceMaps: Seq[Seq[Int]] =
       for
         i <- vertices
@@ -150,21 +149,21 @@ class Graph(
         val map: Map[Int, Int] =
           distanceMap(i)
         vertices.map { map }
-    for
+    (for
       i <- vertices
       j <- 0 until i
-    do
+    yield
+      (i, j)
+    ).forall: (i, j) =>
       val distance = distanceMaps(i)(j)
-      for
+      (for
         k <- vertices
         l <- 0 until k if distanceMaps(k)(l) == distance
-      do
-        if !plushieGroup.elements.exists: g =>
-          multiplyCoset(faces(i), g) == faces(k) &&
-            multiplyCoset(faces(j), g) == faces(l)
-        then
-          throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")
-*/
+      yield
+        (k, l)
+      ).forall: (k, l) =>
+        fullExtensionsMap(Map(i -> k, j -> l)).nonEmpty &&
+          fullExtensionsMap(Map(k -> i, l -> j)).nonEmpty
 
 object Graph:
   @targetName("applyWithEdges")
@@ -330,6 +329,9 @@ object Graph:
       yield
         (j, i)
     Graph(edges*)
+
+  lazy val emptyGraph: Graph =
+    Graph(Seq.empty[Seq[Boolean]]*)
 
   lazy val petersen: Graph =
     oddGraph(3)
