@@ -331,16 +331,22 @@ class GraphSpec extends FunSuite:
       Graph(
         (0, 1), (0, 2)
       )
-    graph.singlePointExtensionsMap(Map()) is Iterable(
+    graph.singlePointExtensionsMap(Map()) isSet Set(
       Map(0 -> 0), Map(0 -> 1), Map(0 -> 2)
     )
-    graph.singlePointExtensionsMap(Map(0 -> 0)) is Iterable(
+    graph.singlePointExtensionsMap(Map(0 -> 0)) isSet Set(
       Map(0 -> 0, 1 -> 1), Map(0 -> 0, 1 -> 2)
     )
-    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1)) is Iterable(
+    graph.singlePointExtensionsMap(Map(1 -> 2)) isSet Set(
+      Map(0 -> 0, 1 -> 2)
+    )
+    graph.singlePointExtensionsMap(Map(2 -> 1)) isSet Set(
+      Map(0 -> 0, 2 -> 1)
+    )
+    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 1)) isSet Set(
       Map(0 -> 0, 1 -> 1, 2 -> 2)
     )
-    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 2)) is Iterable(
+    graph.singlePointExtensionsMap(Map(0 -> 0, 1 -> 2)) isSet Set(
       Map(0 -> 0, 1 -> 2, 2 -> 1)
     )
     intercept[IllegalArgumentException]:
@@ -367,4 +373,3 @@ class GraphSpec extends FunSuite:
     petersen.isDistanceTransitive() is true
     heawood.isDistanceTransitive() is true
 */
-    
