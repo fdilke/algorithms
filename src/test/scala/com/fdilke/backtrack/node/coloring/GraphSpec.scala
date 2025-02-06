@@ -461,6 +461,7 @@ class GraphSpec extends FunSuite:
     petersen.isDistanceTransitive() is true
     heawood.isDistanceTransitive() is true
     pappus.isDistanceTransitive() is true
+    shrikhande.isDistanceTransitive() is false
     cubicalGraph.isDistanceTransitive() is true
     dodecahedralGraph.isDistanceTransitive() is true
     completeBipartite(2, 3).isDistanceTransitive() is false
@@ -476,6 +477,7 @@ class GraphSpec extends FunSuite:
     petersen.diameter is 2
     heawood.diameter is 3
     pappus.diameter is 4
+    shrikhande.diameter is 2
     cubicalGraph.diameter is 3
     dodecahedralGraph.diameter is 5
     completeBipartite(2, 3).diameter is 2

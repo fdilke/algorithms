@@ -376,3 +376,21 @@ object Graph:
 
   lazy val dodecahedralGraph: Graph =
     hamiltonianCubic(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
+
+  lazy val shrikhande: Graph =
+    val size = 4
+    def vertexAt(x: Int, y: Int): Int =
+      (x % size) + (y % size) * 4
+    val edges: Seq[(Int, Int)] =
+      (for
+        x <- 0 until 4
+        y <- 0 until 4
+        vertex = vertexAt(x, y)
+      yield
+        Seq(
+          vertex -> vertexAt(x + 1, y),
+          vertex -> vertexAt(x, y + 1),
+          vertex -> vertexAt(x + 1, y + 1)
+        )
+      ).flatten
+    Graph(edges*)
