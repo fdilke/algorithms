@@ -168,6 +168,9 @@ class Graph(
       ).forall: (k, l) =>
         fullExtensionsMap(Map(i -> k, j -> l)).nonEmpty &&
           fullExtensionsMap(Map(k -> i, l -> j)).nonEmpty
+  
+  def intersectionArray(u: Int, v: Int): (Seq[Int], Seq[Int]) =
+    (Seq(), Seq())
 
 object Graph:
   @targetName("applyWithEdges")
@@ -334,6 +337,17 @@ object Graph:
         (j, i)
     Graph(edges*)
 
+  def completeGraph(
+    vertices: Int
+  ): Graph =
+    val edges: Seq[(Int, Int)] =
+      for
+        i <- 0 until vertices
+        j <- 0 until i
+      yield
+        i -> j
+    Graph(edges *)
+
   def completeBipartite(
     from: Int,
     to: Int
@@ -377,6 +391,9 @@ object Graph:
   lazy val dodecahedralGraph: Graph =
     hamiltonianCubic(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
 
+  lazy val tetrahedralGraph: Graph =
+    completeGraph(4)
+    
   lazy val shrikhande: Graph =
     val size = 4
     def vertexAt(x: Int, y: Int): Int =

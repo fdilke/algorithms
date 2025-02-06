@@ -464,6 +464,7 @@ class GraphSpec extends FunSuite:
     shrikhande.isDistanceTransitive() is false
     cubicalGraph.isDistanceTransitive() is true
     dodecahedralGraph.isDistanceTransitive() is true
+    tetrahedralGraph.isDistanceTransitive() is true
     completeBipartite(2, 3).isDistanceTransitive() is false
     completeBipartite(3, 3).isDistanceTransitive() is true
 
@@ -479,6 +480,14 @@ class GraphSpec extends FunSuite:
     pappus.diameter is 4
     shrikhande.diameter is 2
     cubicalGraph.diameter is 3
+    tetrahedralGraph.diameter is 1
     dodecahedralGraph.diameter is 5
     completeBipartite(2, 3).diameter is 2
     completeBipartite(3, 3).diameter is 2
+
+  /*
+  test("can calculate intersection arrays"):
+//    onePointGraph.intersectionArray(0, 0) is Seq(Seq(0), Seq(0))
+//    Graph((0, 1)).intersectionArray(0, 1) is Seq()
+    tetrahedralGraph.intersectionArray(0, 1) is Seq(Seq(3), Seq(1))
+*/
