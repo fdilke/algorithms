@@ -128,4 +128,16 @@ object SetsUtilities:
     do
       inverse(permutation(i)) = i
     inverse.toSeq
-    
+
+  def crossCheckResult[A](
+    computations: () => A *
+  ): Option[A] =
+    computations match
+      case Nil =>
+        throw new IllegalArgumentException("no computations provided")
+      case first +: tail =>
+        val firstResult: A = first()
+        if tail.forall:
+          _() == firstResult
+        then Some(firstResult)
+        else None

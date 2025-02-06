@@ -1,7 +1,7 @@
 package com.fdilke.utility
 
 import com.fdilke.utility.RichFunSuite.*
-import com.fdilke.utility.SetsUtilities.{allMaps, allNaryOps, bulkJoin, intSqrt, invertPermutation, sequencesOfLength, squareUp, subsetsOf}
+import com.fdilke.utility.SetsUtilities._
 import munit.FunSuite
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -160,3 +160,13 @@ class SetsUtilitiesSpec extends FunSuite:
     invertPermutation(Seq(1, 2, 0)) is Seq(2, 0, 1)
     invertPermutation(Seq(2, 1, 0)) is Seq(2, 1, 0)
     invertPermutation(Seq(2, 3, 1, 0)) is Seq(3, 2, 0, 1)
+
+  test("verify lazily that a bunch of computations all yield the same result"):
+    intercept[IllegalArgumentException]:
+      crossCheckResult()
+    crossCheckResult[Int](() => 2) is Some(2)
+    crossCheckResult[Int](() => 2, () => 2) is Some(2)
+    crossCheckResult[Int](() => 2, () => 3) is None
+    val tripwire: AtomicBoolean = AtomicBoolean(false)
+    crossCheckResult[Int](() => 2, () => 3, () => { tripwire.set(true) ; 2 }) is None
+    tripwire.get is false
