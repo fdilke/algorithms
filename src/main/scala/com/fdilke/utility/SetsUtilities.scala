@@ -141,3 +141,19 @@ object SetsUtilities:
           _() == firstResult
         then Some(firstResult)
         else None
+
+  def crossCheckResultOptional[A](
+    computations: () => Option[A] *
+  ): Option[A] =
+    computations match
+      case Nil =>
+        throw new IllegalArgumentException("no computations provided")
+      case first +: tail =>
+        first() match
+          case None =>
+            None
+          case someFirst =>
+            if tail.forall:
+              _() == someFirst
+            then someFirst
+            else None

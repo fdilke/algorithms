@@ -170,3 +170,16 @@ class SetsUtilitiesSpec extends FunSuite:
     val tripwire: AtomicBoolean = AtomicBoolean(false)
     crossCheckResult[Int](() => 2, () => 3, () => { tripwire.set(true) ; 2 }) is None
     tripwire.get is false
+    
+  test("verify lazily that a bunch of option-returning computations all yield the same defined result"):
+    intercept[IllegalArgumentException]:
+      crossCheckResultOptional()
+    crossCheckResultOptional[Int](() => Some(2)) is Some(2)
+    crossCheckResultOptional[Int](() => Some(2), () => Some(2)) is Some(2)
+    crossCheckResultOptional[Int](() => Some(2), () => Some(3)) is None
+    val tripwire: AtomicBoolean = AtomicBoolean(false)
+    crossCheckResultOptional[Int](() => Some(2), () => Some(3), () => { tripwire.set(true) ; Some(2) }) is None
+    tripwire.get is false
+    val tripwire2: AtomicBoolean = AtomicBoolean(false)
+    crossCheckResultOptional[Int](() => Some(2), () => None, () => { tripwire2.set(true) ; Some(2) }) is None
+    tripwire2.get is false
