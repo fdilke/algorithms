@@ -183,3 +183,14 @@ class SetsUtilitiesSpec extends FunSuite:
     val tripwire2: AtomicBoolean = AtomicBoolean(false)
     crossCheckResultOptional[Int](() => Some(2), () => None, () => { tripwire2.set(true) ; Some(2) }) is None
     tripwire2.get is false
+
+  test("all-or-none optional calculations"):
+    allOrNone[Int]() is Some(Seq())
+    allOrNone[Int](() => Some(2)) is Some(Seq(2))
+    allOrNone[Int](() => None) is None
+    allOrNone[Int](() => Some(2), () => Some(3)) is Some(Seq(2, 3))
+    allOrNone[Int](() => Some(2), () => None) is None
+    allOrNone[Int](() => None, () => Some(2)) is None
+    val tripwire: AtomicBoolean = AtomicBoolean(false)
+    allOrNone[Int](() => Some(2), () => None, () => { tripwire.set(true) ; Some(2) }) is None
+    tripwire.get is false

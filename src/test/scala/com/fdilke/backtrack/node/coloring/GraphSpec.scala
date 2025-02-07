@@ -444,29 +444,29 @@ class GraphSpec extends FunSuite:
     emptyGraph.adjacencyTable.isEmpty is true
 
   test("tell if a graph is distance-transitive"):
-    emptyGraph.isDistanceTransitive() is true
-    onePointGraph.isDistanceTransitive() is true
+    emptyGraph.isDistanceTransitive is true
+    onePointGraph.isDistanceTransitive is true
     Graph(
       (0, 1), (1, 2), (2, 3), (3, 1)
-    ).isDistanceTransitive() is false
+    ).isDistanceTransitive is false
     Graph(
       (0, 1)
-    ) .isDistanceTransitive() is true
+    ) .isDistanceTransitive is true
     Graph(
       (0, 1), (1, 2)
-    ) .isDistanceTransitive() is false
+    ) .isDistanceTransitive is false
     Graph(
       (0, 1), (1, 2), (2, 0)
-    ) .isDistanceTransitive() is true
-    petersen.isDistanceTransitive() is true
-    heawood.isDistanceTransitive() is true
-    pappus.isDistanceTransitive() is true
-    shrikhande.isDistanceTransitive() is false
-    cubicalGraph.isDistanceTransitive() is true
-    dodecahedralGraph.isDistanceTransitive() is true
-    tetrahedralGraph.isDistanceTransitive() is true
-    completeBipartite(2, 3).isDistanceTransitive() is false
-    completeBipartite(3, 3).isDistanceTransitive() is true
+    ) .isDistanceTransitive is true
+    petersen.isDistanceTransitive is true
+    heawood.isDistanceTransitive is true
+    pappus.isDistanceTransitive is true
+    shrikhande.isDistanceTransitive is false
+    cubicalGraph.isDistanceTransitive is true
+    dodecahedralGraph.isDistanceTransitive is true
+    tetrahedralGraph.isDistanceTransitive is true
+    completeBipartite(2, 3).isDistanceTransitive is false
+    completeBipartite(3, 3).isDistanceTransitive is true
 
   test("can measure the diameter of a graph"):
     onePointGraph.diameter is 0
@@ -485,9 +485,7 @@ class GraphSpec extends FunSuite:
     completeBipartite(2, 3).diameter is 2
     completeBipartite(3, 3).diameter is 2
 
-  /*
   test("can calculate intersection arrays"):
 //    onePointGraph.intersectionArray(0, 0) is Seq(Seq(0), Seq(0))
 //    Graph((0, 1)).intersectionArray(0, 1) is Seq()
-    tetrahedralGraph.intersectionArray(0, 1) is Seq(Seq(3), Seq(1))
-*/
+    tetrahedralGraph.intersectionArray(0, 1) is Some(Seq(3), Seq(1))

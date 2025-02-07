@@ -149,10 +149,10 @@ class Graph(
         distanceMap(i)
       vertices.map { map }
 
-  lazy val diameter =
+  lazy val diameter: Int =
     distanceMaps.flatten.max
 
-  def isDistanceTransitive(): Boolean =
+  lazy val isDistanceTransitive: Boolean =
     (for
       i <- vertices
       j <- 0 until i
@@ -168,9 +168,47 @@ class Graph(
       ).forall: (k, l) =>
         fullExtensionsMap(Map(i -> k, j -> l)).nonEmpty &&
           fullExtensionsMap(Map(k -> i, l -> j)).nonEmpty
-  
-  def intersectionArray(u: Int, v: Int): (Seq[Int], Seq[Int]) =
-    (Seq(), Seq())
+
+  def intersectionArray(
+    u: Int,
+    v: Int
+  ): Option[(Seq[Int], Seq[Int])] =
+    val distanceUV = distanceMaps(u)(v)
+    val verticesAtDistance: Seq[Seq[Int]] =
+      for
+        d <- 0 to distanceUV
+      yield
+        vertices filter: x =>
+          distanceMaps(u)(x) == d
+    def neighboursAt(x: Int, d: Int): Int =
+      neighborsOf(x).intersect(verticesAtDistance(d)).size
+    def forward(j: Int): Option[Int] =
+      val forwardCalcs: Seq[() => Int] =
+        verticesAtDistance(j).map:
+          x => () => neighboursAt(x, j + 1)
+      crossCheckResult(forwardCalcs)
+    val optionalForwards: Seq[() => Option[Int]] =
+      for
+        j <- 0 until distanceUV
+      yield
+        () => forward(j)
+    allOrNone(optionalForwards) match
+      case None => None
+      case Some(forwards) =>
+        def backward(j: Int): Option[Int] =
+          val backwardCalcs: Seq[() => Int] =
+            verticesAtDistance(j+1).map:
+              x => () => neighboursAt(x, j)
+          crossCheckResult(backwardCalcs)
+        val optionalBackwards: Seq[() => Option[Int]] =
+          for
+            j <- 0 until distanceUV
+          yield
+            () => backward(j)
+        allOrNone(optionalBackwards) match
+          case None => None
+          case Some(backwards) =>
+            Some(forwards, backwards)
 
 object Graph:
   @targetName("applyWithEdges")
@@ -393,7 +431,7 @@ object Graph:
 
   lazy val tetrahedralGraph: Graph =
     completeGraph(4)
-    
+
   lazy val shrikhande: Graph =
     val size = 4
     def vertexAt(x: Int, y: Int): Int =

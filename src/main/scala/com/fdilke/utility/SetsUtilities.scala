@@ -1,6 +1,9 @@
 package com.fdilke.utility
 
+import java.util.concurrent.atomic.AtomicBoolean
+import scala.annotation.targetName
 import scala.language.postfixOps
+import scala.reflect.ClassTag
 
 // edited snapshot of bewl2's SetsUtilities
 
@@ -130,7 +133,7 @@ object SetsUtilities:
     inverse.toSeq
 
   def crossCheckResult[A](
-    computations: () => A *
+    computations: Seq[() => A]
   ): Option[A] =
     computations match
       case Nil =>
@@ -142,8 +145,14 @@ object SetsUtilities:
         then Some(firstResult)
         else None
 
+  @targetName("crossCheckResultsVarargs")
+  inline def crossCheckResult[A](
+    computations: () => A *
+  ): Option[A] =
+    crossCheckResult(computations)
+  
   def crossCheckResultOptional[A](
-    computations: () => Option[A] *
+    computations: Seq[() => Option[A]]
   ): Option[A] =
     computations match
       case Nil =>
@@ -157,3 +166,33 @@ object SetsUtilities:
               _() == someFirst
             then someFirst
             else None
+
+  @targetName("crossCheckResultsOptionalVarargs")
+  inline def crossCheckResultOptional[A](
+    computations: () => Option[A] *
+  ): Option[A] =
+    crossCheckResultOptional(computations)
+
+  def allOrNone[A: ClassTag](
+    computations: Seq[() => Option[A]]
+  ): Option[Seq[A]] =
+    val arrayOfA: Array[A] =
+      new Array[A](computations.size)
+    if
+      computations.zipWithIndex.exists:
+        (block, i) =>
+          block() match
+            case None => true
+            case Some(a) =>
+              arrayOfA(i) = a
+              false
+    then
+      None
+    else
+      Some(arrayOfA.toSeq)
+
+  @targetName("allOrNoneVarargs")
+  inline def allOrNone[A: ClassTag](
+    computations: () => Option[A] *
+  ): Option[Seq[A]] =
+    allOrNone(computations)

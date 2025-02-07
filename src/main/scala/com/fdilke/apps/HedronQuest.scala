@@ -226,9 +226,9 @@ object PlushiePlayground extends App:
       case Some(coloring) =>
         checkMinColoring(4, coloring, edgeGraph)
         println("the edge coloring: " + coloring.map { label }.mkString(""))
-  println("faceGraph is distance-transitive:" + faceGraph.isDistanceTransitive())
-  println("vertexGraph is distance-transitive:" + vertexGraph.isDistanceTransitive())
-  println("edgeGraph is distance-transitive:" + edgeGraph.isDistanceTransitive())
+  println("faceGraph is distance-transitive:" + faceGraph.isDistanceTransitive)
+  println("vertexGraph is distance-transitive:" + vertexGraph.isDistanceTransitive)
+  println("edgeGraph is distance-transitive:" + edgeGraph.isDistanceTransitive)
 
 //  val distanceMaps: Seq[Seq[Int]] =
 //    for
