@@ -94,13 +94,10 @@ class ColorGraphSpec(
   test("chi(torus(3,3)) == 3"):
     canColor(3, true, torus(3, 3))
 
-// too slow: 3.2 sec
   test("chi(Petersen) <= 3"):
     val petersen = oddGraph(3)
     canColor(3, false, petersen)
 
-// too slow - ~5sec */
-    
   test("chi(torus(5,2)) <= 3"):
     canColor(3, false, torus(5, 2))
 

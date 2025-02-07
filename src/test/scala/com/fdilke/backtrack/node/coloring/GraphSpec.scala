@@ -489,6 +489,7 @@ class GraphSpec extends FunSuite:
     onePointGraph.localIntersectionArray(0) is Some(Seq(), Seq())
     Graph((0, 1)).localIntersectionArray(0) is Some(Seq(1), Seq(1))
     Graph((0, 1), (1, 2)).localIntersectionArray(0) is Some(Seq(1, 1), Seq(1,1))
+    Graph((0, 1), (1, 2)).localIntersectionArray(1) is Some(Seq(2), Seq(1))
     Graph((0, 1), (1, 2), (2, 3), (1, 4)).localIntersectionArray(0) is None
     Graph((0, 1), (1, 2), (2, 3), (1, 4)).localIntersectionArray(1) is None
     Graph((0, 1), (0, 2), (0, 3)).localIntersectionArray(0) is Some(Seq(3), Seq(1))
@@ -500,17 +501,33 @@ class GraphSpec extends FunSuite:
     heawood.localIntersectionArray(4) is Some(Seq(3,2,2), Seq(1,1,3))
     pappus.localIntersectionArray(5) is Some(Seq(3,2,2,1), Seq(1,1,2,3))
     shrikhande.localIntersectionArray(6) is Some(Seq(6, 3), Seq(1,2))
-    
-//  test("can calculate global intersection arrays"):
-//    onePointGraph.intersectionArray is Some(Seq(), Seq())
-//    Graph((0, 1)).intersectionArray is Some(Seq(1), Seq(1))
-//    Graph((0, 1), (1, 2)).intersectionArray is Some(Seq(1, 1), Seq(1,1))
-//    Graph((0, 1), (1, 2), (2, 3), (1, 4)).intersectionArray is None
-//    Graph((0, 1), (0, 2), (0, 3)).intersectionArray is None
-//    tetrahedralGraph.intersectionArray is Some(Seq(3), Seq(1))
-//    petersen.intersectionArray is Some(Seq(3, 2), Seq(1, 1))
-//    dodecahedralGraph.intersectionArray is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
-//    cubicalGraph.intersectionArray is Some(Seq(3,2,1), Seq(1,2,3))
-//    heawood.intersectionArray is Some(Seq(3,2,2), Seq(1,1,3))
-//    pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
-//    shrikhande.intersectionArray is Some(Seq(6, 3), Seq(1,2))
+
+  test("can calculate global intersection arrays"):
+    emptyGraph.intersectionArray is None
+    onePointGraph.intersectionArray is Some(Seq(), Seq())
+    Graph((0, 1)).intersectionArray is Some(Seq(1), Seq(1))
+    Graph((0, 1), (1, 2)).intersectionArray is None
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).intersectionArray is None
+    Graph((0, 1), (0, 2), (0, 3)).intersectionArray is None
+    tetrahedralGraph.intersectionArray is Some(Seq(3), Seq(1))
+    petersen.intersectionArray is Some(Seq(3, 2), Seq(1, 1))
+    dodecahedralGraph.intersectionArray is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
+    cubicalGraph.intersectionArray is Some(Seq(3,2,1), Seq(1,2,3))
+    heawood.intersectionArray is Some(Seq(3,2,2), Seq(1,1,3))
+    pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
+    shrikhande.intersectionArray is Some(Seq(6, 3), Seq(1,2))
+
+  test("can tell if a graph is distance-regular"):
+    emptyGraph.distanceRegular is false
+    onePointGraph.distanceRegular is true
+    Graph((0, 1)).distanceRegular is true
+    Graph((0, 1), (1, 2)).distanceRegular is false
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).distanceRegular is false
+    Graph((0, 1), (0, 2), (0, 3)).distanceRegular is false
+    tetrahedralGraph.distanceRegular is true
+    petersen.distanceRegular is true
+    dodecahedralGraph.distanceRegular is true
+    cubicalGraph.distanceRegular is true
+    heawood.distanceRegular is true
+    pappus.distanceRegular is true
+    shrikhande.distanceRegular is true

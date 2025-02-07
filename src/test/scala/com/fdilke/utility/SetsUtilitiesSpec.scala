@@ -171,9 +171,8 @@ class SetsUtilitiesSpec extends FunSuite:
     crossCheckResult[Int](() => 2, () => 3, () => { tripwire.set(true) ; 2 }) is None
     tripwire.get is false
     
-  test("verify lazily that a bunch of option-returning computations all yield the same defined result"):
-    intercept[IllegalArgumentException]:
-      crossCheckResultOptional()
+  test("verify lazily that a bunch of option-returning computations all yield the same unique defined result"):
+    crossCheckResultOptional() is None
     crossCheckResultOptional[Int](() => Some(2)) is Some(2)
     crossCheckResultOptional[Int](() => Some(2), () => Some(2)) is Some(2)
     crossCheckResultOptional[Int](() => Some(2), () => Some(3)) is None

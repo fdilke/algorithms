@@ -156,7 +156,7 @@ object SetsUtilities:
   ): Option[A] =
     computations match
       case Nil =>
-        throw new IllegalArgumentException("no computations provided")
+        None
       case first +: tail =>
         first() match
           case None =>

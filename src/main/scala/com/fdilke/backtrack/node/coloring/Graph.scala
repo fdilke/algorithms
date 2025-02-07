@@ -203,6 +203,14 @@ class Graph(
           case Some(backwards) =>
             Some(forwards, backwards)
 
+  lazy val intersectionArray: Option[(Seq[Int], Seq[Int])] =
+    crossCheckResultOptional:
+      vertices.map: v =>
+        () => localIntersectionArray(v)
+
+  lazy val distanceRegular: Boolean =
+    intersectionArray.isDefined
+
 object Graph:
   @targetName("applyWithEdges")
   def apply(
