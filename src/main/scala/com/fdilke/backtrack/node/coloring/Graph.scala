@@ -169,17 +169,16 @@ class Graph(
         fullExtensionsMap(Map(i -> k, j -> l)).nonEmpty &&
           fullExtensionsMap(Map(k -> i, l -> j)).nonEmpty
 
-  def intersectionArray(
-    u: Int,
-    v: Int
+  def localIntersectionArray(
+    sourceVertex: Int
   ): Option[(Seq[Int], Seq[Int])] =
-    val distanceUV = distanceMaps(u)(v)
+    val distanceMax = distanceMaps(sourceVertex).max
     val verticesAtDistance: Seq[Seq[Int]] =
       for
-        d <- 0 to distanceUV
+        d <- 0 to distanceMax
       yield
         vertices filter: x =>
-          distanceMaps(u)(x) == d
+          distanceMaps(sourceVertex)(x) == d
     def neighboursAt(x: Int, d: Int): Int =
       neighborsOf(x).intersect(verticesAtDistance(d)).size
     def forward(j: Int): Option[Int] =
@@ -189,7 +188,7 @@ class Graph(
       crossCheckResult(forwardCalcs)
     val optionalForwards: Seq[() => Option[Int]] =
       for
-        j <- 0 until distanceUV
+        j <- 0 until distanceMax
       yield
         () => forward(j)
     allOrNone(optionalForwards) match
@@ -202,7 +201,7 @@ class Graph(
           crossCheckResult(backwardCalcs)
         val optionalBackwards: Seq[() => Option[Int]] =
           for
-            j <- 0 until distanceUV
+            j <- 0 until distanceMax
           yield
             () => backward(j)
         allOrNone(optionalBackwards) match

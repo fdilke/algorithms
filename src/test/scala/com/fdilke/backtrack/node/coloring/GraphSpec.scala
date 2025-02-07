@@ -485,7 +485,32 @@ class GraphSpec extends FunSuite:
     completeBipartite(2, 3).diameter is 2
     completeBipartite(3, 3).diameter is 2
 
-  test("can calculate intersection arrays"):
-//    onePointGraph.intersectionArray(0, 0) is Seq(Seq(0), Seq(0))
-//    Graph((0, 1)).intersectionArray(0, 1) is Seq()
-    tetrahedralGraph.intersectionArray(0, 1) is Some(Seq(3), Seq(1))
+  test("can calculate local intersection arrays"):
+    onePointGraph.localIntersectionArray(0) is Some(Seq(), Seq())
+    Graph((0, 1)).localIntersectionArray(0) is Some(Seq(1), Seq(1))
+    Graph((0, 1), (1, 2)).localIntersectionArray(0) is Some(Seq(1, 1), Seq(1,1))
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).localIntersectionArray(0) is None
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).localIntersectionArray(1) is None
+    Graph((0, 1), (0, 2), (0, 3)).localIntersectionArray(0) is Some(Seq(3), Seq(1))
+    Graph((0, 1), (0, 2), (0, 3)).localIntersectionArray(2) is Some(Seq(1, 2), Seq(1, 1))
+    tetrahedralGraph.localIntersectionArray(0) is Some(Seq(3), Seq(1))
+    petersen.localIntersectionArray(1) is Some(Seq(3, 2), Seq(1, 1))
+    dodecahedralGraph.localIntersectionArray(2) is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
+    cubicalGraph.localIntersectionArray(3) is Some(Seq(3,2,1), Seq(1,2,3))
+    heawood.localIntersectionArray(4) is Some(Seq(3,2,2), Seq(1,1,3))
+    pappus.localIntersectionArray(5) is Some(Seq(3,2,2,1), Seq(1,1,2,3))
+    shrikhande.localIntersectionArray(6) is Some(Seq(6, 3), Seq(1,2))
+    
+//  test("can calculate global intersection arrays"):
+//    onePointGraph.intersectionArray is Some(Seq(), Seq())
+//    Graph((0, 1)).intersectionArray is Some(Seq(1), Seq(1))
+//    Graph((0, 1), (1, 2)).intersectionArray is Some(Seq(1, 1), Seq(1,1))
+//    Graph((0, 1), (1, 2), (2, 3), (1, 4)).intersectionArray is None
+//    Graph((0, 1), (0, 2), (0, 3)).intersectionArray is None
+//    tetrahedralGraph.intersectionArray is Some(Seq(3), Seq(1))
+//    petersen.intersectionArray is Some(Seq(3, 2), Seq(1, 1))
+//    dodecahedralGraph.intersectionArray is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
+//    cubicalGraph.intersectionArray is Some(Seq(3,2,1), Seq(1,2,3))
+//    heawood.intersectionArray is Some(Seq(3,2,2), Seq(1,1,3))
+//    pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
+//    shrikhande.intersectionArray is Some(Seq(6, 3), Seq(1,2))
