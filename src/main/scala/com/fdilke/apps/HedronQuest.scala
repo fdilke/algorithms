@@ -160,7 +160,7 @@ object PlushiePlayground extends App:
     do
       print(s"${label(j)} ")
     println("")
-  val faceGraph = Graph(faceAdjacencies*)
+  val faceGraph = Graph(faceAdjacencies)
   for (n <- 1 to 6) do
     if ColorGraphLoop(n, faceGraph).isDefined then
       println(s"Plushie can be $n-colored")
@@ -202,7 +202,7 @@ object PlushiePlayground extends App:
     yield
       (i, j)
   println("# vertex adjacencies: " + vertexAdjacencies.size)
-  val vertexGraph = Graph(vertexAdjacencies*)
+  val vertexGraph = Graph(vertexAdjacencies)
   ColorGraphLoop(3, vertexGraph) match
     case None => throw new IllegalArgumentException("no coloring")
     case Some(coloring) =>
@@ -219,7 +219,7 @@ object PlushiePlayground extends App:
     yield
       (i, j)
   println("# edge adjacencies: " + edgeAdjacencies.size)
-  val edgeGraph = Graph(edgeAdjacencies*)
+  val edgeGraph = Graph(edgeAdjacencies)
   if false then // a bit of a slow calculation
     ColorGraphLoop(4, edgeGraph) match
       case None => throw new IllegalArgumentException("no coloring")

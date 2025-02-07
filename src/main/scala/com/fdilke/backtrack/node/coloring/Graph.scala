@@ -181,30 +181,24 @@ class Graph(
           distanceMaps(sourceVertex)(x) == d
     def neighboursAt(x: Int, d: Int): Int =
       neighborsOf(x).intersect(verticesAtDistance(d)).size
-    def forward(j: Int): Option[Int] =
-      val forwardCalcs: Seq[() => Int] =
-        verticesAtDistance(j).map:
-          x => () => neighboursAt(x, j + 1)
-      crossCheckResult(forwardCalcs)
-    val optionalForwards: Seq[() => Option[Int]] =
+    allOrNone[Int]:
       for
         j <- 0 until distanceMax
-      yield
-        () => forward(j)
-    allOrNone(optionalForwards) match
+      yield () =>
+        crossCheckResult:
+          verticesAtDistance(j).map:
+            x => () => neighboursAt(x, j + 1)
+    match
       case None => None
       case Some(forwards) =>
-        def backward(j: Int): Option[Int] =
-          val backwardCalcs: Seq[() => Int] =
-            verticesAtDistance(j+1).map:
-              x => () => neighboursAt(x, j)
-          crossCheckResult(backwardCalcs)
-        val optionalBackwards: Seq[() => Option[Int]] =
+        allOrNone[Int]:
           for
             j <- 0 until distanceMax
-          yield
-            () => backward(j)
-        allOrNone(optionalBackwards) match
+          yield () =>
+            crossCheckResult:
+              verticesAtDistance(j+1).map:
+                x => () => neighboursAt(x, j)
+        match
           case None => None
           case Some(backwards) =>
             Some(forwards, backwards)
@@ -212,37 +206,42 @@ class Graph(
 object Graph:
   @targetName("applyWithEdges")
   def apply(
-    edges: (Int, Int)*
+    edges: Seq[(Int, Int)]
   ): Graph =
     new Graph(
       adjacencyTableFromPairs(edges *),
       edges
     )
 
+  @targetName("applyWithEdgesVarargs")
+  inline def apply(
+    edges: (Int, Int)*
+  ): Graph =
+    Graph:
+      edges
+
   @targetName("applyWithAdjacencyTable")
   def apply(
     adjacencyTable: Seq[Boolean]*
   ): Graph =
-    new Graph(
-      adjacencyTable,
-      edgesFromAdjacencyTable(adjacencyTable),
-    )
+    fromAdjacencyTable:
+      adjacencyTable
 
-  def fromAdjacencyTable(
+  private def fromAdjacencyTable(
     adjacencyTable: Seq[Seq[Boolean]]
   ): Graph =
     new Graph(
       adjacencyTable,
-      edgesFromAdjacencyTable(adjacencyTable),
+      edgesFromAdjacencyTable(adjacencyTable)
     )
 
   @targetName("applyWithUnpackedAdjacencies")
   def apply(
     unpackedAdjacencyTable: Boolean*
   ): Graph =
-    fromAdjacencyTable(
-      packAdjacencyTable(unpackedAdjacencyTable)
-    )
+    fromAdjacencyTable:
+      packAdjacencyTable:
+        unpackedAdjacencyTable
 
   def lastVertexFromPairs(
      adjacencyPairs: (Int, Int)*
@@ -257,7 +256,8 @@ object Graph:
   def adjacencyTableFromPairs(
     adjacencyPairs: (Int, Int)*
   ): Seq[Seq[Boolean]] =
-    val lastVertex: Int = lastVertexFromPairs(adjacencyPairs*)
+    val lastVertex: Int =
+      lastVertexFromPairs(adjacencyPairs*)
     for
       i <- 0 to lastVertex
     yield
@@ -267,7 +267,7 @@ object Graph:
         adjacencyPairs.contains(i -> j) ||
           adjacencyPairs.contains(j -> i)
 
-  def edgesFromAdjacencyTable(
+  private def edgesFromAdjacencyTable(
     adjacencyTable: Seq[Seq[Boolean]]
   ): Seq[(Int, Int)] =
     for
@@ -277,7 +277,7 @@ object Graph:
     yield
       j -> i
 
-  def packAdjacencyTable(
+  private def packAdjacencyTable(
     unpackedAdjacencyTable: Seq[Boolean]
   ): Seq[Seq[Boolean]] =
     squareUp(unpackedAdjacencyTable*)
@@ -337,7 +337,7 @@ object Graph:
           val (newCycle, moreEdges) =
             addLayer(cycle, v, start, coverLength)
           (newCycle, edges ++ moreEdges)
-    Graph(adjacencies._2*)
+    Graph(adjacencies._2)
 
   def torus(
     width: Int,
@@ -357,7 +357,8 @@ object Graph:
             cellIndex(i, j) -> cellIndex(i + 1, j),
             cellIndex(i, j) -> cellIndex(i, j + 1)
           )
-      Graph(pairs.flatten.distinct*)
+      Graph:
+        pairs.flatten.distinct
 
 //"The odd graph O_{n} has one vertex for each of the (n-1)-element subsets of a (2n-1)}-element set.
 //Two vertices are connected by an edge if and only if the corresponding subsets are disjoint."
@@ -365,37 +366,34 @@ object Graph:
   def oddGraph(n: Int): Graph =
     val tuples: Seq[Seq[Int]] =
       (0 until (2*n - 1)).combinations(n - 1).toSeq
-    val edges: Seq[(Int, Int)] =
+    Graph:
       for
         i <- tuples.indices
         tupleI = tuples(i)
         j <- 0 until i if tupleI.intersect(tuples(j)).isEmpty
       yield
         (j, i)
-    Graph(edges*)
 
   def completeGraph(
     vertices: Int
   ): Graph =
-    val edges: Seq[(Int, Int)] =
+    Graph:
       for
         i <- 0 until vertices
         j <- 0 until i
       yield
         i -> j
-    Graph(edges *)
 
   def completeBipartite(
     from: Int,
     to: Int
   ): Graph =
-    val edges: Seq[(Int, Int)] =
+    Graph:
       for
         i <- 0 until from
         j <- 0 until to
       yield
         i -> (from + j)
-    Graph(edges*)
 
   lazy val emptyGraph: Graph =
     Graph(Seq.empty[Seq[Boolean]]*)
@@ -409,7 +407,7 @@ object Graph:
   lazy val heawood: Graph =
     hamiltonianCubic(14, 5, -5)
 
-  def hamiltonianCubic(vertices: Int, cycle: Int*): Graph =
+  private def hamiltonianCubic(vertices: Int, cycle: Int*): Graph =
     val circumference: Seq[(Int, Int)] =
       0 until vertices map: v =>
         (v, (v + 1) % vertices)
@@ -417,7 +415,8 @@ object Graph:
       0 until vertices map: v =>
         val direction = cycle(v % cycle.length)
         (v, (v + vertices + direction) % vertices)
-    Graph(circumference ++ crosslinks *)
+    Graph:
+      circumference ++ crosslinks
 
   lazy val pappus: Graph =
     hamiltonianCubic(18, -5, 5, 7, -7, 7, -7)
@@ -435,7 +434,7 @@ object Graph:
     val size = 4
     def vertexAt(x: Int, y: Int): Int =
       (x % size) + (y % size) * 4
-    val edges: Seq[(Int, Int)] =
+    Graph:
       (for
         x <- 0 until 4
         y <- 0 until 4
@@ -447,4 +446,3 @@ object Graph:
           vertex -> vertexAt(x + 1, y + 1)
         )
       ).flatten
-    Graph(edges*)
