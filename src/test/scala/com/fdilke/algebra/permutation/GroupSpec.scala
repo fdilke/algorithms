@@ -87,3 +87,43 @@ class GroupSpec extends FunSuite:
     group6.generateSubgroup(ord3).hasComplement.isDefined is true
     group6.generateSubgroup(ord2).hasComplement is Some(group6.generateSubgroup(ord3))
 
+  test("enumerating subgroups of the trivial group"):
+    val trivialGroup = Permutation.group(1)
+    trivialGroup.subgroups is Set(
+      trivialGroup.trivialSubgroup
+    )
+
+  test("enumerating subgroups of the 2-element group"):
+    val twoGroup = Permutation.group(2)
+    twoGroup.subgroups is Set(
+      twoGroup.trivialSubgroup,
+      twoGroup.wholeGroup
+    )
+
+  // return the orders of a group's subgroups -
+  // with the sign reversed if they're normal!
+  // and ordered with the normal subgroups last for each order
+  private def subgroupOrdersX[T](group: Group[T]): Seq[Int] =
+    group.subgroups.toSeq.map: subgroup =>
+      subgroup.order * (
+        if (subgroup.isNormal) -1 else +1
+      )
+    .sortBy: orderX =>
+      3 * Math.abs(orderX) - (
+        if (orderX > 0) +1 else -1
+      )
+  
+  test("enumerating subgroups of cyclic groups works - at least orders are correct"):
+    subgroupOrdersX(CyclicGroup(6)) is Seq(-1,-2,-3,-6)
+    subgroupOrdersX(CyclicGroup(7)) is Seq(-1,-7)
+    subgroupOrdersX(CyclicGroup(8)) is Seq(-1,-2,-4,-8)
+
+  test("enumerating subgroups of symmetric groups works"):
+    subgroupOrdersX(Permutation.group(3)) is Seq(
+      -1, 2, 2, 2, -3, -6
+    )
+
+  test("enumerating subgroups of dihedral groups works"):
+    subgroupOrdersX(DihedralGroup(12)) is Seq(
+      -1, 2, 2, 2, 2, 2, 2, -2, -3, 4, 4, 4, -6, -6, -6, -12
+    )

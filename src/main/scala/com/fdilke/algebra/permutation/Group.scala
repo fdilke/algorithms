@@ -151,3 +151,29 @@ trait Group[T]:
       orderOf(g) == n
     .getOrElse:
       throw new IllegalArgumentException(s"no element of order $n found")
+
+  def subgroups: Set[Subgroup] =
+    def allAboveUsingWithout(
+      above: Subgroup,
+      elementsToUse: Seq[T],
+      elementsToExclude: Seq[T]
+    ): Set[Subgroup] =
+      elementsToUse match
+        case Nil => Set(above)
+        case x +: rest =>
+          if above.elements.contains(x) ||
+            elementsToExclude.contains(x)
+          then
+            allAboveUsingWithout(above, rest, elementsToExclude)
+          else
+            val aboveWithX =
+              group.generateSubgroup(above.elements + x)
+            allAboveUsingWithout(aboveWithX, rest, elementsToExclude) ++
+              allAboveUsingWithout(above, rest, x +: elementsToExclude)
+
+    allAboveUsingWithout(
+      trivialSubgroup,
+      elements.toSeq,
+      Seq.empty
+    )
+    
