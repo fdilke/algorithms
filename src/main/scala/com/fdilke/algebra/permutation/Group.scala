@@ -43,30 +43,25 @@ trait Group[T]:
             x <- subgroup.elements
           yield
             group.conjugate(x, g)
-//      println("outside conjs: " + outsideConjugates.size)
       case class CandidateComplement(
         candidate: group.Subgroup
       ) extends Node[CandidateComplement, Iterable, group.Subgroup]:
         override def explore: Iterable[Either[CandidateComplement, group.Subgroup]] =
-//          println("candidate has order: " + candidate.order)
           if candidate.order == targetOrder then
             Iterable(solution(candidate))
           else
-            val pool: Set[T] =
-              outsideConjugates.diff(candidate.elements)
-//            println("pool size: " + pool.size)
-//            println("pool: " + pool)
-            val nextCandidates: Iterable[group.Subgroup] =
-              pool.map: p =>
-                group.generateSubgroup(candidate.elements + p)
-              .filter: nextCandidate =>
-//                println("next candidate, order:" + nextCandidate.order)
-                nextCandidate.elements.subsetOf(outsideConjugates + group.unit)
-            nextCandidates.map: nextCandidate =>
+            outsideConjugates.diff:
+              candidate.elements
+            .map: p =>
+              group.generateSubgroup(candidate.elements + p)
+            .filter: nextCandidate =>
+              nextCandidate.elements.subsetOf(outsideConjugates + group.unit)
+            .map: nextCandidate =>
               node(CandidateComplement(nextCandidate))
-      StackSafeDedupNodeSolver.allSolutions[CandidateComplement, Iterable, group.Subgroup](
-        CandidateComplement(group.trivialSubgroup)
-      ).headOption
+      StackSafeDedupNodeSolver.allSolutions[CandidateComplement, Iterable, group.Subgroup]:
+        CandidateComplement:
+          group.trivialSubgroup
+      .headOption
 
     override val unit: T = group.unit
 
@@ -95,7 +90,7 @@ trait Group[T]:
     Subgroup:
       elements filter: x =>
         elements forall: y =>
-          group.commutes(x, y)
+          group.commute(x, y)
 
   def generateSubgroup(generators: T*): Subgroup =
     generateSubgroup(generators.toSet)
@@ -131,9 +126,9 @@ trait Group[T]:
   def isAbelian: Boolean =
     elements.forall: x =>
       elements.forall: y =>
-        commutes(x, y)
+        commute(x, y)
 
-  def commutes(x: T, y: T): Boolean =
+  def commute(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
 
   def elementOrders: Map[Int, Int] =
@@ -170,10 +165,9 @@ trait Group[T]:
               group.generateSubgroup(above.elements + x)
             allAboveUsingWithout(aboveWithX, rest, elementsToExclude) ++
               allAboveUsingWithout(above, rest, x +: elementsToExclude)
-
     allAboveUsingWithout(
       trivialSubgroup,
       elements.toSeq,
       Seq.empty
     )
-    
+
