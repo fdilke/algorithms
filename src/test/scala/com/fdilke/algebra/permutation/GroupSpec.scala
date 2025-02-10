@@ -55,16 +55,17 @@ class GroupSpec extends FunSuite:
     DihedralGroup(12).centre.order is 2
 
   test("can compute the order of elements - for cyclic groups"):
-    elementOrders(CyclicGroup(9)) is Seq(
-      1, 3, 3, 9, 9, 9, 9, 9, 9
+    CyclicGroup(9).elementOrders is Map(
+      1 -> 1,
+      9 -> 6,
+      3 -> 2
     )
 
   test("can compute the order of elements - for dihedral groups"):
-    elementOrders(DihedralGroup(6)) is Seq(
-      1, 2, 2, 2, 3, 3
+    DihedralGroup(6).elementOrders is Map(
+      1 -> 1,
+      2 -> 3,
+      3 -> 2
     )
 
-  private def elementOrders[T](group: Group[T]): Seq[Int] =
-    group.elements.toSeq.map:
-      group.orderOf
-    .sorted
+

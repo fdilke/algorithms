@@ -98,3 +98,10 @@ trait Group[T]:
   def commutes(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
 
+  def elementOrders: Map[Int, Int] =
+    group.elements.toSeq.map:
+      group.orderOf
+    .groupBy(identity)
+    .view.mapValues:
+      _.size
+    .toMap
