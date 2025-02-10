@@ -43,19 +43,24 @@ trait Group[T]:
             x <- subgroup.elements
           yield
             group.conjugate(x, g)
+//      println("outside conjs: " + outsideConjugates.size)
       case class CandidateComplement(
         candidate: group.Subgroup
       ) extends Node[CandidateComplement, Iterable, group.Subgroup]:
         override def explore: Iterable[Either[CandidateComplement, group.Subgroup]] =
+//          println("candidate has order: " + candidate.order)
           if candidate.order == targetOrder then
             Iterable(solution(candidate))
           else
-            val pool: Set[T] = 
+            val pool: Set[T] =
               outsideConjugates.diff(candidate.elements)
+//            println("pool size: " + pool.size)
+//            println("pool: " + pool)
             val nextCandidates: Iterable[group.Subgroup] =
               pool.map: p =>
-                group.generateSubgroup(subgroup.elements + p)
+                group.generateSubgroup(candidate.elements + p)
               .filter: nextCandidate =>
+//                println("next candidate, order:" + nextCandidate.order)
                 nextCandidate.elements.subsetOf(outsideConjugates + group.unit)
             nextCandidates.map: nextCandidate =>
               node(CandidateComplement(nextCandidate))
@@ -138,3 +143,11 @@ trait Group[T]:
     .view.mapValues:
       _.size
     .toMap
+
+  def elementOfOrder(
+    n: Int
+  ): T =
+    elements.find: g =>
+      orderOf(g) == n
+    .getOrElse:
+      throw new IllegalArgumentException(s"no element of order $n found")
