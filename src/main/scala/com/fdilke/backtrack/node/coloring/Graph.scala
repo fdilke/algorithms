@@ -152,7 +152,7 @@ class Graph(
   lazy val diameter: Int =
     distanceMaps.flatten.max
 
-  lazy val isDistanceTransitive: Boolean =
+  lazy val distanceTransitive: Boolean =
     (for
       i <- vertices
       j <- 0 until i

@@ -226,28 +226,11 @@ object PlushiePlayground extends App:
       case Some(coloring) =>
         checkMinColoring(4, coloring, edgeGraph)
         println("the edge coloring: " + coloring.map { label }.mkString(""))
-  println("faceGraph is distance-transitive:" + faceGraph.isDistanceTransitive)
-  println("vertexGraph is distance-transitive:" + vertexGraph.isDistanceTransitive)
-  println("edgeGraph is distance-transitive:" + edgeGraph.isDistanceTransitive)
-
-//  val distanceMaps: Seq[Seq[Int]] =
-//    for
-//      i <- faces.indices
-//    yield
-//      val map: Map[Int, Int] =
-//        faceGraph.distanceMap(i)
-//      faces.indices.map { map }
-//  for
-//    i <- faces.indices
-//    j <- 0 until i
-//  do
-//    val distance = distanceMaps(i)(j)
-//    for
-//      k <- faces.indices
-//      l <- 0 until k if distanceMaps(k)(l) == distance
-//    do
-//      if !plushieGroup.elements.exists: g =>
-//        multiplyCoset(faces(i), g) == faces(k) &&
-//          multiplyCoset(faces(j), g) == faces(l)
-//      then
-//        throw IllegalArgumentException(s"can't map face pair: $i, $j -> $k, $l at distance $distance")
+  println("faceGraph is distance-transitive:" + faceGraph.distanceTransitive)
+  if false then
+    println("vertexGraph is distance-transitive:" + vertexGraph.distanceTransitive)
+    println("edgeGraph is distance-transitive:" + edgeGraph.distanceTransitive)
+  println("faceGraph is distance-regular:" + faceGraph.distanceRegular)
+  println("vertexGraph is distance-regular:" + vertexGraph.distanceRegular)
+//  if false then
+  println("edgeGraph is distance-regular:" + edgeGraph.distanceRegular)

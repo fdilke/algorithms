@@ -444,29 +444,29 @@ class GraphSpec extends FunSuite:
     emptyGraph.adjacencyTable.isEmpty is true
 
   test("tell if a graph is distance-transitive"):
-    emptyGraph.isDistanceTransitive is true
-    onePointGraph.isDistanceTransitive is true
+    emptyGraph.distanceTransitive is true
+    onePointGraph.distanceTransitive is true
     Graph(
       (0, 1), (1, 2), (2, 3), (3, 1)
-    ).isDistanceTransitive is false
+    ).distanceTransitive is false
     Graph(
       (0, 1)
-    ) .isDistanceTransitive is true
+    ) .distanceTransitive is true
     Graph(
       (0, 1), (1, 2)
-    ) .isDistanceTransitive is false
+    ) .distanceTransitive is false
     Graph(
       (0, 1), (1, 2), (2, 0)
-    ) .isDistanceTransitive is true
-    petersen.isDistanceTransitive is true
-    heawood.isDistanceTransitive is true
-    pappus.isDistanceTransitive is true
-    shrikhande.isDistanceTransitive is false
-    cubicalGraph.isDistanceTransitive is true
-    dodecahedralGraph.isDistanceTransitive is true
-    tetrahedralGraph.isDistanceTransitive is true
-    completeBipartite(2, 3).isDistanceTransitive is false
-    completeBipartite(3, 3).isDistanceTransitive is true
+    ) .distanceTransitive is true
+    petersen.distanceTransitive is true
+    heawood.distanceTransitive is true
+    pappus.distanceTransitive is true
+    shrikhande.distanceTransitive is false
+    cubicalGraph.distanceTransitive is true
+    dodecahedralGraph.distanceTransitive is true
+    tetrahedralGraph.distanceTransitive is true
+    completeBipartite(2, 3).distanceTransitive is false
+    completeBipartite(3, 3).distanceTransitive is true
 
   test("can measure the diameter of a graph"):
     onePointGraph.diameter is 0
