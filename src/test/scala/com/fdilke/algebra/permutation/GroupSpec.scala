@@ -68,4 +68,14 @@ class GroupSpec extends FunSuite:
       3 -> 2
     )
 
+  test("determine a complement for a subgroup, if there is one"):
+    val group9 = CyclicGroup(9)
+    group9.trivialSubgroup.hasComplement is Some(group9.wholeGroup)
+    group9.wholeGroup.hasComplement is Some(group9.trivialSubgroup)
+    val ord3: Int =
+      group9.elements.find:
+        group9.orderOf(_) == 3
+      .getOrElse:
+        fail("element not found")
+    group9.generateSubgroup(ord3).hasComplement is None
 

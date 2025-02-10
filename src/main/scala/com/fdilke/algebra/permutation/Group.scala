@@ -1,7 +1,11 @@
 package com.fdilke.algebra.permutation
 
+import com.fdilke.backtrack.node.Node
+import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
+
 import scala.annotation.{tailrec, targetName}
 import scala.annotation.targetName
+import com.fdilke.backtrack.node.MonadIterable
 
 trait Group[T]: 
   group =>
@@ -28,6 +32,36 @@ trait Group[T]:
         subgroup.elements.subsetOf:
           subgroup.elements.map: y =>
             group.conjugate(y, x)
+
+    lazy val hasComplement: Option[group.Subgroup] =
+      val targetOrder: Int =
+        group.order / subgroup.order
+      val outsideConjugates: Set[T] =
+        group.elements.diff:
+          for
+            g <- group.elements
+            x <- subgroup.elements
+          yield
+            group.conjugate(x, g)
+      case class CandidateComplement(
+        candidate: group.Subgroup
+      ) extends Node[CandidateComplement, Iterable, group.Subgroup]:
+        override def explore: Iterable[Either[CandidateComplement, group.Subgroup]] =
+          if candidate.order == targetOrder then
+            Iterable(solution(candidate))
+          else
+            val pool: Set[T] = 
+              outsideConjugates.diff(candidate.elements)
+            val nextCandidates: Iterable[group.Subgroup] =
+              pool.map: p =>
+                group.generateSubgroup(subgroup.elements + p)
+              .filter: nextCandidate =>
+                nextCandidate.elements.subsetOf(outsideConjugates + group.unit)
+            nextCandidates.map: nextCandidate =>
+              node(CandidateComplement(nextCandidate))
+      StackSafeDedupNodeSolver.allSolutions[CandidateComplement, Iterable, group.Subgroup](
+        CandidateComplement(group.trivialSubgroup)
+      ).headOption
 
     override val unit: T = group.unit
 
@@ -79,7 +113,6 @@ trait Group[T]:
         t
       else
         generate(t ++ xg_t, xg_t)
-
     Subgroup:
       generate(generators, generators) + group.unit
 
