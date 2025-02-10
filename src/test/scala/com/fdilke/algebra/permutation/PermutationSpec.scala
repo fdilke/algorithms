@@ -40,7 +40,7 @@ class PermutationSpec extends FunSuite:
     
   test("Permutations of a given degree can be made into a group"):
     val group: Group[Permutation] =
-      Permutation.group(degree = 4)
+      Permutation.symmetricGroup(degree = 4)
     GroupVerifier.checkGroupOf[Permutation](group)
     group.order is 24
 
@@ -51,10 +51,17 @@ class PermutationSpec extends FunSuite:
       Permutation(0, 1) <  Permutation(0)
     .getMessage is "cannot compare permutations of different degrees"
     val group: Group[Permutation] =
-      Permutation.group(degree = 3)
+      Permutation.symmetricGroup(degree = 3)
     group.unit.isInstanceOf[Comparable[Permutation]] is true
     group.elements.toSeq.sorted is Seq(
       Permutation(0,1,2), Permutation(0,2,1),
       Permutation(1,0,2), Permutation(1,2,0),
       Permutation(2,0,1), Permutation(2,1,0)
     )
+
+  test("Permutation parity"):
+    Permutation.identity(3).parity is 1
+    Permutation(1,0).parity is -1
+    Permutation(1,2,0).parity is 1
+    Permutation(2,0,1).parity is 1
+    Permutation(2,0,3,1).parity is -1

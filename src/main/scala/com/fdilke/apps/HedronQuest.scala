@@ -9,7 +9,7 @@ import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, Graph, PartialColorin
 
 object HedronQuest extends App:
   private val searchDegree = 5
-  val group = Permutation.group(searchDegree)
+  val group = Permutation.symmetricGroup(searchDegree)
   given Group[Permutation] = group
   private def elementsOfOrder(n: Int) =
     group.elements.filter:
@@ -60,7 +60,7 @@ object HedronQuest extends App:
   println("v = " + plushie.v)
 
 object PlushiePlayground extends App:
-  val group: Group[Permutation] = Permutation.group(5)
+  val group: Group[Permutation] = Permutation.symmetricGroup(5)
   given Group[Permutation] = group
   val f = Permutation(0, 2, 3, 4, 1)
   val v = Permutation(2, 4, 1, 0, 3)

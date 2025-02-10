@@ -5,7 +5,7 @@ import munit.FunSuite
 import GroupSugar._
 
 class GroupSugarSpec extends FunSuite:
-  given Group[Permutation] = Permutation.group(3)
+  given Group[Permutation] = Permutation.symmetricGroup(3)
 
   test("can multiply elements of a group"):
     Permutation(1,2,0) * Permutation(1,2,0) is Permutation(2,0,1)

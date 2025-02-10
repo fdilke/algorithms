@@ -24,6 +24,22 @@ case class Permutation(
       array(this(index)) = index
     Permutation(array*)
 
+  def parity: Int =
+    val array: Array[Int] =
+      images.toArray
+    var flag = 1
+    for
+      index <- array.indices
+    do
+      if array(index) != index then
+        var other = index
+        while index != array(other) do
+          other = array(other)
+        array(other) = array(index)
+        array(index) = index
+        flag = -flag
+    flag
+
   override def compareTo(that: Permutation): Int =
     if degree != that.degree then
       throw new IllegalArgumentException("cannot compare permutations of different degrees")
@@ -41,7 +57,7 @@ object Permutation:
       p => Permutation(p.toSeq *)
     .toSet
 
-  def group(degree: Int): Group[Permutation] =
+  def symmetricGroup(degree: Int): Group[Permutation] =
     new Group[Permutation]:
       override val unit: Permutation =
         Permutation.identity(degree)
@@ -58,3 +74,9 @@ object Permutation:
       override def invert(element: Permutation): Permutation =
         element.inverse
 
+  def alternatingGroup(degree: Int): Group[Permutation] =
+    val bigGroup: Group[Permutation] =
+      Permutation.symmetricGroup(degree)
+    bigGroup.Subgroup:
+      bigGroup.elements.filter:
+        _.parity == 1
