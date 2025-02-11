@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.apps
 
-import com.fdilke.backtrack.Backtrack
-import Backtrack.*
+import com.fdilke.backtrack.MapBacktrack
+import MapBacktrack.*
 import com.fdilke.backtrack.apps.NQueens.{coordinates, lastOneAttacks, queensNode}
 import com.fdilke.utility.SetsUtilities.*
 import java.util.concurrent.atomic.AtomicInteger

@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.apps
 
-import com.fdilke.backtrack.Backtrack
-import com.fdilke.backtrack.Backtrack.{DecisionNode, MapComplete, MapInvalid, NextStep, assuming}
+import com.fdilke.backtrack.MapBacktrack
+import com.fdilke.backtrack.MapBacktrack.{DecisionNode, MapComplete, MapInvalid, NextStep, assuming}
 
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -81,7 +81,7 @@ object CommutingOpsSubtle extends App:
     map => theNext(map, initialQuad)
 
   val counter = AtomicInteger(0)
-  Backtrack.solve[(Int, Int), Int](
+  MapBacktrack.solve[(Int, Int), Int](
     elements,
     commutesNode
   ) foreach showTable(counter)

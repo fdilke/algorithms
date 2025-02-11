@@ -1,6 +1,6 @@
 package com.fdilke.freefire
 
-import com.fdilke.backtrack.Backtrack._
+import com.fdilke.backtrack.MapBacktrack._
 import munit.FunSuite
 import FreeMonadKVStore._
 import com.fdilke.utility.RichFunSuite._

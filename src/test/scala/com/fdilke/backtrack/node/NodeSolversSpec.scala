@@ -76,7 +76,7 @@ abstract class NodeSolverSpec(
     )
     explorations.get().size is 15
 
-  test("find all solutions in a branching search"):
+  test("find all solutions in a branching search (2)"):
     val seqValues: Iterable[Boolean] = Iterable(true, false)
     class SearchNode(prefix: Seq[Boolean]) extends Node[SearchNode, Iterable, Seq[Boolean]]:
       override def explore: NodeStatus =
@@ -134,7 +134,7 @@ class DupAndDedupSolversSpec extends FunSuite:
       Set(3, 4), Set(4, 1, 2), Set(4, 2, 1), Set(4, 3), Set(5, 2), Set(6, 1), Set(7)
     )
 
-  test("vanilla stacksafe solver enumerates solutions redundantly"):
+  test("dedup stacksafe solver enumerates solutions irredundantly"):
     StackSafeDedupNodeSolver.allSolutions(sumNode).toSet is Set(
       Set(1, 2, 4), Set(1, 6), Set(2, 5), Set(3, 4), Set(7)
     )

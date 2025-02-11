@@ -1,57 +1,60 @@
 package com.fdilke.backtrack
 
-import scala.collection.immutable.HashMap
+import cats.Monad
+import com.fdilke.backtrack.node.{MonadIterable, Node}
 
-object Backtrack:
-  trait DecisionNode[KEY, VALUE] extends Function[
-    Map[KEY, VALUE],
-    NextStep[KEY, VALUE]
-  ]
+object Backtrack extends BacktrackSolver:
+  def apply[
+    NODE,
+    F[_] : Monad,
+    SOLUTION
+  ](
+     startNode: NODE
+   )(
+   explore: NODE => F[Either[NODE, SOLUTION]]
+  ): F[SOLUTION] =
+    Monad[F].tailRecM[NODE, SOLUTION](startNode):
+      explore
 
-  def assuming[KEY, VALUE](
-    map: Map[KEY, VALUE],
-    key: KEY
-  )(
-    fn: (VALUE, Map[KEY, VALUE]) => NextStep[KEY, VALUE]
-  ): NextStep[KEY, VALUE] =
-    if (map.contains(key))
-      fn(map(key), map)
-    else
-      MapContinue(
-        key,
-        map2 => fn(map2(key), map2)
-      )
-  
-  sealed trait NextStep[KEY, VALUE]
-  case object MapComplete extends NextStep[?, ?]
-  case object MapInvalid extends NextStep[?, ?]
-  case class MapContinue[KEY, VALUE](
-    requiredKey: KEY,
-    node: DecisionNode[KEY, VALUE]
-  ) extends NextStep[KEY, VALUE]
+  val dedup: BacktrackSolver =
+    new BacktrackSolver:
+      def apply[
+        NODE,
+        F[_] : Monad,
+        SOLUTION
+      ](
+        startNode: NODE
+      )(
+       explore: NODE => F[Either[NODE, SOLUTION]]
+      ): F[SOLUTION] =
+        type CHOICE = Either[NODE, SOLUTION]
+        lazy val emptyChoice: F[CHOICE] =
+          if (Monad[F] == Monad[Iterable])
+            Iterable.empty[CHOICE].asInstanceOf[F[CHOICE]]
+          else
+            throw new IllegalArgumentException("unknown Monad[F]")
 
-  def solve[KEY, VALUE](
-     values: Iterable[VALUE],
-     initialNode: DecisionNode[KEY, VALUE]
-  ): Iterable[Map[KEY, VALUE]] =
-    def recurse(
-      partialMap: Map[KEY, VALUE],
-      step: NextStep[KEY, VALUE]
-    ): Iterator[Map[KEY, VALUE]] =
-      step match
-        case MapInvalid =>
-          Iterator.empty
-        case MapComplete =>
-          Iterator(partialMap)
-        case MapContinue(key, node) =>
-          for {
-            value <- values.iterator
-            newMap = partialMap + (key -> value)
-            solution <- recurse(newMap, node(newMap))
-          } yield
-            solution
+        var seenNodes: List[NODE] = Nil
+        def isSeen(node: NODE): Boolean =
+          if (seenNodes.contains(node))
+            true
+          else
+            seenNodes = node +: seenNodes
+            false
 
-    val initialMap: Map[KEY, VALUE] = new HashMap[KEY, VALUE]()
-    new Iterable[Map[KEY, VALUE]]:
-      override def iterator: Iterator[Map[KEY, VALUE]] =
-        recurse(initialMap, initialNode(initialMap))
+        Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
+          if (isSeen(node))
+            emptyChoice
+          else
+            explore(node)
+
+trait BacktrackSolver:
+  def apply[
+    NODE,
+    F[_] : Monad,
+    SOLUTION
+  ](
+     startNode: NODE
+   )(
+   explore: NODE => F[Either[NODE, SOLUTION]]
+  ): F[SOLUTION]

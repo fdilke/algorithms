@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.apps
 
-import com.fdilke.backtrack.Backtrack
-import com.fdilke.backtrack.Backtrack.{DecisionNode, MapComplete, MapContinue, MapInvalid, NextStep}
+import com.fdilke.backtrack.MapBacktrack
+import com.fdilke.backtrack.MapBacktrack.{DecisionNode, MapComplete, MapContinue, MapInvalid, NextStep}
 
 object NQueens extends App {
   val order = 8
@@ -32,11 +32,11 @@ object NQueens extends App {
 
   lazy val queensNode: DecisionNode[Int, (Int, Int)] =
     map =>
-      if (map.isEmpty) then
+      if map.isEmpty then
         MapContinue(0, queensNode)
       else if lastOneAttacks(map) then
         MapInvalid.asInstanceOf[NextStep[Int, (Int, Int)]]
-      else if (map.size == order) then
+      else if map.size == order then
         MapComplete.asInstanceOf[NextStep[Int, (Int, Int)]]
       else
         MapContinue(map.keySet.max + 1, queensNode)
@@ -57,7 +57,7 @@ object NQueens extends App {
     }
   }
 
-  Backtrack.solve[Int, (Int, Int)](
+  MapBacktrack.solve[Int, (Int, Int)](
     coordinates,
     queensNode
   ) foreach showMap
