@@ -3,6 +3,8 @@ package com.fdilke.backtrack
 import cats.Monad
 import com.fdilke.backtrack.node.{MonadIterable, Node}
 
+import scala.collection.mutable
+
 object Backtrack extends BacktrackSolver:
   def apply[
     NODE,
@@ -34,19 +36,28 @@ object Backtrack extends BacktrackSolver:
           else
             throw new IllegalArgumentException("unknown Monad[F]")
 
-        var seenNodes: List[NODE] = Nil
-        def isSeen(node: NODE): Boolean =
+        def isSeen(
+          node: NODE,
+          seenNodes: mutable.ListBuffer[NODE]
+        ): Boolean =
           if (seenNodes.contains(node))
             true
           else
-            seenNodes = node +: seenNodes
+            seenNodes += node
             false
+        
+        val seenNodesGenerator: F[() => mutable.ListBuffer[NODE]] =
+          Monad[F].pure:
+            () => mutable.ListBuffer.empty[NODE]
 
-        Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
-          if (isSeen(node))
-            emptyChoice
-          else
-            explore(node)
+        Monad[F].flatMap(seenNodesGenerator):
+          generatorF =>
+          val seenNodes = generatorF()
+          Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
+            if (isSeen(node, seenNodes))
+              emptyChoice
+            else
+              explore(node)
 
 trait BacktrackSolver:
   def apply[

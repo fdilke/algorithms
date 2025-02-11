@@ -77,7 +77,7 @@ abstract class GenericBacktrackSolverSpec(
       else
         seqValues.map: v =>
           Left(prefix :+ v)
-    .toSeq.isSet:   // TODO: <== muffling up a bug here
+    .isSet:
       Set(
         Seq(true, true, true),
         Seq(true, true, false),
