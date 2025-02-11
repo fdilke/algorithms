@@ -2,6 +2,8 @@ package com.fdilke.backtrack.node
 
 import cats.Monad
 
+import scala.collection.mutable
+
 object NodeSolvers:
   object NaiveNodeSolver extends NodeSolver:
     override def allSolutions[
@@ -55,6 +57,44 @@ object NodeSolvers:
           emptyChoice
         else
           node.explore
+
+/* for some reason, we can't do this; too slow: */
+//    override def allSolutions[
+//      NODE <: Node[NODE, F, SOLUTION],
+//      F[_],
+//      SOLUTION
+//    ](
+//      startNode: NODE
+//    )(
+//      implicit monadF: Monad[F]
+//    ): F[SOLUTION] =
+//      type CHOICE = Either[NODE, SOLUTION]
+//      lazy val emptyChoice: F[CHOICE] =
+//        if (monadF == Monad[Iterable])
+//          Iterable.empty[CHOICE].asInstanceOf[F[CHOICE]]
+//        else
+//          throw new IllegalArgumentException("unknown Monad[F]")
+//      def isSeen(
+//        node: NODE,
+//        seenNodes: mutable.ListBuffer[NODE]
+//      ): Boolean =
+//        if (seenNodes.contains(node))
+//          true
+//        else
+//          seenNodes += node
+//          false
+//
+//      monadF.flatMap(
+//        monadF.pure:
+//          () => mutable.ListBuffer.empty[NODE]
+//      ):
+//        generatorF =>
+//        val seenNodes = generatorF()
+//        Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
+//          if (isSeen(node, seenNodes))
+//            emptyChoice
+//          else
+//            node.explore
 
   /* A bold attempt, but I can't quite make the FreeT stuff work. Maybe need a simpler example to work from.
   object FancyFreeNodeSolver extends NodeSolver:

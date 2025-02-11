@@ -12,14 +12,16 @@ object RichFunSuite:
 
   extension[A] (a: Iterable[A])
     inline infix def isSet(b: Iterable[A]): Unit =
-      checkNoDuplicates(a)
-      checkNoDuplicates(b)
-      assertEquals(a.toSet, b.toSet)
+      assertEquals(
+        checkNoDuplicates(a),
+        checkNoDuplicates(b)
+      )
 
-  private def checkNoDuplicates[A](a: Iterable[A]): Unit =
+  private def checkNoDuplicates[A](a: Iterable[A]): Set[A] =
     val seq: Seq[A] = a.toSeq
     if (seq.size != seq.distinct.size)
       throw new IllegalArgumentException(s"duplicates found in collection: $seq")
+    seq.toSet
 
   extension(letters: Seq[Char])
     inline def be(text: String): Unit =
