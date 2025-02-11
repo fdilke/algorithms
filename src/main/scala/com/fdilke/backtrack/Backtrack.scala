@@ -22,12 +22,14 @@ object Backtrack extends BacktrackSolver:
     new BacktrackSolver:
       def apply[
         NODE,
-        F[_] : Monad,
+        F[_],
         SOLUTION
       ](
         startNode: NODE
       )(
        explore: NODE => F[Either[NODE, SOLUTION]]
+      )(
+        implicit monadF: Monad[F]
       ): F[SOLUTION] =
         type CHOICE = Either[NODE, SOLUTION]
         lazy val emptyChoice: F[CHOICE] =
@@ -45,12 +47,11 @@ object Backtrack extends BacktrackSolver:
           else
             seenNodes += node
             false
-        
-        val seenNodesGenerator: F[() => mutable.ListBuffer[NODE]] =
-          Monad[F].pure:
-            () => mutable.ListBuffer.empty[NODE]
 
-        Monad[F].flatMap(seenNodesGenerator):
+        monadF.flatMap(
+          monadF.pure:
+            () => mutable.ListBuffer.empty[NODE]
+        ):
           generatorF =>
           val seenNodes = generatorF()
           Monad[F].tailRecM[NODE, SOLUTION](startNode): node =>
