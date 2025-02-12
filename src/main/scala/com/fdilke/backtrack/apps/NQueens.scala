@@ -1,64 +1,66 @@
 package com.fdilke.backtrack.apps
 
-import com.fdilke.backtrack.MapBacktrack
-import com.fdilke.backtrack.MapBacktrack.{DecisionNode, MapComplete, MapContinue, MapInvalid, NextStep}
+import com.fdilke.backtrack.BacktrackIterable
 
-object NQueens extends App {
-  val order = 8
+object NQueens extends App:
+  val order = 6
 
+  type BOARD = Set[(Int, Int)]
   val columns: Set[Int] = (0 until order).toSet
-  val coordinates: Set[(Int, Int)] =
-    for {
+  val positions: Set[(Int, Int)] =
+    for
       x <- columns
       y <- columns
-    } yield
+    yield
       (x, y)
 
-  def lastOneAttacks(
-    map: Map[Int, (Int, Int)]
-  ): Boolean = {
-    val last = map.keySet.max
-    val (lastX, lastY) = map(last)
+  def attacks(
+    position: (Int, Int),
+    target: (Int, Int)
+  ): Boolean =
+    val (a, b) = position
+    val (x, y) = target
+    a == x || b == y ||
+      Math.abs(a - x) == Math.abs(b - y)
 
-    (0 until last).exists { i =>
-      val (x, y) = map(i)
+  def attacks(
+    board: BOARD,
+    position: (Int, Int)
+  ): Boolean =
+    board.exists: target =>
+      attacks(position, target)
 
-      (x == lastX) ||
-      (y == lastY) ||
-      (  (x - lastX) == (y - lastY) ) ||
-      (  (lastX - x) == (y - lastY) )
-    }
-  }
-
-  lazy val queensNode: DecisionNode[Int, (Int, Int)] =
-    map =>
-      if map.isEmpty then
-        MapContinue(0, queensNode)
-      else if lastOneAttacks(map) then
-        MapInvalid.asInstanceOf[NextStep[Int, (Int, Int)]]
-      else if map.size == order then
-        MapComplete.asInstanceOf[NextStep[Int, (Int, Int)]]
-      else
-        MapContinue(map.keySet.max + 1, queensNode)
-
-  def showMap(
-    map: Map[Int, (Int, Int)]
-  ): Unit = {
-    val queens: Set[(Int, Int)] = map.values.toSet
+  def showBoard(
+    board: BOARD
+  ): Unit =
     println("-----------------")
-    for { i <- columns } {
-      for { j <- columns } {
-        if (queens.contains( i -> j ))
+    for
+      i <- columns
+    do
+      for
+        j <- columns
+      do
+        if board.contains( i -> j ) then
           print("Q")
         else
           print("-")
-      }
       println()
-    }
-  }
 
-  MapBacktrack.solve[Int, (Int, Int)](
-    coordinates,
-    queensNode
-  ) foreach showMap
-}
+  val solutions: Iterable[BOARD] =
+    BacktrackIterable.dedup[BOARD, BOARD](
+      Set.empty : BOARD
+    ): board =>
+      if board.size == order then
+        Iterable(Right(board))
+      else
+        positions.filterNot: position =>
+          board.contains(position) ||
+          attacks(board, position)
+        .map: position =>
+          Left(board + position)
+
+//  if false then
+  solutions foreach showBoard
+//  else
+  println(s"${solutions.size} solutions")
+
