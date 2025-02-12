@@ -1,7 +1,7 @@
 package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.backtrack.node.Node
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
+import com.fdilke.backtrack.node.NodeSolvers.{StackSafeDedupNodeSolver, StackSafeDedupNodeSolverBuggy}
 import com.fdilke.backtrack.node.MonadIterable
 
 object ColorGraphByJoins extends ColoringAlgo:
@@ -12,7 +12,7 @@ object ColorGraphByJoins extends ColoringAlgo:
     val numVertices: Int = graph.numVertices
     graph.checkAntireflexive()
     graph.checkSymmetric()
-    StackSafeDedupNodeSolver.allSolutions[PartialColoring, Iterable, Seq[Int]]:
+    StackSafeDedupNodeSolverBuggy.allSolutions[PartialColoring, Iterable, Seq[Int]]:
       PartialColoring(
         0 until numVertices,
         graph.adjacencyTable
