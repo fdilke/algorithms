@@ -90,16 +90,16 @@ abstract class GenericBacktrackIterableSolverSpec(
       )
 
   test("is stack safe"):
+    def stackUse(maxRecursions: Int): Int =
+      solver[Int, Int](0): recursions =>
+        Iterable:
+          if recursions == maxRecursions then
+            Right(stackDepth())
+          else
+            Left(recursions + 1)
+      .head
     stackUse(10) is stackUse(5)
 
-  private def stackUse(maxRecursions: Int): Int =
-    solver[Int, Int](0): recursions =>
-      Iterable:
-        if recursions == maxRecursions then
-          Right(stackDepth())
-        else
-          Left(recursions + 1)
-    .head
 
 class DupAndDedupBacktrackIterableSpec extends FunSuite:
   // check dups and dedups for a deliberately redundant search for partitions of 7

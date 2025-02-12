@@ -10,18 +10,15 @@ import com.fdilke.utility.Handy.stackDepth
 import java.util.concurrent.atomic.AtomicReference
 
 class BacktrackSpec extends GenericBacktrackSolverSpec(
-  solver = Backtrack,
-  stackSafe = true
+  solver = Backtrack
 )
 
 class BacktrackDedupSpec extends GenericBacktrackSolverSpec(
-  solver = Backtrack.dedup,
-  stackSafe = true
+  solver = Backtrack.dedup
 )
 
 abstract class GenericBacktrackSolverSpec(
-  solver: BacktrackSolver,
-  stackSafe: Boolean = true
+  solver: BacktrackSolver
 ) extends FunSuite:
   test("successfully fails at the first hurdle"):
     class NonStarterNode
@@ -89,21 +86,17 @@ abstract class GenericBacktrackSolverSpec(
         Seq(false, false, false)
       )
 
-  if stackSafe then
-    test("is stack safe"):
-      stackUse(10) is stackUse(5)
-  else
-    test("is unfortunately not stack safe"):
-      (stackUse(10) > stackUse(5)) is true
+  test("is stack safe"):
+    def stackUse(maxRecursions: Int): Int =
+      solver[Int, Iterable, Int](0): recursions =>
+        Iterable:
+          if recursions == maxRecursions then
+            Right(stackDepth())
+          else
+            Left(recursions + 1)
+      .head
+    stackUse(10) is stackUse(5)
 
-  private def stackUse(maxRecursions: Int): Int =
-    solver[Int, Iterable, Int](0): recursions =>
-      Iterable:
-        if recursions == maxRecursions then
-          Right(stackDepth())
-        else
-          Left(recursions + 1)
-    .head
 
 class DupAndDedupBacktrackSolversSpec extends FunSuite:
   // check dups and dedups for a deliberately redundant search for partitions of 7
