@@ -3,8 +3,10 @@ package com.fdilke.backtrack.node.coloring
 import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import Graph.adjacencyTableFromPairs
-import com.fdilke.utility.SetsUtilities._
+import com.fdilke.backtrack.BacktrackIterable
+import com.fdilke.utility.SetsUtilities.*
 import com.fdilke.backtrack.node.MonadIterable
+
 import scala.annotation.{tailrec, targetName}
 import scala.util.Random
 
@@ -129,17 +131,14 @@ class Graph(
   def fullExtensionsMap(
     imageMap: Map[Int, Int]
   ): Iterable[Map[Int, Int]] =
-    class Extension(
-      extendedImageMap: Map[Int, Int]
-    ) extends Node[Extension, Iterable, Map[Int, Int]]:
-      override def explore: Iterable[Either[Extension, Map[Int, Int]]] =
-        if extendedImageMap.size == numVertices then
-          Iterable(solution(extendedImageMap))
-        else
-          singlePointExtensionsMap(extendedImageMap).map:
-            furtherExtension => node(Extension(furtherExtension))
-    StackSafeNodeSolver.allSolutions[Extension, Iterable, Map[Int, Int]]:
-      Extension(imageMap)
+    BacktrackIterable[Map[Int, Int], Map[Int, Int]](
+      imageMap
+    ): extension =>
+      if extension.size == numVertices then
+        Iterable(Right(extension))
+      else
+        singlePointExtensionsMap(extension).map:
+          Left(_)
 
   lazy val distanceMaps: Seq[Seq[Int]] =
     for
