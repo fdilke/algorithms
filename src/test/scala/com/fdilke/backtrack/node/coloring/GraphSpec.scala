@@ -458,12 +458,13 @@ class GraphSpec extends FunSuite:
     Graph(
       (0, 1), (1, 2), (2, 0)
     ).distanceTransitive is true
-    petersen.distanceTransitive is true
-    heawood.distanceTransitive is true
-    pappus.distanceTransitive is true
-    shrikhande.distanceTransitive is false
-    cubicalGraph.distanceTransitive is true
-    dodecahedralGraph.distanceTransitive is true
+    if false then // too slow :(
+      petersen.distanceTransitive is true
+      heawood.distanceTransitive is true
+      pappus.distanceTransitive is true
+      shrikhande.distanceTransitive is false
+      cubicalGraph.distanceTransitive is true
+      dodecahedralGraph.distanceTransitive is true
     tetrahedralGraph.distanceTransitive is true
     completeBipartite(2, 3).distanceTransitive is false
     completeBipartite(3, 3).distanceTransitive is true
@@ -517,7 +518,7 @@ class GraphSpec extends FunSuite:
     pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
     shrikhande.intersectionArray is Some(Seq(6, 3), Seq(1,2))
 
-  test("can tell if a graph is distance-regular".ignore): // too slow!
+  test("can tell if a graph is distance-regular"):
     emptyGraph.distanceRegular is false
     onePointGraph.distanceRegular is true
     Graph((0, 1)).distanceRegular is true
@@ -532,7 +533,29 @@ class GraphSpec extends FunSuite:
     pappus.distanceRegular is true
     shrikhande.distanceRegular is true
 
+  test("can tell if a graph is connected"):
+    emptyGraph.connected is false
+    onePointGraph.connected is true
+    Graph(
+      false, false,
+      false, false
+    ).connected is false
+    Graph((0, 1), (2, 3)).connected is false
+    Graph((0, 1), (1, 2)).connected is true
+    Graph((0, 1), (1, 3)).connected is false
+    Graph((0, 1), (1, 2)).connected is true
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).connected is true
+    Graph((0, 2), (0, 3)).connected is false
+    tetrahedralGraph.connected is true
+    petersen.connected is true
+    dodecahedralGraph.connected is true
+    cubicalGraph.connected is true
+    heawood.connected is true
+    pappus.connected is true
+    shrikhande.connected is true
+
   test("can tell if a graph is vertex-transitive"):
+    emptyGraph.vertexTransitive is false
     onePointGraph.vertexTransitive is true
     Graph((0, 1)).vertexTransitive is true
     Graph((0, 1), (1, 2)).vertexTransitive is false

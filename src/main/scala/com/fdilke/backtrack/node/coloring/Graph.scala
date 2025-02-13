@@ -210,10 +210,37 @@ class Graph(
   lazy val distanceRegular: Boolean =
     intersectionArray.isDefined
 
+  lazy val connected: Boolean =
+    if vertices.isEmpty then
+      false
+    else
+      @tailrec def recurse(
+        club: Seq[Int],
+        outside: Seq[Int]
+      ): Boolean =
+        outside match
+          case Nil => true
+          case others =>
+            others.find: v =>
+              club.exists: w =>
+                adjacencyTable(v)(w)
+            match
+              case None => false
+              case Some(v) =>
+                recurse(
+                  club = v +: club,
+                  outside = others.diff(Seq(v))
+                )
+      recurse(
+        club = Seq(0),
+        outside = 1 until numVertices
+      )
+
   lazy val vertexTransitive: Boolean =
+    connected &&
     vertices.drop(1).forall: v =>
       fullExtensions(Seq(v)).nonEmpty
-    
+
 object Graph:
   @targetName("applyWithEdges")
   def apply(
