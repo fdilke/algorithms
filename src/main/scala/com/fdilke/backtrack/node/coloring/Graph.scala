@@ -210,6 +210,10 @@ class Graph(
   lazy val distanceRegular: Boolean =
     intersectionArray.isDefined
 
+  lazy val vertexTransitive: Boolean =
+    vertices.drop(1).forall: v =>
+      fullExtensions(Seq(v)).nonEmpty
+    
 object Graph:
   @targetName("applyWithEdges")
   def apply(

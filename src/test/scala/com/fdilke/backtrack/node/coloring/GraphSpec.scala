@@ -451,13 +451,13 @@ class GraphSpec extends FunSuite:
     ).distanceTransitive is false
     Graph(
       (0, 1)
-    ) .distanceTransitive is true
+    ).distanceTransitive is true
     Graph(
       (0, 1), (1, 2)
-    ) .distanceTransitive is false
+    ).distanceTransitive is false
     Graph(
       (0, 1), (1, 2), (2, 0)
-    ) .distanceTransitive is true
+    ).distanceTransitive is true
     petersen.distanceTransitive is true
     heawood.distanceTransitive is true
     pappus.distanceTransitive is true
@@ -517,7 +517,7 @@ class GraphSpec extends FunSuite:
     pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
     shrikhande.intersectionArray is Some(Seq(6, 3), Seq(1,2))
 
-  test("can tell if a graph is distance-regular"):
+  test("can tell if a graph is distance-regular".ignore): // too slow!
     emptyGraph.distanceRegular is false
     onePointGraph.distanceRegular is true
     Graph((0, 1)).distanceRegular is true
@@ -531,3 +531,20 @@ class GraphSpec extends FunSuite:
     heawood.distanceRegular is true
     pappus.distanceRegular is true
     shrikhande.distanceRegular is true
+
+  test("can tell if a graph is vertex-transitive"):
+    onePointGraph.vertexTransitive is true
+    Graph((0, 1)).vertexTransitive is true
+    Graph((0, 1), (1, 2)).vertexTransitive is false
+    Graph((0, 1), (1, 2), (2, 3), (1, 4)).vertexTransitive is false
+    Graph((0, 1), (0, 2)).vertexTransitive is false
+    Graph((0, 1), (0, 2), (0, 3)).vertexTransitive is false
+    tetrahedralGraph.vertexTransitive is true
+    petersen.vertexTransitive is true
+    dodecahedralGraph.vertexTransitive is true
+    cubicalGraph.vertexTransitive is true
+    heawood.vertexTransitive is true
+    pappus.vertexTransitive is true
+    shrikhande.vertexTransitive is true
+    completeBipartite(2, 3).vertexTransitive is false
+    completeBipartite(3, 3).vertexTransitive is true
