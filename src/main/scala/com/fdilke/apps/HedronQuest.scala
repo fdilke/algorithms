@@ -234,3 +234,7 @@ object PlushiePlayground extends App:
   println("vertexGraph is distance-regular:" + vertexGraph.distanceRegular)
 //  if false then
   println("edgeGraph is distance-regular:" + edgeGraph.distanceRegular)
+
+  println("faceGraph is Cayley:" + faceGraph.cayley)
+  println("vertexGraph is Cayley:" + vertexGraph.cayley)
+  println("edgeGraph is Cayley:" + edgeGraph.cayley)

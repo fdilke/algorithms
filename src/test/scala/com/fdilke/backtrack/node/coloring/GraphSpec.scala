@@ -8,6 +8,8 @@ import com.fdilke.utility.RichFunSuite.*
 import scala.util.Random
 
 class GraphSpec extends FunSuite:
+  private val runSlowTests: Boolean = false
+
   test("can construct an adjacency table from a list of edges"):
     Graph((0, 1), (1,2)).adjacencyTable is Seq(
       Seq(false, true, false),
@@ -459,7 +461,7 @@ class GraphSpec extends FunSuite:
     Graph(
       (0, 1), (1, 2), (2, 0)
     ).distanceTransitive is true
-    if false then // too slow :(
+    if runSlowTests then
       petersen.distanceTransitive is true
       heawood.distanceTransitive is true
       pappus.distanceTransitive is true
@@ -598,4 +600,20 @@ class GraphSpec extends FunSuite:
     checkGroup(shrikhande, 192)
     checkGroup(completeBipartite(2, 3), 12)
     checkGroup(completeBipartite(3, 3), 72)
+
+  test("tell if a graph is Cayley"):
+    emptyGraph.cayley is false
+    onePointGraph.cayley is true
+    Graph((0, 1)).cayley is true
+    Graph((0, 1), (1, 2)).cayley is false
+    tetrahedralGraph.cayley is true
+    petersen.cayley is false
+    if runSlowTests then
+      dodecahedralGraph.cayley is false
+      cubicalGraph.cayley is true
+      heawood.cayley is true
+      pappus.cayley is true
+      shrikhande.cayley is true
+    completeBipartite(2, 3).cayley is false
+    completeBipartite(3, 3).cayley is true
 

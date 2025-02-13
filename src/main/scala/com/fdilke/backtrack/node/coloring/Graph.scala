@@ -5,7 +5,7 @@ import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import Graph.adjacencyTableFromPairs
 import com.fdilke.algebra.permutation.{Group, Permutation}
 import com.fdilke.backtrack.BacktrackIterable
-import com.fdilke.utility.SetsUtilities.*
+import com.fdilke.utility.SetsUtilities._
 import com.fdilke.backtrack.node.MonadIterable
 
 import scala.annotation.{tailrec, targetName}
@@ -241,7 +241,7 @@ class Graph(
     connected &&
       vertices.drop(1).forall: v =>
         fullExtensions(Seq(v)).nonEmpty
-      
+
   lazy val automorphisms: Group[Permutation] =
     Permutation.group:
       fullExtensions:
@@ -249,6 +249,10 @@ class Graph(
       .map: images =>
         Permutation(images*)
       .toSet
+
+  lazy val cayley: Boolean =
+    vertexTransitive &&
+      automorphisms.stabilizer(0).hasComplement.isDefined
 
 object Graph:
   @targetName("applyWithEdges")

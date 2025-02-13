@@ -173,11 +173,12 @@ trait Group[T]:
       Seq.empty
     )
 
-extension(group: Group[Permutation])
-  def stabilizer(
-    points: Int*
-  ): group.Subgroup =
-    group.Subgroup:
-      group.elements.filter: p =>
-        points.forall: x =>
-          p(x) == x
+object Group:
+  extension(group: Group[Permutation])
+    def stabilizer(
+      points: Int*
+    ): group.Subgroup =
+      group.Subgroup:
+        group.elements.filter: p =>
+          points.forall: x =>
+            p(x) == x
