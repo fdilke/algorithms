@@ -3,6 +3,7 @@ package com.fdilke.backtrack.node.coloring
 import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import Graph.adjacencyTableFromPairs
+import com.fdilke.algebra.permutation.{Group, Permutation}
 import com.fdilke.backtrack.BacktrackIterable
 import com.fdilke.utility.SetsUtilities.*
 import com.fdilke.backtrack.node.MonadIterable
@@ -238,8 +239,16 @@ class Graph(
 
   lazy val vertexTransitive: Boolean =
     connected &&
-    vertices.drop(1).forall: v =>
-      fullExtensions(Seq(v)).nonEmpty
+      vertices.drop(1).forall: v =>
+        fullExtensions(Seq(v)).nonEmpty
+      
+  lazy val automorphisms: Group[Permutation] =
+    Permutation.group:
+      fullExtensions:
+        Seq.empty
+      .map: images =>
+        Permutation(images*)
+      .toSet
 
 object Graph:
   @targetName("applyWithEdges")

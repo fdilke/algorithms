@@ -57,26 +57,37 @@ object Permutation:
       p => Permutation(p.toSeq *)
     .toSet
 
+  def group(
+    permutations: Set[Permutation]
+  ): Group[Permutation] =
+    if permutations.isEmpty then
+      throw new IllegalArgumentException("empty permutation group")
+    else
+      val degree = permutations.head.degree
+      new Group[Permutation]:
+        override val unit: Permutation =
+          Permutation.identity(degree)
+  
+        override val elements: Set[Permutation] =
+          permutations
+  
+        override def multiply(
+          p1: Permutation,
+          p2: Permutation
+        ): Permutation =
+          p1(p2)
+  
+        override def invert(
+          element: Permutation
+        ): Permutation =
+          element.inverse
+    
   def symmetricGroup(degree: Int): Group[Permutation] =
-    new Group[Permutation]:
-      override val unit: Permutation =
-        Permutation.identity(degree)
-
-      override val elements: Set[Permutation] =
-        enumerate(degree)
-
-      override def multiply(
-        p1: Permutation,
-        p2: Permutation
-      ): Permutation =
-        p1(p2)
-
-      override def invert(element: Permutation): Permutation =
-        element.inverse
+    group:
+      enumerate:
+        degree
 
   def alternatingGroup(degree: Int): Group[Permutation] =
-    val bigGroup: Group[Permutation] =
-      Permutation.symmetricGroup(degree)
-    bigGroup.Subgroup:
-      bigGroup.elements.filter:
+    group:
+      Permutation.symmetricGroup(degree).elements.filter:
         _.parity == 1

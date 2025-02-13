@@ -1,8 +1,9 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.backtrack.node.coloring.Graph._
+import com.fdilke.algebra.permutation.{Group, GroupVerifier, Permutation}
+import com.fdilke.backtrack.node.coloring.Graph.*
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite._
+import com.fdilke.utility.RichFunSuite.*
 
 import scala.util.Random
 
@@ -571,3 +572,30 @@ class GraphSpec extends FunSuite:
     shrikhande.vertexTransitive is true
     completeBipartite(2, 3).vertexTransitive is false
     completeBipartite(3, 3).vertexTransitive is true
+
+  private def checkGroup(
+    graph : Graph,
+    expectedAutos: Int
+  ): Unit =
+    val group: Group[Permutation] =
+      graph.automorphisms
+    // GroupVerifier.checkGroupOf(group)
+    group.order is expectedAutos
+
+  test("compute the automorphism group of a graph"):
+    checkGroup(emptyGraph, 1)
+    checkGroup(onePointGraph, 1)
+    checkGroup(Graph((0, 1)), 2)
+    checkGroup(Graph((0, 1), (1, 2)), 2)
+    checkGroup(Graph((0, 1), (1, 2), (2, 3), (1, 4)), 2)
+    checkGroup(Graph((0, 1), (1, 2), (2, 4), (1, 3), (3, 5), (5, 6)), 1)
+    checkGroup(tetrahedralGraph, 24)
+    checkGroup(petersen, 120)
+    checkGroup(dodecahedralGraph, 120)
+    checkGroup(cubicalGraph, 48)
+    checkGroup(heawood, 336)
+    checkGroup(pappus, 216)
+    checkGroup(shrikhande, 192)
+    checkGroup(completeBipartite(2, 3), 12)
+    checkGroup(completeBipartite(3, 3), 72)
+
