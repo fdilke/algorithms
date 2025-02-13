@@ -130,7 +130,7 @@ trait Group[T]:
       elements.forall: y =>
         commute(x, y)
 
-  def commute(x: T, y: T): Boolean =
+  private def commute(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
 
   def elementOrders: Map[Int, Int] =

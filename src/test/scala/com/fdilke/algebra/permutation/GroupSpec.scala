@@ -144,7 +144,7 @@ class GroupSpec extends FunSuite:
       -1, 2, 2, 2, 2, 2, 2, -2, -3, 4, 4, 4, -6, -6, -6, -12
     )
 
-  test("can compute stabilizers in permutation groups"):
+  test("can compute stabilizers in a permutation group"):
     val group: Group[Permutation] =
       Permutation.symmetricGroup(4)
     group.stabilizer() is group.wholeGroup
