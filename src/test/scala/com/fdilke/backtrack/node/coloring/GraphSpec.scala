@@ -468,6 +468,7 @@ class GraphSpec extends FunSuite:
       shrikhande.distanceTransitive is false
       cubicalGraph.distanceTransitive is true
       dodecahedralGraph.distanceTransitive is true
+      icosahedralGraph.distanceTransitive is true
     tetrahedralGraph.distanceTransitive is true
     completeBipartite(2, 3).distanceTransitive is false
     completeBipartite(3, 3).distanceTransitive is true
@@ -486,6 +487,7 @@ class GraphSpec extends FunSuite:
     cubicalGraph.diameter is 3
     tetrahedralGraph.diameter is 1
     dodecahedralGraph.diameter is 5
+    icosahedralGraph.diameter is 3
     completeBipartite(2, 3).diameter is 2
     completeBipartite(3, 3).diameter is 2
 
@@ -501,6 +503,7 @@ class GraphSpec extends FunSuite:
     tetrahedralGraph.localIntersectionArray(0) is Some(Seq(3), Seq(1))
     petersen.localIntersectionArray(1) is Some(Seq(3, 2), Seq(1, 1))
     dodecahedralGraph.localIntersectionArray(2) is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
+    icosahedralGraph.localIntersectionArray(2) is Some(Seq(5,2,1), Seq(1,2,5))
     cubicalGraph.localIntersectionArray(3) is Some(Seq(3,2,1), Seq(1,2,3))
     heawood.localIntersectionArray(4) is Some(Seq(3,2,2), Seq(1,1,3))
     pappus.localIntersectionArray(5) is Some(Seq(3,2,2,1), Seq(1,1,2,3))
@@ -516,6 +519,7 @@ class GraphSpec extends FunSuite:
     tetrahedralGraph.intersectionArray is Some(Seq(3), Seq(1))
     petersen.intersectionArray is Some(Seq(3, 2), Seq(1, 1))
     dodecahedralGraph.intersectionArray is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
+    icosahedralGraph.intersectionArray is Some(Seq(5, 2, 1), Seq(1, 2, 5))
     cubicalGraph.intersectionArray is Some(Seq(3,2,1), Seq(1,2,3))
     heawood.intersectionArray is Some(Seq(3,2,2), Seq(1,1,3))
     pappus.intersectionArray is Some(Seq(3,2,2,1), Seq(1,1,2,3))
@@ -531,6 +535,7 @@ class GraphSpec extends FunSuite:
     tetrahedralGraph.distanceRegular is true
     petersen.distanceRegular is true
     dodecahedralGraph.distanceRegular is true
+    icosahedralGraph.distanceRegular is true
     cubicalGraph.distanceRegular is true
     heawood.distanceRegular is true
     pappus.distanceRegular is true
@@ -552,6 +557,7 @@ class GraphSpec extends FunSuite:
     tetrahedralGraph.connected is true
     petersen.connected is true
     dodecahedralGraph.connected is true
+    icosahedralGraph.connected is true
     cubicalGraph.connected is true
     heawood.connected is true
     pappus.connected is true
@@ -568,6 +574,7 @@ class GraphSpec extends FunSuite:
     tetrahedralGraph.vertexTransitive is true
     petersen.vertexTransitive is true
     dodecahedralGraph.vertexTransitive is true
+    icosahedralGraph.vertexTransitive is true
     cubicalGraph.vertexTransitive is true
     heawood.vertexTransitive is true
     pappus.vertexTransitive is true
@@ -594,6 +601,7 @@ class GraphSpec extends FunSuite:
     checkGroup(tetrahedralGraph, 24)
     checkGroup(petersen, 120)
     checkGroup(dodecahedralGraph, 120)
+    checkGroup(icosahedralGraph, 120)
     checkGroup(cubicalGraph, 48)
     checkGroup(heawood, 336)
     checkGroup(pappus, 216)
@@ -610,6 +618,7 @@ class GraphSpec extends FunSuite:
     petersen.cayley is false
     if runSlowTests then
       dodecahedralGraph.cayley is false
+      icosahedralGraph.cayley is true
       cubicalGraph.cayley is true
       heawood.cayley is true
       pappus.cayley is true

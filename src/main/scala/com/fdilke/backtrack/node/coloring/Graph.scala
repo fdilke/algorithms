@@ -478,6 +478,16 @@ object Graph:
   lazy val dodecahedralGraph: Graph =
     hamiltonianCubic(20, 4, -4, -7, 10, -4, 7, -7, 4, 10, 7, 4, -4, -7, 10, -4, 7, -7, 4, -10, 7)
 
+  lazy val icosahedralGraph: Graph =
+    Graph(
+      (0, 1), (0, 2), (0, 3), (0, 4), (0, 5),
+      (1, 2), (2, 3), (3, 4), (4, 5), (1, 5),
+      (2, 9), (9, 11), (11, 10), (10, 4),
+      (3, 6), (3, 7), (2, 6), (6, 7), (7, 4),
+      (6, 8), (7, 8), (6, 9), (8, 9), (7, 10), (8, 10), (8, 11),
+      (1, 9), (1, 11), (10, 5), (11, 5)
+    )
+
   lazy val tetrahedralGraph: Graph =
     completeGraph(4)
 
