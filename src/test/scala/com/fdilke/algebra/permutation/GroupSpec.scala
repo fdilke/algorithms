@@ -143,3 +143,12 @@ class GroupSpec extends FunSuite:
     subgroupOrdersX(DihedralGroup(12)) is Seq(
       -1, 2, 2, 2, 2, 2, 2, -2, -3, 4, 4, 4, -6, -6, -6, -12
     )
+
+  test("can compute stabilizers in permutation groups"):
+    val group: Group[Permutation] =
+      Permutation.symmetricGroup(4)
+    group.stabilizer() is group.wholeGroup
+    group.stabilizer(0).order is 6
+    group.stabilizer(0, 1).order is 2
+    group.stabilizer(0, 1, 2) is group.trivialSubgroup
+    group.stabilizer(0, 1, 2, 3) is group.trivialSubgroup
