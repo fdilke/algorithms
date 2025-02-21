@@ -220,3 +220,16 @@ object SetsUtilities:
       bitCount(n/2)
     else
       1 + bitCount(n/2)
+
+  def bits(
+    n: Int
+  ): Seq[Int] =
+    if (n == 0)
+      Seq.empty
+    else
+      val recursed: Seq[Int] =
+        bits(n/2).map { _ + 1 }
+      if (n % 2 == 0)
+        recursed
+      else
+        0 +: recursed

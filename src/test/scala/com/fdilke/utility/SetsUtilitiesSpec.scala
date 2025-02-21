@@ -212,10 +212,18 @@ class SetsUtilitiesSpec extends FunSuite:
       4, 5, 7
     )
 
-  test("bitcount"):
+  test("calculate bit count"):
     bitCount(0) is 0
     bitCount(1) is 1
     bitCount(1 + 4) is 2
     bitCount(8 + 16) is 2
     bitCount(2 + 8 + 16) is 3
     bitCount(2 + 8 + 16 + 32) is 4
+
+  test("enumerate the bits"):
+    bits(0) is Seq.empty[Int]
+    bits(1) is Seq(0)
+    bits(1 + 4) is Seq(0, 2)
+    bits(8 + 16) is Seq(3, 4)
+    bits(2 + 8 + 16) is Seq(1, 3, 4)
+    bits(2 + 8 + 16 + 32) is Seq(1, 3, 4, 5)
