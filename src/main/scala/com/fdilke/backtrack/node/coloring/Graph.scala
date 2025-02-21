@@ -491,6 +491,13 @@ object Graph:
   lazy val tetrahedralGraph: Graph =
     completeGraph(4)
 
+  lazy val octahedralGraph: Graph =
+    Graph(
+      (0, 1), (0, 2), (0, 3), (0, 4),
+      (1, 2), (2, 3), (3, 4), (4, 1),
+      (5, 1), (5, 2), (5, 3), (5, 4)
+    )
+
   lazy val shrikhande: Graph =
     val size = 4
     def vertexAt(x: Int, y: Int): Int =

@@ -1,9 +1,9 @@
 package com.fdilke.backtrack.node.coloring
 
 import com.fdilke.algebra.permutation.{Group, GroupVerifier, Permutation}
-import com.fdilke.backtrack.node.coloring.Graph.*
+import com.fdilke.backtrack.node.coloring.Graph._
 import munit.FunSuite
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 
 import scala.util.Random
 
@@ -470,6 +470,7 @@ class GraphSpec extends FunSuite:
       dodecahedralGraph.distanceTransitive is true
       icosahedralGraph.distanceTransitive is true
     tetrahedralGraph.distanceTransitive is true
+    octahedralGraph.distanceTransitive is true
     completeBipartite(2, 3).distanceTransitive is false
     completeBipartite(3, 3).distanceTransitive is true
 
@@ -486,6 +487,7 @@ class GraphSpec extends FunSuite:
     shrikhande.diameter is 2
     cubicalGraph.diameter is 3
     tetrahedralGraph.diameter is 1
+    octahedralGraph.diameter is 2
     dodecahedralGraph.diameter is 5
     icosahedralGraph.diameter is 3
     completeBipartite(2, 3).diameter is 2
@@ -501,6 +503,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1), (0, 2), (0, 3)).localIntersectionArray(0) is Some(Seq(3), Seq(1))
     Graph((0, 1), (0, 2), (0, 3)).localIntersectionArray(2) is Some(Seq(1, 2), Seq(1, 1))
     tetrahedralGraph.localIntersectionArray(0) is Some(Seq(3), Seq(1))
+    octahedralGraph.localIntersectionArray(0) is Some(Seq(4, 1), Seq(1, 4))
     petersen.localIntersectionArray(1) is Some(Seq(3, 2), Seq(1, 1))
     dodecahedralGraph.localIntersectionArray(2) is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
     icosahedralGraph.localIntersectionArray(2) is Some(Seq(5,2,1), Seq(1,2,5))
@@ -517,6 +520,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1), (1, 2), (2, 3), (1, 4)).intersectionArray is None
     Graph((0, 1), (0, 2), (0, 3)).intersectionArray is None
     tetrahedralGraph.intersectionArray is Some(Seq(3), Seq(1))
+    octahedralGraph.intersectionArray is Some(Seq(4, 1), Seq(1, 4))
     petersen.intersectionArray is Some(Seq(3, 2), Seq(1, 1))
     dodecahedralGraph.intersectionArray is Some(Seq(3,2,1,1,1), Seq(1,1,1,2,3))
     icosahedralGraph.intersectionArray is Some(Seq(5, 2, 1), Seq(1, 2, 5))
@@ -533,6 +537,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1), (1, 2), (2, 3), (1, 4)).distanceRegular is false
     Graph((0, 1), (0, 2), (0, 3)).distanceRegular is false
     tetrahedralGraph.distanceRegular is true
+    octahedralGraph.distanceRegular is true
     petersen.distanceRegular is true
     dodecahedralGraph.distanceRegular is true
     icosahedralGraph.distanceRegular is true
@@ -555,6 +560,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1), (1, 2), (2, 3), (1, 4)).connected is true
     Graph((0, 2), (0, 3)).connected is false
     tetrahedralGraph.connected is true
+    octahedralGraph.connected is true
     petersen.connected is true
     dodecahedralGraph.connected is true
     icosahedralGraph.connected is true
@@ -572,6 +578,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1), (0, 2)).vertexTransitive is false
     Graph((0, 1), (0, 2), (0, 3)).vertexTransitive is false
     tetrahedralGraph.vertexTransitive is true
+    octahedralGraph.vertexTransitive is true
     petersen.vertexTransitive is true
     dodecahedralGraph.vertexTransitive is true
     icosahedralGraph.vertexTransitive is true
@@ -599,6 +606,7 @@ class GraphSpec extends FunSuite:
     checkGroup(Graph((0, 1), (1, 2), (2, 3), (1, 4)), 2)
     checkGroup(Graph((0, 1), (1, 2), (2, 4), (1, 3), (3, 5), (5, 6)), 1)
     checkGroup(tetrahedralGraph, 24)
+    checkGroup(octahedralGraph, 48)
     checkGroup(petersen, 120)
     checkGroup(dodecahedralGraph, 120)
     checkGroup(icosahedralGraph, 120)
@@ -615,6 +623,7 @@ class GraphSpec extends FunSuite:
     Graph((0, 1)).cayley is true
     Graph((0, 1), (1, 2)).cayley is false
     tetrahedralGraph.cayley is true
+    octahedralGraph.cayley is true
     petersen.cayley is false
     if runSlowTests then
       dodecahedralGraph.cayley is false
