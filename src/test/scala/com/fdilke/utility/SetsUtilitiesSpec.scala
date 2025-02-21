@@ -204,6 +204,9 @@ class SetsUtilitiesSpec extends FunSuite:
     )
 
   test("bulk XOR"):
+    bulkXor(
+      Set.empty[Set[Boolean]]
+    ) is Set.empty
     bulkXor(Set(
       Set(1,2,3),
       Set(1, 2,4,5),
@@ -211,6 +214,13 @@ class SetsUtilitiesSpec extends FunSuite:
     )) is Set(
       4, 5, 7
     )
+
+  test("xor'ing numbers"):
+    xorNumbers(Seq.empty) is 0
+    xorNumbers(Seq(3)) is 3
+    xorNumbers(Seq(5, 5)) is 0
+    xorNumbers(Seq(5, 7)) is 2
+    xorNumbers(Seq(1, 2, 3)) is 0
 
   test("calculate bit count"):
     bitCount(0) is 0
@@ -239,4 +249,3 @@ class SetsUtilitiesSpec extends FunSuite:
       log2(-1)
     intercept[IllegalArgumentException]:
       log2(3)
-    

@@ -208,8 +208,20 @@ object SetsUtilities:
   def bulkXor[A](
     sets: Set[Set[A]]
   ): Set[A] =
-    sets.reduce[Set[A]]:
-      binaryXor[A]
+    if sets.isEmpty then
+      Set.empty[A]
+    else
+      sets.reduce[Set[A]]:
+        binaryXor[A]
+
+  def xorNumbers(
+    numbers: Seq[Int]
+  ): Int =
+    if numbers.isEmpty then
+      0
+    else
+      numbers.reduce:
+        _ ^ _
 
   def bitCount(
     n: Int
