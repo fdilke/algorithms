@@ -227,3 +227,16 @@ class SetsUtilitiesSpec extends FunSuite:
     bits(8 + 16) is Seq(3, 4)
     bits(2 + 8 + 16) is Seq(1, 3, 4)
     bits(2 + 8 + 16 + 32) is Seq(1, 3, 4, 5)
+
+  test("log2"):
+    log2(1) is 0
+    log2(2) is 1
+    log2(32) is 5
+    log2(128) is 7
+    intercept[IllegalArgumentException]:
+      log2(0)
+    intercept[IllegalArgumentException]:
+      log2(-1)
+    intercept[IllegalArgumentException]:
+      log2(3)
+    

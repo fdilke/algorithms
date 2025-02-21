@@ -233,3 +233,13 @@ object SetsUtilities:
         recursed
       else
         0 +: recursed
+
+  def log2(
+    power2: Int
+  ): Int =
+    if (power2 == 1)
+      0
+    else if (power2 <= 0 || (power2 % 2 == 1))
+      throw new IllegalArgumentException("not a power of 2")
+    else
+      1 + log2(power2/2)
