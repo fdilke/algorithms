@@ -211,3 +211,11 @@ class SetsUtilitiesSpec extends FunSuite:
     )) is Set(
       4, 5, 7
     )
+
+  test("bitcount"):
+    bitCount(0) is 0
+    bitCount(1) is 1
+    bitCount(1 + 4) is 2
+    bitCount(8 + 16) is 2
+    bitCount(2 + 8 + 16) is 3
+    bitCount(2 + 8 + 16 + 32) is 4

@@ -210,3 +210,13 @@ object SetsUtilities:
   ): Set[A] =
     sets.reduce[Set[A]]:
       binaryXor[A]
+
+  def bitCount(
+    n: Int
+  ): Int =
+    if (n == 0)
+      0
+    else if (n % 2 == 0)
+      bitCount(n/2)
+    else
+      1 + bitCount(n/2)
