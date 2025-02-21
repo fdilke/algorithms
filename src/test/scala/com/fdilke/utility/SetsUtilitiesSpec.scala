@@ -1,11 +1,12 @@
 package com.fdilke.utility
 
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 import com.fdilke.utility.SetsUtilities._
 import munit.FunSuite
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+//noinspection ScalaUnusedExpression
 class SetsUtilitiesSpec extends FunSuite:
   test("enumerates all maps between two sets"):
     allMaps(Set(1, 2), Set("a", "b", "c")).map { f =>
@@ -193,3 +194,20 @@ class SetsUtilitiesSpec extends FunSuite:
     val tripwire: AtomicBoolean = AtomicBoolean(false)
     allOrNone[Int](() => Some(2), () => None, () => { tripwire.set(true) ; Some(2) }) is None
     tripwire.get is false
+
+  test("binary XOR"):
+    binaryXor(
+      Set(1,2,4,7),
+      Set(1,3,4,5,7)
+    ) is Set(
+      2,3,5
+    )
+
+  test("bulk XOR"):
+    bulkXor(Set(
+      Set(1,2,3),
+      Set(1, 2,4,5),
+      Set(3, 7)
+    )) is Set(
+      4, 5, 7
+    )

@@ -1,6 +1,5 @@
 package com.fdilke.utility
 
-import java.util.concurrent.atomic.AtomicBoolean
 import scala.annotation.targetName
 import scala.language.postfixOps
 import scala.reflect.ClassTag
@@ -31,7 +30,7 @@ object SetsUtilities:
     Map(
       a.indices map { i =>
         i -> a(i)
-      } :_*
+      }*
     )
 
   def sequencesOfLength[H](
@@ -196,3 +195,18 @@ object SetsUtilities:
     computations: () => Option[A] *
   ): Option[Seq[A]] =
     allOrNone(computations)
+
+  def power(exponent: Int, n: Int): Int = 
+    Seq.fill[Int](n)(exponent).product
+
+  def binaryXor[A](
+    s1: Set[A],
+    s2: Set[A]
+  ): Set[A] =
+    (s1 union s2) diff (s1 intersect s2)
+
+  def bulkXor[A](
+    sets: Set[Set[A]]
+  ): Set[A] =
+    sets.reduce[Set[A]]:
+      binaryXor[A]
