@@ -59,11 +59,19 @@ object HedronQuest extends App:
   println("f = " + plushie.f)
   println("v = " + plushie.v)
 
-object PlushiePlayground extends App:
-  val group: Group[Permutation] = Permutation.symmetricGroup(5)
+object PretzelPlushie extends PlushiePlayground(
+  f = Permutation(0, 2, 3, 4, 1),
+  v = Permutation(2, 4, 1, 0, 3)
+)
+
+class PlushiePlayground(
+  f: Permutation,
+  v: Permutation
+) extends App:
+  val group: Group[Permutation] = Permutation.symmetricGroup(
+    Math.max(f.degree, v.degree)
+  )
   given Group[Permutation] = group
-  val f = Permutation(0, 2, 3, 4, 1)
-  val v = Permutation(2, 4, 1, 0, 3)
   val e = f * v
   assert(e.order == 2)
   val plushieGroup: group.Subgroup =
@@ -92,6 +100,10 @@ object PlushiePlayground extends App:
   println(s"${vertexes.size} vertexes")
   println(s"${faces.size} faces")
   println(s"${edges.size} edges")
+  val chi: Int = vertexes.size - edges.size + faces.size
+  println(s"χ = $chi")
+  val genus: Int = 1 - chi/2
+  println(s"genus = $genus")
   val corners: Seq[Corner] =
     for
       face <- faces
@@ -116,26 +128,28 @@ object PlushiePlayground extends App:
   else
     println("Not torsorial :(")
   def checkIncidences(
-    seq1: Seq[Coset],
-    seq2: Seq[Coset],
-    theCount: Int
-  ): Boolean =
-    seq1.forall: s1 =>
-      seq2.count: s2 =>
-        incident(s1, s2)
-      == theCount
-  if checkIncidences(faces, vertexes, 5) then
-    println("Every face is incident to 5 vertexes")
-  if checkIncidences(faces, edges, 5) then
-    println("Every face is incident to 5 edges")
-  if checkIncidences(vertexes, faces, 4) then
-    println("Every vertex is incident to 4 faces")
-  if checkIncidences(vertexes, edges, 4) then
-    println("Every vertex is incident to 4 edges")
-  if checkIncidences(edges, vertexes, 2) then
-    println("Every edge is incident to 2 vertexes")
-  if checkIncidences(vertexes, edges, 4) then
-    println("Every vertex is incident to 4 edges")
+    subg1: group.Subgroup,
+    subg2: group.Subgroup,
+  ): String =
+    val theCount: Int =
+      subg1.order /
+        (subg1.elements.intersect(subg2.elements).size)
+    if
+      rightCosetsOf(subg1).forall: s1 =>
+        rightCosetsOf(subg2).count: s2 =>
+          incident(s1, s2)
+        == theCount
+    then
+      theCount.toString
+    else
+      "?"
+
+  println(s"Every face is incident to ${checkIncidences(vGroup, fGroup)} vertexes")
+  println(s"Every face is incident to ${checkIncidences(vGroup, eGroup)} edges")
+  println(s"Every vertex is incident to ${checkIncidences(fGroup, vGroup)} faces")
+  println(s"Every vertex is incident to ${checkIncidences(fGroup, eGroup)} edges")
+  println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} vertexes")
+  println(s"Every vertex is incident to ${checkIncidences(fGroup, eGroup)} edges")
 
   def adjacentFaces(f1: Coset, f2: Coset): Boolean =
     edges.exists: edge =>
