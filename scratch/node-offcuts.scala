@@ -34,3 +34,22 @@ object NoddySearch extends App:
     initialNode.solve
     println("solved one: explorations.get.size() = " + explorations.get.size) // #??
     println("" + explorations.get().size + " explorations")
+
+  private def checkMinColoring(
+     numColors: Int,
+     coloring: Seq[Int],
+     graph: Graph,
+   ): Unit =
+      for
+        i <- coloring.indices
+        j <- 0 until i
+      do
+        if graph.adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
+          throw new IllegalArgumentException("adjacent vertices have same color")
+      if coloring.distinct.size > numColors then
+        throw new IllegalArgumentException("too many colors")
+      if PartialColoring.fromColorsAndGraph(
+        coloring,
+        graph
+      ).amalgamations.nonEmpty then
+        throw new IllegalArgumentException("not a minimal coloring: an amalgamation is possible")

@@ -35,7 +35,7 @@ trait Group[T]:
           subgroup.elements.map: y =>
             group.conjugate(y, x)
 
-    lazy val hasComplement: Option[group.Subgroup] =
+    lazy val findComplement: Option[group.Subgroup] =
       val targetOrder: Int =
         group.order / subgroup.order
       val outsideConjugates: Set[T] =

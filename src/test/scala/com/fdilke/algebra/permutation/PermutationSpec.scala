@@ -65,3 +65,8 @@ class PermutationSpec extends FunSuite:
     Permutation(1,2,0).parity is 1
     Permutation(2,0,1).parity is 1
     Permutation(2,0,3,1).parity is -1
+
+  test("Permutation to string"):
+    Permutation.identity(3).toString is "Permutation(0, 1, 2)"
+    Permutation(2,0,1).toString is "Permutation(2, 0, 1)"
+    Permutation(2, 0, 3, 1).toString is "Permutation(2, 0, 3, 1)"

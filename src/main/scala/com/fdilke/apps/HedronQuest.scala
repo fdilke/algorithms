@@ -7,8 +7,23 @@ import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, Graph, PartialColorin
 // Attempt to find permutations f, v, e of order 4, 5, 2 respectively with fv = e
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
 
-object HedronQuest extends App:
-  private val searchDegree = 5
+object PentagridPlushieQuest extends HedronQuest(
+  order1 = 4,
+  order2 = 5,
+  searchDegree = 5
+)
+
+object SeptagridPlushieQuest extends HedronQuest(
+  order1 = 3,
+  order2 = 7,
+  searchDegree = 7
+)
+
+class HedronQuest(
+  order1: Int,
+  order2: Int,
+  searchDegree: Int
+) extends App:
   val group = Permutation.symmetricGroup(searchDegree)
   given Group[Permutation] = group
   private def elementsOfOrder(n: Int) =
@@ -17,19 +32,19 @@ object HedronQuest extends App:
   private def conjugacyRepresentatives(elements: Set[Permutation]): Set[Permutation] =
     elements.map:
       _.canonicalConjugate
-  val order4s = elementsOfOrder(4)
-  val order4sReduced = conjugacyRepresentatives(order4s)
-  val order5s = elementsOfOrder(5)
-  val order5sReduced = conjugacyRepresentatives(order5s)
-  println(s"${order4s.size} -> ${order4sReduced.size} elements of order 4")
-  println(s"${order5s.size} -> ${order5sReduced.size} elements of order 5")
-  val (loop4: Set[Permutation], loop5: Set[Permutation]) =
-    if (order4sReduced.size * order5s.size) < (order4s.size * order5sReduced.size) then
-      println("Winnowing 4")
-      (order4sReduced, order5s)
+  val order1s = elementsOfOrder(order1)
+  val order1sReduced = conjugacyRepresentatives(order1s)
+  val order2s = elementsOfOrder(order2)
+  val order2sReduced = conjugacyRepresentatives(order2s)
+  println(s"${order1s.size} -> ${order1sReduced.size} elements of order $order1")
+  println(s"${order2s.size} -> ${order2sReduced.size} elements of order $order2")
+  val (loop1: Set[Permutation], loop2: Set[Permutation]) =
+    if (order1sReduced.size * order2s.size) < (order1s.size * order2sReduced.size) then
+      println(s"Winnowing $order1")
+      (order1sReduced, order2s)
     else
-      println("Winnowing 5")
-      (order4s, order5sReduced)
+      println(s"Winnowing $order2")
+      (order1s, order2sReduced)
 
   case class Hedron(
     f: Permutation,
@@ -40,8 +55,8 @@ object HedronQuest extends App:
       subgroup.order
   private val hedrons: Set[Hedron] =
     for
-      f <- loop4
-      v <- loop5
+      f <- loop1
+      v <- loop2
       e = f * v if e.order == 2
     yield
       val subgroup = group.generateSubgroup(f, v)
@@ -59,9 +74,14 @@ object HedronQuest extends App:
   println("f = " + plushie.f)
   println("v = " + plushie.v)
 
-object PretzelPlushie extends PlushiePlayground(
+object PentagridPlushie extends PlushiePlayground(
   f = Permutation(0, 2, 3, 4, 1),
   v = Permutation(2, 4, 1, 0, 3)
+)
+
+object SeptagridPlushie extends PlushiePlayground(
+  f = Permutation(6, 3, 1, 2, 0, 5, 4),
+  v = Permutation(1, 2, 3, 4, 5, 6, 0)
 )
 
 class PlushiePlayground(
@@ -85,15 +105,15 @@ class PlushiePlayground(
    ): Coset =
     coset.map:
       s => s * g
-  def rightCosetsOf(subgroup: group.Subgroup): Seq[Coset] =
-    group.elements.map: g =>
+  def rightCosetsOf(subgroup: plushieGroup.Subgroup): Seq[Coset] =
+    plushieGroup.elements.map: g =>
       multiplyCoset(subgroup.elements, g)
     .toSeq
   def incident(c1: Coset, c2: Coset): Boolean =
     (c1 intersect c2).nonEmpty
-  val fGroup: group.Subgroup = group.generateSubgroup(f)
-  val vGroup: group.Subgroup = group.generateSubgroup(v)
-  val eGroup: group.Subgroup = group.generateSubgroup(e)
+  val fGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(f)
+  val vGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(v)
+  val eGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(e)
   val vertexes = rightCosetsOf(fGroup)
   val faces = rightCosetsOf(vGroup)
   val edges = rightCosetsOf(eGroup)
@@ -121,15 +141,15 @@ class PlushiePlayground(
     )
   val sampleCorner: Corner = corners.head
   val cornerCoset: Set[Corner] =
-    group.elements.map: g =>
+    plushieGroup.elements.map: g =>
       multiplyCorner(sampleCorner, g)
-  if cornerCoset.size == group.order then
+  if cornerCoset.size == plushieGroup.order then
     println("Group acts torsorially on corners")
   else
     println("Not torsorial :(")
   def checkIncidences(
-    subg1: group.Subgroup,
-    subg2: group.Subgroup,
+    subg1: plushieGroup.Subgroup,
+    subg2: plushieGroup.Subgroup,
   ): String =
     val theCount: Int =
       subg1.order /
@@ -175,35 +195,6 @@ class PlushiePlayground(
       print(s"${label(j)} ")
     println("")
   val faceGraph = Graph(faceAdjacencies)
-  for (n <- 1 to 6) do
-    if ColorGraphLoop(n, faceGraph).isDefined then
-      println(s"Plushie can be $n-colored")
-    else
-      println(s"Plushie cannot be $n-colored")
-  private def checkMinColoring(
-     numColors: Int,
-     coloring: Seq[Int],
-     graph: Graph,
-   ): Unit =
-      for
-        i <- coloring.indices
-        j <- 0 until i
-      do
-        if graph.adjacencyTable(i)(j) && (coloring(i) == coloring(j)) then
-          throw new IllegalArgumentException("adjacent vertices have same color")
-      if coloring.distinct.size > numColors then
-        throw new IllegalArgumentException("too many colors")
-      if PartialColoring.fromColorsAndGraph(
-        coloring,
-        graph
-      ).amalgamations.nonEmpty then
-        throw new IllegalArgumentException("not a minimal coloring: an amalgamation is possible")
-
-  ColorGraphLoop(2, faceGraph) match
-    case None => throw new IllegalArgumentException("no coloring after all")
-    case Some(coloring) =>
-      checkMinColoring(2, coloring, faceGraph)
-      println("the 2-coloring: " + coloring.map{ label }.mkString(""))
 
   def adjacentVertexes(v1: Coset, v2: Coset): Boolean =
     edges.exists: edge =>
@@ -217,11 +208,6 @@ class PlushiePlayground(
       (i, j)
   println("# vertex adjacencies: " + vertexAdjacencies.size)
   val vertexGraph = Graph(vertexAdjacencies)
-  ColorGraphLoop(3, vertexGraph) match
-    case None => throw new IllegalArgumentException("no coloring")
-    case Some(coloring) =>
-      checkMinColoring(3, coloring, vertexGraph)
-      println("the vertex coloring: " + coloring.map { label }.mkString(""))
 
   def adjacentEdges(e1: Coset, e2: Coset): Boolean =
     vertexes.exists: vertex =>
@@ -234,12 +220,11 @@ class PlushiePlayground(
       (i, j)
   println("# edge adjacencies: " + edgeAdjacencies.size)
   val edgeGraph = Graph(edgeAdjacencies)
-  if false then // a bit of a slow calculation
-    ColorGraphLoop(4, edgeGraph) match
-      case None => throw new IllegalArgumentException("no coloring")
-      case Some(coloring) =>
-        checkMinColoring(4, coloring, edgeGraph)
-        println("the edge coloring: " + coloring.map { label }.mkString(""))
+
+  println(s"χ(faceGraph) = ${faceGraph.chromaticNumber}")
+  println(s"χ(vertexGraph) = ${vertexGraph.chromaticNumber}")
+  println(s"χ(edgeGraph) = ${edgeGraph.chromaticNumber}")
+
   println("faceGraph is distance-transitive:" + faceGraph.distanceTransitive)
   if false then
     println("vertexGraph is distance-transitive:" + vertexGraph.distanceTransitive)

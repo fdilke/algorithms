@@ -252,7 +252,7 @@ class Graph(
 
   lazy val cayley: Boolean =
     vertexTransitive &&
-      automorphisms.stabilizer(0).hasComplement.isDefined
+      automorphisms.stabilizer(0).findComplement.isDefined
     
   lazy val chromaticNumber: Int =
     (0 to numVertices).find: numColors =>

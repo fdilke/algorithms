@@ -71,11 +71,11 @@ class GroupSpec extends FunSuite:
   test("determine a complement for a subgroup, if there is one"):
     val group9: Group[Int] =
       CyclicGroup(9)
-    group9.trivialSubgroup.hasComplement is Some(group9.wholeGroup)
-    group9.wholeGroup.hasComplement is Some(group9.trivialSubgroup)
+    group9.trivialSubgroup.findComplement is Some(group9.wholeGroup)
+    group9.wholeGroup.findComplement is Some(group9.trivialSubgroup)
     val ord3: Int =
       group9.elementOfOrder(3)
-    group9.generateSubgroup(ord3).hasComplement is None
+    group9.generateSubgroup(ord3).findComplement is None
 
   test("determine a complement for a subgroup, if there is one (2)"):
     val group6: Group[Permutation] =
@@ -84,8 +84,8 @@ class GroupSpec extends FunSuite:
       group6.elementOfOrder(3)
     val ord2: Permutation =
       group6.elementOfOrder(2)
-    group6.generateSubgroup(ord3).hasComplement.isDefined is true
-    group6.generateSubgroup(ord2).hasComplement is Some(group6.generateSubgroup(ord3))
+    group6.generateSubgroup(ord3).findComplement.isDefined is true
+    group6.generateSubgroup(ord2).findComplement is Some(group6.generateSubgroup(ord3))
 
   test("determine a complement for a subgroup, if there is one (3)"):
     val group: Group[Permutation] =
@@ -93,7 +93,7 @@ class GroupSpec extends FunSuite:
     for
       subgroup <- group.subgroups if !Set(2,4).contains(subgroup.order)
     do
-      subgroup.hasComplement.isDefined is true
+      subgroup.findComplement.isDefined is true
 
   test("determine a complement for a subgroup, if there is one (4)"):
     val group: Group[Permutation] =
@@ -101,7 +101,7 @@ class GroupSpec extends FunSuite:
     for
       subgroup <- group.subgroups
     do
-      subgroup.hasComplement.isEmpty is (subgroup.order == 2)
+      subgroup.findComplement.isEmpty is (subgroup.order == 2)
 
   test("enumerating subgroups of the trivial group"):
     val trivialGroup = Permutation.symmetricGroup(1)

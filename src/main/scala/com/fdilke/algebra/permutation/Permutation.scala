@@ -46,6 +46,9 @@ case class Permutation(
     else
       images.compareTo(that.images)
 
+  override def toString: String =
+    s"""Permutation(${images.mkString(", ")})"""
+
 object Permutation:
   def identity(degree: Int): Permutation =
     Permutation(
