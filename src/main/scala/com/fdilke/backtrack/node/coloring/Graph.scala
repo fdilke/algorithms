@@ -253,6 +253,14 @@ class Graph(
   lazy val cayley: Boolean =
     vertexTransitive &&
       automorphisms.stabilizer(0).hasComplement.isDefined
+    
+  lazy val chromaticNumber: Int =
+    (0 to numVertices).find: numColors =>
+      ColorGraphLoop(
+        numColors, 
+        Graph.this
+      ).isDefined
+    .get
 
 object Graph:
   @targetName("applyWithEdges")

@@ -635,3 +635,22 @@ class GraphSpec extends FunSuite:
     completeBipartite(2, 3).cayley is false
     completeBipartite(3, 3).cayley is true
 
+  test("can measure the chromatic number of a graph"):
+    emptyGraph.chromaticNumber is 0
+    onePointGraph.chromaticNumber is 1
+    Graph((0, 1)).chromaticNumber is 2
+    Graph((0, 1), (1, 2)).chromaticNumber is 2
+    Graph(
+      (0, 1), (1, 2), (2, 0)
+    ).chromaticNumber is 3
+    petersen.chromaticNumber is 3
+    heawood.chromaticNumber is 2
+    pappus.chromaticNumber is 2
+    shrikhande.chromaticNumber is 4
+    cubicalGraph.chromaticNumber is 2
+    tetrahedralGraph.chromaticNumber is 4
+    octahedralGraph.chromaticNumber is 3
+    dodecahedralGraph.chromaticNumber is 3
+    icosahedralGraph.chromaticNumber is 4
+    completeBipartite(2, 3).chromaticNumber is 2
+    completeBipartite(3, 3).chromaticNumber is 2
