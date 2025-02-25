@@ -1,8 +1,8 @@
 package com.fdilke.apps
 
+import com.fdilke.algebra.permutation.GroupSugar.*
 import com.fdilke.algebra.permutation.{Group, GroupSugar, Permutation}
-import GroupSugar.*
-import com.fdilke.backtrack.node.coloring.{ColorGraphLoop, Graph, PartialColoring}
+import com.fdilke.backtrack.node.coloring.Graph
 
 // Attempt to find permutations f, v, e of order 4, 5, 2 respectively with fv = e
 // These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
@@ -168,7 +168,7 @@ object Plushie:
     ): String =
       val theCount: Int =
         subg1.order /
-          (subg1.elements.intersect(subg2.elements).size)
+          subg1.elements.intersect(subg2.elements).size
       if
         rightCosetsOf(subg1).forall: s1 =>
           rightCosetsOf(subg2).count: s2 =>
@@ -186,29 +186,76 @@ object Plushie:
     println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} vertexes")
     println(s"Every edge is incident to ${checkIncidences(eGroup, vGroup)} faces")
 
-    def adjacentFaces(f1: Coset, f2: Coset): Boolean =
-      edges.exists: edge =>
+//    def adjacentFaces(f1: Coset, f2: Coset): Boolean =
+//      edges.exists: edge =>
+//        incident(edge, f1) && incident(edge, f2)
+    def adjacentFaceMultiplicity(f1: Coset, f2: Coset): Int =
+      edges.count: edge =>
         incident(edge, f1) && incident(edge, f2)
 
-    val faceAdjacencies: Seq[(Int, Int)] =
-      for
-        (faceI, i) <- faces.zipWithIndex
-        (faceJ, j) <- faces.take(i).zipWithIndex if adjacentFaces(faceI, faceJ)
-      yield
-        (i, j)
-    println("# face adjacencies: " + faceAdjacencies.size)
-    def label(i: Int): Char =
-      (65 + i).toChar
+    val faceAdjacencyMultiplicities: Map[Set[Int], Int] =
+      val multiplicities: Seq[Seq[(Set[Int], Int)]] =
+        for
+          (faceI, i) <- faces.zipWithIndex
+          (faceJ, j) <- faces.take(i).zipWithIndex
+          multiplicity = adjacentFaceMultiplicity(faceI, faceJ)
+        yield
+          if multiplicity > 0 then
+            Seq((Set(i, j), multiplicity))
+          else
+            Seq.empty[(Set[Int], Int)]
+      multiplicities.flatten.toMap
 
+    val faceAdjacencies: Seq[(Int, Int)] =
+      faceAdjacencyMultiplicities.keySet.toSeq.collect: set =>
+        set.toSeq match
+          case Seq(a, b) => (a, b)
+
+    def label(i: Int): Char =
+      ('A'.toInt + i).toChar
+    println("# face adjacencies: " + faceAdjacencies.size)
     for
       i <- faces.indices
     do
       print(s"${label(i)}: ")
       for
         j <- faces.indices if faceAdjacencies.contains(i, j) || faceAdjacencies.contains(j, i)
+        multiplicity = faceAdjacencyMultiplicities(Set(i, j))
       do
-        print(s"${label(j)} ")
+        val indicator =
+          if (multiplicity > 1)
+            s"x$multiplicity"
+          else
+            ""
+        print(s"${label(j)}$indicator ")
       println("")
+
+    println("# faces: " + faces.size)
+    for
+      (face, i) <- faces.zipWithIndex
+    do
+      print(s"${label(i)}: ")
+      val incidentEdges: Seq[Int] =
+        for
+          (edge, j) <- edges.zipWithIndex if incident(edge, face)
+        yield j
+      println:
+        incidentEdges.map: e =>
+          label(e).toLower
+        .mkString("--")
+
+    println("# edges: " + edges.size)
+    for
+      (edge, i) <- edges.zipWithIndex
+    do
+      print(s"${label(i).toLower}: ")
+      val incidentVertexes: Seq[Int] =
+        for
+          (vertex, j) <- vertexes.zipWithIndex if incident(vertex, edge)
+        yield j
+      println:
+        incidentVertexes.mkString("--")
+
     val faceGraph = Graph(faceAdjacencies)
 
     def adjacentVertexes(v1: Coset, v2: Coset): Boolean =
