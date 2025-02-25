@@ -19,4 +19,5 @@ class DihedralGroupSpec extends FunSuite:
     GroupVerifier.checkGroupOf[DihedralSymmetry](DihedralGroup(4))
 
   test("DG should have the right order"):
+    DihedralGroup(2).order is 2
     DihedralGroup(8).order is 8

@@ -173,6 +173,16 @@ trait Group[T]:
       Seq.empty
     )
 
+  lazy val simple: Boolean =
+    elements.forall: e =>
+      if (e == unit)
+        true
+      else
+        val conjClass: Set[T] =
+          elements.map: g =>
+            conjugate(e, g)
+        generateSubgroup(conjClass).order == Group.this.order
+
 object Group:
   extension(group: Group[Permutation])
     def stabilizer(

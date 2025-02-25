@@ -152,3 +152,16 @@ class GroupSpec extends FunSuite:
     group.stabilizer(0, 1).order is 2
     group.stabilizer(0, 1, 2) is group.trivialSubgroup
     group.stabilizer(0, 1, 2, 3) is group.trivialSubgroup
+
+  test("can compute if a group is simple"):
+    CyclicGroup(2).simple is true
+    CyclicGroup(3).simple is true
+    CyclicGroup(4).simple is false
+    Permutation.symmetricGroup(0).simple is true
+    Permutation.symmetricGroup(3).simple is false
+    Permutation.alternatingGroup(3).simple is true
+    Permutation.alternatingGroup(4).simple is false
+    Permutation.alternatingGroup(5).simple is true
+    DihedralGroup(2).simple is true
+    DihedralGroup(4).simple is false
+    DihedralGroup(6).simple is false
