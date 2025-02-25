@@ -7,7 +7,9 @@ import scala.annotation.{tailrec, targetName}
 import scala.annotation.targetName
 import com.fdilke.backtrack.node.MonadIterable
 
+import scala.collection.mutable
 import scala.compiletime.ops.any.==
+import scala.language.postfixOps
 
 trait Group[T]: 
   group =>
@@ -172,16 +174,26 @@ trait Group[T]:
       elements.toSeq,
       Seq.empty
     )
-
+    
+  lazy val conjugacyClasses: Set[Set[T]] =
+    val buf: mutable.ListBuffer[Set[T]] =
+      mutable.ListBuffer[Set[T]]()
+    for
+      e <- elements
+      if !buf.exists: conjClass =>
+        conjClass.contains(e)
+    do
+      buf.append:
+        elements.map: 
+          conjugate(e, _)
+    buf.toSet
+    
   lazy val simple: Boolean =
-    elements.forall: e =>
-      if (e == unit)
+    conjugacyClasses.forall: conjs =>
+      if (conjs.contains(unit))
         true
       else
-        val conjClass: Set[T] =
-          elements.map: g =>
-            conjugate(e, g)
-        generateSubgroup(conjClass).order == Group.this.order
+        generateSubgroup(conjs).order == Group.this.order
 
 object Group:
   extension(group: Group[Permutation])

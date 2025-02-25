@@ -153,6 +153,14 @@ class GroupSpec extends FunSuite:
     group.stabilizer(0, 1, 2) is group.trivialSubgroup
     group.stabilizer(0, 1, 2, 3) is group.trivialSubgroup
 
+  test("can compute conjugacy classes"):
+    def classSizes[T](group: Group[T]): Seq[Int] =
+      group.conjugacyClasses.toSeq.map { _.size }.sorted
+    classSizes(CyclicGroup(2)) is Seq(1, 1)
+    classSizes(CyclicGroup(3)) is Seq(1, 1, 1)
+    classSizes(Permutation.symmetricGroup(3)) is Seq(1, 2, 3)
+    classSizes(DihedralGroup(4)) is Seq(1, 1, 1, 1)
+
   test("can compute if a group is simple"):
     CyclicGroup(2).simple is true
     CyclicGroup(3).simple is true
