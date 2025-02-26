@@ -186,9 +186,6 @@ object Plushie:
     println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} vertexes")
     println(s"Every edge is incident to ${checkIncidences(eGroup, vGroup)} faces")
 
-//    def adjacentFaces(f1: Coset, f2: Coset): Boolean =
-//      edges.exists: edge =>
-//        incident(edge, f1) && incident(edge, f2)
     def adjacentFaceMultiplicity(f1: Coset, f2: Coset): Int =
       edges.count: edge =>
         incident(edge, f1) && incident(edge, f2)
@@ -211,13 +208,18 @@ object Plushie:
         set.toSeq match
           case Seq(a, b) => (a, b)
 
-    def label(i: Int): Char =
+    def faceLabel(i: Int): Char =
       ('A'.toInt + i).toChar
+    def edgeLabel(i: Int): Char =
+      ('a'.toInt + i).toChar
+    def vertexLabel(i: Int): String =
+      i.toString
+
     println("# face adjacencies: " + faceAdjacencies.size)
     for
       i <- faces.indices
     do
-      print(s"${label(i)}: ")
+      print(s"${faceLabel(i)}: ")
       for
         j <- faces.indices if faceAdjacencies.contains(i, j) || faceAdjacencies.contains(j, i)
         multiplicity = faceAdjacencyMultiplicities(Set(i, j))
@@ -227,34 +229,41 @@ object Plushie:
             s"x$multiplicity"
           else
             ""
-        print(s"${label(j)}$indicator ")
+        print(s"${faceLabel(j)}$indicator ")
       println("")
 
     println("# faces: " + faces.size)
     for
       (face, i) <- faces.zipWithIndex
     do
-      print(s"${label(i)}: ")
-      val incidentEdges: Seq[Int] =
+      print(s"${faceLabel(i)}: ")
+      val incidentEdges: Seq[(Coset, Int)] =
         for
           (edge, j) <- edges.zipWithIndex if incident(edge, face)
-        yield j
+        yield (edge, j)
+//      val cycleEdgesVertices: Seq[(Int, Int)] =
+//        for
+//          (pair, entryIndex) <- incidentEdges.zipWithIndex
+//          (edge, edgeIndex) = pair
+
+//  val sortedIncidentEdgesVertices: Seq[(Int, Int)] =
+
       println:
-        incidentEdges.map: e =>
-          label(e).toLower
+        incidentEdges.map( _._2 ).map: e =>
+          edgeLabel(e)
         .mkString("--")
 
     println("# edges: " + edges.size)
     for
       (edge, i) <- edges.zipWithIndex
     do
-      print(s"${label(i).toLower}: ")
+      print(s"${edgeLabel(i)}: ")
       val incidentVertexes: Seq[Int] =
         for
           (vertex, j) <- vertexes.zipWithIndex if incident(vertex, edge)
         yield j
       println:
-        incidentVertexes.mkString("--")
+        incidentVertexes.map(vertexLabel).mkString("--")
 
     val faceGraph = Graph(faceAdjacencies)
 
