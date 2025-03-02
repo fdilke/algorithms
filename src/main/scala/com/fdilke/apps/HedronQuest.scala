@@ -36,72 +36,104 @@ class HedronQuest(
   order2: Int,
   searchDegree: Int
 ) extends App:
-  val group = Permutation.symmetricGroup(searchDegree)
-  given Group[Permutation] = group
-  private def elementsOfOrder(n: Int) =
-    group.elements.filter:
-      _.order == n
-  private def conjugacyRepresentatives(elements: Set[Permutation]): Set[Permutation] =
-    elements.map:
-      _.canonicalConjugate
-  val order1s = elementsOfOrder(order1)
-  val order1sReduced = conjugacyRepresentatives(order1s)
-  val order2s = elementsOfOrder(order2)
-  val order2sReduced = conjugacyRepresentatives(order2s)
-  println(s"${order1s.size} -> ${order1sReduced.size} elements of order $order1")
-  println(s"${order2s.size} -> ${order2sReduced.size} elements of order $order2")
-  val (loop1: Set[Permutation], loop2: Set[Permutation]) =
-    if (order1sReduced.size * order2s.size) < (order1s.size * order2sReduced.size) then
-      println(s"Winnowing $order1")
-      (order1sReduced, order2s)
-    else
-      println(s"Winnowing $order2")
-      (order1s, order2sReduced)
-
-  case class Hedron(
-    f: Permutation,
-    v: Permutation,
-    subgroup: group.Subgroup
-  ):
-    val order: Int =
-      subgroup.order
-  private val hedrons: Set[Hedron] =
-    for
-      f <- loop1
-      v <- loop2
-      e = f * v if e.order == 2
-    yield
-      val subgroup = group.generateSubgroup(f, v)
-      Hedron(f, v, subgroup)
-  private val orders: Seq[Int] =
-    hedrons.map { _.order }.toSeq.sorted
-  println("Sorted orders: " + orders.mkString(","))
-  val smallestOrder = orders.head
-  val plushie: Hedron =
-    hedrons.find:
-      _.order == smallestOrder
-    .getOrElse:
-      throw new IllegalArgumentException("can't find smallest plushie")
-  println("for the small plushie:")
-  println("f = " + plushie.f)
-  println("v = " + plushie.v)
-  Plushie.investigate(f = plushie.f, v = plushie.v)
-
-//object PentagridPlushie extends PlushiePlayground(
-//  f = Permutation(0, 2, 3, 4, 1),
-//  v = Permutation(2, 4, 1, 0, 3)
-//)
-//
-//object SeptagridPlushie extends PlushiePlayground(
-//  f = Permutation(6, 3, 1, 2, 0, 5, 4),
-//  v = Permutation(1, 2, 3, 4, 5, 6, 0)
-//)
+  Plushie.lookup(order1, order2).match
+    case Some(plushie) => plushie
+    case None =>
+      Plushie.search(order1, order2, searchDegree)
+  .investigate()
 
 object Plushie:
-  def investigate(
-    f: Permutation,
-    v: Permutation
-  ): Unit =
+
+  private val knownPlushies: Map[(Int, Int), Plushie] = Map(
+      (4, 5) -> Plushie(
+        f = Permutation(0, 2, 3, 4, 1),
+        v = Permutation(2, 4, 1, 0, 3),
+        name = "Pentaplushie"
+      ),
+      (3, 7) -> Plushie(
+        f = Permutation(6, 3, 1, 2, 0, 5, 4),
+        v = Permutation(1, 2, 3, 4, 5, 6, 0),
+        name = "Septaplushie"
+      ),
+      (3, 8) -> Plushie(
+        f = Permutation(6, 4, 1, 3, 2, 0, 5, 7),
+        v = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
+        name = "Octoplushie"
+      )
+    )
+// TODO: Schlafli the wrong way round, fix
+
+  def lookup(
+    order1: Int,
+    order2: Int,
+  ): Option[Plushie] =
+    knownPlushies.get:
+      (order1, order2)
+
+  def search(
+    order1: Int,
+    order2: Int,
+    searchDegree: Int
+  ): Plushie =
+    val group = Permutation.symmetricGroup(searchDegree)
+    given Group[Permutation] = group
+    def elementsOfOrder(n: Int) =
+      group.elements.filter:
+        _.order == n
+    def conjugacyRepresentatives(elements: Set[Permutation]): Set[Permutation] =
+      elements.map:
+        _.canonicalConjugate
+    val order1s = elementsOfOrder(order1)
+    val order1sReduced = conjugacyRepresentatives(order1s)
+    val order2s = elementsOfOrder(order2)
+    val order2sReduced = conjugacyRepresentatives(order2s)
+    println(s"${order1s.size} -> ${order1sReduced.size} elements of order $order1")
+    println(s"${order2s.size} -> ${order2sReduced.size} elements of order $order2")
+    val (loop1: Set[Permutation], loop2: Set[Permutation]) =
+      if (order1sReduced.size * order2s.size) < (order1s.size * order2sReduced.size) then
+        println(s"Winnowing $order1")
+        (order1sReduced, order2s)
+      else
+        println(s"Winnowing $order2")
+        (order1s, order2sReduced)
+
+    case class Hedron(
+      f: Permutation,
+      v: Permutation,
+      subgroup: group.Subgroup
+    ):
+      val order: Int =
+        subgroup.order
+    val hedrons: Set[Hedron] =
+      for
+        f <- loop1
+        v <- loop2
+        e = f * v if e.order == 2
+      yield
+        val subgroup = group.generateSubgroup(f, v)
+        Hedron(f, v, subgroup)
+    val orders: Seq[Int] =
+      hedrons.map { _.order }.toSeq.sorted
+    println("Sorted orders: " + orders.mkString(","))
+    val smallestOrder = orders.head
+    val plushie: Hedron =
+      hedrons.find:
+        _.order == smallestOrder
+      .getOrElse:
+        throw new IllegalArgumentException("can't find smallest plushie")
+    println("for the small plushie:")
+    println("f = " + plushie.f)
+    println("v = " + plushie.v)
+    val schlafliName: String =
+      s"{ $order1, $order2 }"
+    Plushie(f = plushie.f, v = plushie.v, name = schlafliName)
+
+class Plushie(
+  val f: Permutation,
+  val v: Permutation,
+  name: String
+):
+  def investigate(): Unit =
     val group: Group[Permutation] = Permutation.symmetricGroup(
       Math.max(f.degree, v.degree)
     )
@@ -186,6 +218,10 @@ object Plushie:
     println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} vertexes")
     println(s"Every edge is incident to ${checkIncidences(eGroup, vGroup)} faces")
 
+    def edgesAdjacent(e1: Coset, e2: Coset): Boolean =
+      vertexes.exists: v =>
+        incident(v, e1) && incident(v, e2)
+
     def adjacentFaceMultiplicity(f1: Coset, f2: Coset): Int =
       edges.count: edge =>
         incident(edge, f1) && incident(edge, f2)
@@ -208,10 +244,10 @@ object Plushie:
         set.toSeq match
           case Seq(a, b) => (a, b)
 
-    def faceLabel(i: Int): Char =
-      ('A'.toInt + i).toChar
-    def edgeLabel(i: Int): Char =
-      ('a'.toInt + i).toChar
+    def faceLabel(i: Int): String =
+      ('A'.toInt + i).toChar.toString
+    def edgeLabel(i: Int): String =
+      ('a'.toInt + i).toChar.toString
     def vertexLabel(i: Int): String =
       i.toString
 
@@ -237,21 +273,45 @@ object Plushie:
       (face, i) <- faces.zipWithIndex
     do
       print(s"${faceLabel(i)}: ")
-      val incidentEdges: Seq[(Coset, Int)] =
+      val incidentEdges: Seq[Int] =
         for
           (edge, j) <- edges.zipWithIndex if incident(edge, face)
-        yield (edge, j)
-//      val cycleEdgesVertices: Seq[(Int, Int)] =
-//        for
-//          (pair, entryIndex) <- incidentEdges.zipWithIndex
-//          (edge, edgeIndex) = pair
-
-//  val sortedIncidentEdgesVertices: Seq[(Int, Int)] =
-
+        yield j
+      def nextVertexEdge(
+        vertexEdge: (Int, Int)
+      ): (Int, Int) =
+        val (aVertex: Int, anEdge: Int) = vertexEdge
+        val nextEdge: Int =
+          incidentEdges.find: e =>
+            e != anEdge &&
+              edgesAdjacent(edges(e), edges(anEdge)) &&
+              !incident(edges(e), vertexes(aVertex))
+          .getOrElse:
+            throw new IllegalArgumentException("can't find next edge")
+        val nextVertex: Int =
+          vertexes.zipWithIndex.find: (vertex, _) =>
+            incident(vertex, edges(nextEdge)) &&
+            incident(vertex, edges(anEdge))
+          .map ( _. _2 )
+          .getOrElse:
+            throw new IllegalArgumentException("can't find next vertex")
+        (nextVertex, nextEdge)
+      val firstEdge: Int = incidentEdges.head
+      val firstVertex =
+        vertexes.indices.find: v =>
+          incident(vertexes(v), edges(firstEdge))
+        .getOrElse:
+          throw new IllegalArgumentException("can't find first vertex")
+      val cycleVertexesEdges: Seq[(Int, Int)] =
+        Seq.iterate[(Int, Int)](
+          (firstVertex, firstEdge),
+          incidentEdges.size
+        ):
+          nextVertexEdge
       println:
-        incidentEdges.map( _._2 ).map: e =>
-          edgeLabel(e)
-        .mkString("--")
+        cycleVertexesEdges.map: (v, e) =>
+          vertexLabel(v) + "-" + edgeLabel(e)
+        .mkString("-")
 
     println("# edges: " + edges.size)
     for
