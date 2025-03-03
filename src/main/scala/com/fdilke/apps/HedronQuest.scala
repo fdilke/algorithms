@@ -4,58 +4,59 @@ import com.fdilke.algebra.permutation.GroupSugar.*
 import com.fdilke.algebra.permutation.{Group, GroupSugar, Permutation}
 import com.fdilke.backtrack.node.coloring.Graph
 
-// Attempt to find permutations f, v, e of order 4, 5, 2 respectively with fv = e
-// These then form the generators of a finite homomorphic image of the von Dyck group D(4, 5, 2)
+// Attempt to find permutations v, f, e of order 5, 4, 2 respectively with fv = e
+// These then form the generators of a finite homomorphic image of the von Dyck group D(5, 4, 2),
+// from which we can extract an orientable Buekenhout geometry representing an abstract regular polytope
 
 object PentagridPlushieQuest extends HedronQuest(
-  order1 = 4,
-  order2 = 5,
+  faceSize = 5,
+  vertexDegree = 4,
   searchDegree = 5
 )
 
 object SeptagridPlushieQuest extends HedronQuest(
-  order1 = 3,
-  order2 = 7,
+  faceSize = 7,
+  vertexDegree = 3,
   searchDegree = 7
 )
 
 object OctagridPlushieQuest extends HedronQuest(
-  order1 = 3,
-  order2 = 8,
+  faceSize = 8,
+  vertexDegree = 3,
   searchDegree = 8
 )
 
 object NonagridPlushieQuest extends HedronQuest(
-  order1 = 3,
-  order2 = 9,
+  faceSize = 9,
+  vertexDegree = 3,
   searchDegree = 9
 )
 
 class HedronQuest(
-  order1: Int,
-  order2: Int,
-  searchDegree: Int
+   faceSize: Int,
+   vertexDegree: Int,
+   searchDegree: Int
 ) extends App:
-  Plushie.lookup(order1, order2).match
+  Plushie.lookup(faceSize, vertexDegree).match
     case Some(plushie) => plushie
     case None =>
-      Plushie.search(order1, order2, searchDegree)
+      Plushie.search(faceSize, vertexDegree, searchDegree)
   .investigate()
 
 object Plushie:
 
   private val knownPlushies: Map[(Int, Int), Plushie] = Map(
-      (4, 5) -> Plushie(
+      (5, 4) -> Plushie(
         f = Permutation(0, 2, 3, 4, 1),
         v = Permutation(2, 4, 1, 0, 3),
         name = "Pentaplushie"
       ),
-      (3, 7) -> Plushie(
+      (7, 3) -> Plushie(
         f = Permutation(6, 3, 1, 2, 0, 5, 4),
         v = Permutation(1, 2, 3, 4, 5, 6, 0),
         name = "Septaplushie"
       ),
-      (3, 8) -> Plushie(
+      (8, 3) -> Plushie(
         f = Permutation(6, 4, 1, 3, 2, 0, 5, 7),
         v = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
         name = "Octoplushie"
@@ -64,15 +65,15 @@ object Plushie:
 // TODO: Schlafli the wrong way round, fix
 
   def lookup(
-    order1: Int,
-    order2: Int,
+    faceSize: Int,
+    vertexDegree: Int,
   ): Option[Plushie] =
     knownPlushies.get:
-      (order1, order2)
+      (faceSize, vertexDegree)
 
   def search(
-    order1: Int,
-    order2: Int,
+    faceSize: Int,
+    vertexDegree: Int,
     searchDegree: Int
   ): Plushie =
     val group = Permutation.symmetricGroup(searchDegree)
@@ -83,18 +84,18 @@ object Plushie:
     def conjugacyRepresentatives(elements: Set[Permutation]): Set[Permutation] =
       elements.map:
         _.canonicalConjugate
-    val order1s = elementsOfOrder(order1)
+    val order1s = elementsOfOrder(vertexDegree)
     val order1sReduced = conjugacyRepresentatives(order1s)
-    val order2s = elementsOfOrder(order2)
+    val order2s = elementsOfOrder(faceSize)
     val order2sReduced = conjugacyRepresentatives(order2s)
-    println(s"${order1s.size} -> ${order1sReduced.size} elements of order $order1")
-    println(s"${order2s.size} -> ${order2sReduced.size} elements of order $order2")
+    println(s"${order1s.size} -> ${order1sReduced.size} elements of order $vertexDegree")
+    println(s"${order2s.size} -> ${order2sReduced.size} elements of order $faceSize")
     val (loop1: Set[Permutation], loop2: Set[Permutation]) =
       if (order1sReduced.size * order2s.size) < (order1s.size * order2sReduced.size) then
-        println(s"Winnowing $order1")
+        println(s"Winnowing $vertexDegree")
         (order1sReduced, order2s)
       else
-        println(s"Winnowing $order2")
+        println(s"Winnowing $faceSize")
         (order1s, order2sReduced)
 
     case class Hedron(
@@ -125,7 +126,7 @@ object Plushie:
     println("f = " + plushie.f)
     println("v = " + plushie.v)
     val schlafliName: String =
-      s"{ $order1, $order2 }"
+      s"{ $vertexDegree, $faceSize }"
     Plushie(f = plushie.f, v = plushie.v, name = schlafliName)
 
 class Plushie(
