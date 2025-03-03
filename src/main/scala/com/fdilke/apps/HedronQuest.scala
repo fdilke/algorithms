@@ -8,6 +8,12 @@ import com.fdilke.backtrack.node.coloring.Graph
 // These then form the generators of a finite homomorphic image of the von Dyck group D(5, 4, 2),
 // from which we can extract an orientable Buekenhout geometry representing an abstract regular polytope
 
+object KeyringPlushieQuest extends HedronQuest(
+  faceSize = 4,
+  vertexDegree = 8,
+  searchDegree = 8
+)
+
 object PentagridPlushieQuest extends HedronQuest(
   faceSize = 5,
   vertexDegree = 4,
@@ -47,22 +53,21 @@ object Plushie:
 
   private val knownPlushies: Map[(Int, Int), Plushie] = Map(
       (5, 4) -> Plushie(
-        f = Permutation(0, 2, 3, 4, 1),
-        v = Permutation(2, 4, 1, 0, 3),
+        f = Permutation(4, 0, 1, 2, 3),
+        v = Permutation(0, 2, 3, 4, 1),
         name = "Pentaplushie"
       ),
       (7, 3) -> Plushie(
-        f = Permutation(6, 3, 1, 2, 0, 5, 4),
-        v = Permutation(1, 2, 3, 4, 5, 6, 0),
+        f = Permutation(1, 2, 3, 4, 5, 6, 0),
+        v = Permutation(2, 0, 1, 6, 4, 3, 5),
         name = "Septaplushie"
       ),
       (8, 3) -> Plushie(
-        f = Permutation(6, 4, 1, 3, 2, 0, 5, 7),
-        v = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
+        f = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
+        v = Permutation(7, 1, 0, 6, 3, 5, 4, 2),
         name = "Octoplushie"
       )
     )
-// TODO: Schlafli the wrong way round, fix
 
   def lookup(
     faceSize: Int,
@@ -84,19 +89,19 @@ object Plushie:
     def conjugacyRepresentatives(elements: Set[Permutation]): Set[Permutation] =
       elements.map:
         _.canonicalConjugate
-    val order1s = elementsOfOrder(vertexDegree)
-    val order1sReduced = conjugacyRepresentatives(order1s)
-    val order2s = elementsOfOrder(faceSize)
-    val order2sReduced = conjugacyRepresentatives(order2s)
-    println(s"${order1s.size} -> ${order1sReduced.size} elements of order $vertexDegree")
-    println(s"${order2s.size} -> ${order2sReduced.size} elements of order $faceSize")
-    val (loop1: Set[Permutation], loop2: Set[Permutation]) =
-      if (order1sReduced.size * order2s.size) < (order1s.size * order2sReduced.size) then
+    val vCandidatesFull = elementsOfOrder(vertexDegree)
+    val vCandidatesReduced = conjugacyRepresentatives(vCandidatesFull)
+    val fCandidatesFull = elementsOfOrder(faceSize)
+    val fCandidatesReduced = conjugacyRepresentatives(fCandidatesFull)
+    println(s"${vCandidatesFull.size} -> ${vCandidatesReduced.size} elements of order $vertexDegree")
+    println(s"${fCandidatesFull.size} -> ${fCandidatesReduced.size} elements of order $faceSize")
+    val (fCandidates: Set[Permutation], vCandidates: Set[Permutation]) =
+      if (vCandidatesReduced.size * fCandidatesFull.size) < (vCandidatesFull.size * fCandidatesReduced.size) then
         println(s"Winnowing $vertexDegree")
-        (order1sReduced, order2s)
+        (fCandidatesFull, vCandidatesReduced)
       else
         println(s"Winnowing $faceSize")
-        (order1s, order2sReduced)
+        (fCandidatesReduced, vCandidatesFull)
 
     case class Hedron(
       f: Permutation,
@@ -107,8 +112,8 @@ object Plushie:
         subgroup.order
     val hedrons: Set[Hedron] =
       for
-        f <- loop1
-        v <- loop2
+        f <- fCandidates
+        v <- vCandidates
         e = f * v if e.order == 2
       yield
         val subgroup = group.generateSubgroup(f, v)
@@ -117,17 +122,17 @@ object Plushie:
       hedrons.map { _.order }.toSeq.sorted
     println("Sorted orders: " + orders.mkString(","))
     val smallestOrder = orders.head
-    val plushie: Hedron =
+    val hedron: Hedron =
       hedrons.find:
         _.order == smallestOrder
       .getOrElse:
         throw new IllegalArgumentException("can't find smallest plushie")
     println("for the small plushie:")
-    println("f = " + plushie.f)
-    println("v = " + plushie.v)
+    println("f = " + hedron.f)
+    println("v = " + hedron.v)
     val schlafliName: String =
       s"{ $vertexDegree, $faceSize }"
-    Plushie(f = plushie.f, v = plushie.v, name = schlafliName)
+    Plushie(f = hedron.f, v = hedron.v, name = schlafliName)
 
 class Plushie(
   val f: Permutation,
@@ -162,12 +167,12 @@ class Plushie(
     val fGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(f)
     val vGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(v)
     val eGroup: plushieGroup.Subgroup = plushieGroup.generateSubgroup(e)
-    val vertexes = rightCosetsOf(fGroup)
-    val faces = rightCosetsOf(vGroup)
+    val vertexes = rightCosetsOf(vGroup)
+    val faces = rightCosetsOf(fGroup)
     val edges = rightCosetsOf(eGroup)
     println(s"${vertexes.size} vertexes")
-    println(s"${faces.size} faces")
     println(s"${edges.size} edges")
+    println(s"${faces.size} faces")
     val chi: Int = vertexes.size - edges.size + faces.size
     println(s"χ = $chi")
     val genus: Int = 1 - chi/2
@@ -196,15 +201,15 @@ class Plushie(
     else
       println("Not torsorial :(")
     def checkIncidences(
-      subg1: plushieGroup.Subgroup,
-      subg2: plushieGroup.Subgroup,
+      subgroup1: plushieGroup.Subgroup,
+      subgroup2: plushieGroup.Subgroup,
     ): String =
       val theCount: Int =
-        subg1.order /
-          subg1.elements.intersect(subg2.elements).size
+        subgroup1.order /
+          subgroup1.elements.intersect(subgroup2.elements).size
       if
-        rightCosetsOf(subg1).forall: s1 =>
-          rightCosetsOf(subg2).count: s2 =>
+        rightCosetsOf(subgroup1).forall: s1 =>
+          rightCosetsOf(subgroup2).count: s2 =>
             incident(s1, s2)
           == theCount
       then
@@ -212,12 +217,12 @@ class Plushie(
       else
         "?"
 
-    println(s"Every face is incident to ${checkIncidences(vGroup, fGroup)} vertexes")
-    println(s"Every face is incident to ${checkIncidences(vGroup, eGroup)} edges")
-    println(s"Every vertex is incident to ${checkIncidences(fGroup, vGroup)} faces")
-    println(s"Every vertex is incident to ${checkIncidences(fGroup, eGroup)} edges")
-    println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} vertexes")
-    println(s"Every edge is incident to ${checkIncidences(eGroup, vGroup)} faces")
+    println(s"Every face is incident to ${checkIncidences(fGroup, vGroup)} vertexes")
+    println(s"Every face is incident to ${checkIncidences(fGroup, eGroup)} edges")
+    println(s"Every vertex is incident to ${checkIncidences(vGroup, fGroup)} faces")
+    println(s"Every vertex is incident to ${checkIncidences(vGroup, eGroup)} edges")
+    println(s"Every edge is incident to ${checkIncidences(eGroup, vGroup)} vertexes")
+    println(s"Every edge is incident to ${checkIncidences(eGroup, fGroup)} faces")
 
     def edgesAdjacent(e1: Coset, e2: Coset): Boolean =
       vertexes.exists: v =>
