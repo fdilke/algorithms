@@ -38,6 +38,37 @@ object NonagridPlushieQuest extends HedronQuest(
   searchDegree = 9
 )
 
+object TetrahedronQuest extends HedronQuest(
+  faceSize = 3,
+  vertexDegree = 3,
+  searchDegree = 4
+)
+
+object OctahedronQuest extends HedronQuest(
+  faceSize = 3,
+  vertexDegree = 4,
+  searchDegree = 4
+)
+
+object CubeQuest extends HedronQuest(
+  faceSize = 4,
+  vertexDegree = 3,
+  searchDegree = 4
+)
+
+object IcosahedronQuest extends HedronQuest(
+  faceSize = 3,
+  vertexDegree = 5,
+  searchDegree = 5
+)
+
+object DodecahedronQuest extends HedronQuest(
+  faceSize = 5,
+  vertexDegree = 3,
+  searchDegree = 5
+)
+
+
 class HedronQuest(
    faceSize: Int,
    vertexDegree: Int,
@@ -288,43 +319,46 @@ class Plushie(
         for
           (edge, j) <- edges.zipWithIndex if incident(edge, face)
         yield j
-      def nextVertexEdge(
-        vertexEdgeEdge: (Int, Option[Int], Int)
-      ): (Int, Option[Int], Int) =
-        val (aVertex: Int, prevEdge: Option[Int], anEdge: Int) = vertexEdgeEdge
+      def addNextEdge(
+        edgesSoFar: Seq[Int]
+      ): Seq[Int] =
         val nextEdge: Int =
-          incidentEdges.find: e =>
-            e != anEdge &&
-              edgesAdjacent(edges(e), edges(anEdge)) &&
-              !prevEdge.contains(e)
-//              !incident(edges(e), vertexes(aVertex))
-          .getOrElse:
-            throw new IllegalArgumentException("can't find next edge")
-        val nextVertex: Int =
-//          println(s"looping over vertexes to find the next one, given last = $aVertex")
-          vertexes.zipWithIndex.find: (vertex, v) =>
-            v != aVertex &&
-            incident(vertex, edges(nextEdge))
-//            incident(vertex, edges(anEdge))
-          .map ( _. _2 )
-          .getOrElse:
-            throw new IllegalArgumentException("can't find next vertex")
-        (nextVertex, Some(anEdge), nextEdge)
-      val firstEdge: Int = incidentEdges.head
-      val firstVertex =
-        vertexes.indices.find: v =>
-          incident(vertexes(v), edges(firstEdge))
-        .getOrElse:
-          throw new IllegalArgumentException("can't find first vertex")
-      val cycleVertexesEdges: Seq[(Int, Option[Int], Int)] =
-        Seq.iterate[(Int, Option[Int], Int)](
-          (firstVertex, None, firstEdge),
-          incidentEdges.size
+          edgesSoFar match
+            case Nil => incidentEdges.head
+            case leadingEdge :: others =>
+              incidentEdges.find: e =>
+                !edgesSoFar.contains(e) &&
+                  edgesAdjacent(edges(e), edges(leadingEdge))
+              .getOrElse:
+                throw new IllegalArgumentException("can't find next edge")
+        nextEdge +: edgesSoFar
+      val cycleEdges: Seq[Int] =
+        Seq.iterate[Seq[Int]](
+          Seq.empty[Int],
+          incidentEdges.size + 1
         ):
-          nextVertexEdge
+          addNextEdge
+        .last
+      var prevVertex = -1
+      val cycleVertexes: Seq[Int] =
+        for
+          i <- incidentEdges.indices
+          e1 = cycleEdges(i)
+          e2 = cycleEdges((i + 1) % incidentEdges.size)
+        yield
+          val v: Int =
+            vertexes.zipWithIndex.find: (vertex, v) =>
+              incident(vertex, edges(e1)) &&
+                incident(vertex, edges(e2)) &&
+                v != prevVertex
+            .getOrElse:
+              throw new IllegalArgumentException("can't find connecting vertex")
+            ._2
+          prevVertex = v
+          v
       println:
-        cycleVertexesEdges.map: (v, _, e) =>
-          vertexLabel(v) + "-" + edgeLabel(e)
+        cycleEdges.zip(cycleVertexes).map: (e, v) =>
+          edgeLabel(e) + "-" + vertexLabel(v)
         .mkString("-")
 
     println("# edges: " + edges.size)
