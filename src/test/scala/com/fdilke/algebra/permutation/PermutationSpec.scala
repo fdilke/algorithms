@@ -70,3 +70,20 @@ class PermutationSpec extends FunSuite:
     Permutation.identity(3).toString is "Permutation(0, 1, 2)"
     Permutation(2,0,1).toString is "Permutation(2, 0, 1)"
     Permutation(2, 0, 3, 1).toString is "Permutation(2, 0, 3, 1)"
+
+  test("Generating permutation groups"):
+    def checkGroup(
+      expectedOrder: Int,
+      generators: Permutation*
+    ): Unit =
+      val group: Group[Permutation] =
+        Permutation.group(generators*)
+      GroupVerifier.checkGroupOf[Permutation](group)
+      group.order is expectedOrder
+    checkGroup(1)
+    checkGroup(2, Permutation(0, 2, 1))
+    checkGroup(6, Permutation(0, 2, 1), Permutation(2, 0, 1))
+    checkGroup(6, Permutation(0, 2, 1), Permutation(2, 0, 1))
+    checkGroup(48, Permutation(1, 2, 3, 4, 5, 6, 7, 0), Permutation(7, 1, 0, 6, 3, 5, 4, 2))
+
+

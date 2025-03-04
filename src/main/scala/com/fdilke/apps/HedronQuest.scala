@@ -176,14 +176,10 @@ class Plushie(
   name: String
 ):
   def investigate(): Unit =
-    val group: Group[Permutation] = Permutation.symmetricGroup(
-      Math.max(f.degree, v.degree)
-    )
-    given Group[Permutation] = group
+    val plushieGroup: Group[Permutation] = Permutation.group(f, v)
+    given Group[Permutation] = plushieGroup
     val e = f * v
     assert(e.order == 2)
-    val plushieGroup: group.Subgroup =
-      group.generateSubgroup(f, v)
     println(s"Plushie group order = ${plushieGroup.order}")
     println(s"Plushie group simple = ${plushieGroup.simple}")
     type Coset = Set[Permutation]
@@ -229,13 +225,13 @@ class Plushie(
         multiplyCoset(corner._2, g)
       )
     val sampleCorner: Corner = corners.head
-    val cornerCoset: Set[Corner] =
+    val cornerOrbit: Set[Corner] =
       plushieGroup.elements.map: g =>
         multiplyCorner(sampleCorner, g)
-    if cornerCoset.size == plushieGroup.order then
+    if cornerOrbit.size == plushieGroup.order then
       println("Group acts torsorially on corners")
     else
-      println("Not torsorial :(")
+      println(s"Not torsorial :(\tcornerOrbit.size = ${cornerOrbit.size} ; plushieGroup.order = ${plushieGroup.order}")
     def checkIncidences(
       subgroup1: plushieGroup.Subgroup,
       subgroup2: plushieGroup.Subgroup,

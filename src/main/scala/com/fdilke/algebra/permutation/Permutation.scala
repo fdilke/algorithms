@@ -1,5 +1,9 @@
 package com.fdilke.algebra.permutation
 
+import com.fdilke.utility.SetsUtilities
+import com.fdilke.utility.SetsUtilities.crossCheckResult
+
+import scala.annotation.tailrec
 import scala.language.postfixOps
 import scala.math.Ordered.orderingToOrdered
 
@@ -84,13 +88,57 @@ object Permutation:
           element: Permutation
         ): Permutation =
           element.inverse
-    
-  def symmetricGroup(degree: Int): Group[Permutation] =
+
+  private def multiplySets(
+    set1: Set[Permutation],
+    set2: Set[Permutation]
+  ): Set[Permutation] =
+    for
+      x <- set1
+      y <- set2
+    yield
+      x(y)
+
+  def group(
+    generatorsSeq: Permutation*
+  ): Group[Permutation] =
+    if generatorsSeq.isEmpty then
+      group(Set(Permutation.identity(0)))
+    else
+      crossCheckResult:
+        generatorsSeq.map: p =>
+          () => p.degree
+      .match
+        case None =>
+          throw new IllegalArgumentException("degrees do not match")
+        case Some(degree) =>
+          val generators: Set[Permutation] =
+            generatorsSeq.toSet
+          @tailrec def generate(
+            t: Set[Permutation],
+            x: Set[Permutation]
+          ): Set[Permutation] =
+            val xg = multiplySets(x, generators)
+            val xg_t = xg -- t
+            if (xg_t.isEmpty)
+              t
+            else
+              generate(t ++ xg_t, xg_t)
+          group:
+            generate(generators, generators) + Permutation.identity(degree)
+
+  def symmetricGroup(
+    degree: Int
+  ): Group[Permutation] =
     group:
       enumerate:
         degree
 
-  def alternatingGroup(degree: Int): Group[Permutation] =
+  def alternatingGroup(
+    degree: Int
+  ): Group[Permutation] =
     group:
-      Permutation.symmetricGroup(degree).elements.filter:
+      Permutation.symmetricGroup:
+        degree
+      .elements.filter:
         _.parity == 1
