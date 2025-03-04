@@ -8,7 +8,7 @@ import com.fdilke.backtrack.node.coloring.Graph
 // These then form the generators of a finite homomorphic image of the von Dyck group D(5, 4, 2),
 // from which we can extract an orientable Buekenhout geometry representing an abstract regular polytope
 
-object KeyringPlushieQuest extends HedronQuest(
+object QuadKeyringPlushieQuest extends HedronQuest(
   faceSize = 4,
   vertexDegree = 8,
   searchDegree = 8
@@ -66,6 +66,11 @@ object Plushie:
         f = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
         v = Permutation(7, 1, 0, 6, 3, 5, 4, 2),
         name = "Octoplushie"
+      ),
+      (4, 8) -> Plushie(
+        f = Permutation(5, 0, 3, 6, 1, 4, 7, 2),
+        v = Permutation(1, 2, 3, 4, 5, 6, 7, 0),
+        name = "Quad Keyring"
       )
     )
 
@@ -284,38 +289,41 @@ class Plushie(
           (edge, j) <- edges.zipWithIndex if incident(edge, face)
         yield j
       def nextVertexEdge(
-        vertexEdge: (Int, Int)
-      ): (Int, Int) =
-        val (aVertex: Int, anEdge: Int) = vertexEdge
+        vertexEdgeEdge: (Int, Option[Int], Int)
+      ): (Int, Option[Int], Int) =
+        val (aVertex: Int, prevEdge: Option[Int], anEdge: Int) = vertexEdgeEdge
         val nextEdge: Int =
           incidentEdges.find: e =>
             e != anEdge &&
               edgesAdjacent(edges(e), edges(anEdge)) &&
-              !incident(edges(e), vertexes(aVertex))
+              !prevEdge.contains(e)
+//              !incident(edges(e), vertexes(aVertex))
           .getOrElse:
             throw new IllegalArgumentException("can't find next edge")
         val nextVertex: Int =
-          vertexes.zipWithIndex.find: (vertex, _) =>
-            incident(vertex, edges(nextEdge)) &&
-            incident(vertex, edges(anEdge))
+//          println(s"looping over vertexes to find the next one, given last = $aVertex")
+          vertexes.zipWithIndex.find: (vertex, v) =>
+            v != aVertex &&
+            incident(vertex, edges(nextEdge))
+//            incident(vertex, edges(anEdge))
           .map ( _. _2 )
           .getOrElse:
             throw new IllegalArgumentException("can't find next vertex")
-        (nextVertex, nextEdge)
+        (nextVertex, Some(anEdge), nextEdge)
       val firstEdge: Int = incidentEdges.head
       val firstVertex =
         vertexes.indices.find: v =>
           incident(vertexes(v), edges(firstEdge))
         .getOrElse:
           throw new IllegalArgumentException("can't find first vertex")
-      val cycleVertexesEdges: Seq[(Int, Int)] =
-        Seq.iterate[(Int, Int)](
-          (firstVertex, firstEdge),
+      val cycleVertexesEdges: Seq[(Int, Option[Int], Int)] =
+        Seq.iterate[(Int, Option[Int], Int)](
+          (firstVertex, None, firstEdge),
           incidentEdges.size
         ):
           nextVertexEdge
       println:
-        cycleVertexesEdges.map: (v, e) =>
+        cycleVertexesEdges.map: (v, _, e) =>
           vertexLabel(v) + "-" + edgeLabel(e)
         .mkString("-")
 
