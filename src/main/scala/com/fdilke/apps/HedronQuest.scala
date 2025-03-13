@@ -8,6 +8,12 @@ import com.fdilke.backtrack.node.coloring.Graph
 // These then form the generators of a finite homomorphic image of the von Dyck group D(5, 4, 2),
 // from which we can extract an orientable Buekenhout geometry representing an abstract regular polytope
 
+object HexaPlushieQuest extends HedronQuest(
+  faceSize = 6,
+  vertexDegree = 4,
+  searchDegree = 6
+)
+
 object QuadKeyringPlushieQuest extends HedronQuest(
   faceSize = 4,
   vertexDegree = 8,
