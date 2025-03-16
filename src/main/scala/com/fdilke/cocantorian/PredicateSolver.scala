@@ -7,24 +7,12 @@ object PredicateSolver:
     equation: (X => Boolean) => Boolean
   ): Option[Map[X, Boolean]] =
     case class StumpedAtException(x: X) extends Exception
-    // Boolean, Option[Map[X, Boolean]]
-//      T = Boolean
-//      U = Option[Map[X, Boolean]]
     def determine[Q](
        f: Boolean => Q,
        predicate: Q => Boolean
-    ): Option[(Boolean, Q)] =
-      val holder = AtomicReference[(Boolean, Q)]()
-        if Set(true, false).exists: b =>
-          val q: Q = f(b)
-          val good = predicate(q)
-          if (good)
-            holder.set(b -> q)
-          good
-        then
-          Some(holder.get())
-        else 
-          None
+    ): Option[Q] =
+        Seq(true, false).map(f).find(predicate)
+    // ^ todo: inline this
     def tryMap(
       map: Map[X, Boolean]
     ): Option[Map[X, Boolean]] =
@@ -52,8 +40,6 @@ object PredicateSolver:
                 map + (x -> c)
               ),
             om => om.isDefined
-          ).flatMap {
-            _._2
-          }
+          ).flatten
       }
     tryMap(Map.empty)
