@@ -1,12 +1,15 @@
 package com.fdilke.cocantorian
 
+import com.fdilke.backtrack.BacktrackIterable
+
 import java.util.concurrent.atomic.AtomicReference
+import scala.collection.mutable
 
 trait PredicateSolver:
   def apply[X](
     equation: (X => Boolean) => Boolean
   ): Option[Map[X, Boolean]]
-  
+
 object ExPredicateSolver extends PredicateSolver:
   override def apply[X](
     equation: (X => Boolean) => Boolean
@@ -40,3 +43,37 @@ object ExPredicateSolver extends PredicateSolver:
           .flatten
     tryMap:
       Map.empty
+
+object ExFreePredicateSolver extends PredicateSolver:
+  override def apply[X](
+    equation: (X => Boolean) => Boolean
+  ): Option[Map[X, Boolean]] =
+    def tryMap(
+      map: Map[X, Boolean]
+    ): (Seq[X], Boolean) =
+      val buffer: mutable.Buffer[X] = mutable.Buffer()
+      val result: Boolean =
+        equation: x =>
+          map.get(x) match
+            case Some(flag) => flag
+            case None =>
+              buffer += x
+              false
+      buffer.toSeq -> result
+    BacktrackIterable[Map[X, Boolean], Map[X, Boolean]](
+      Map.empty
+    ): map =>
+      tryMap(map) match
+        case (seq, true) =>
+          Iterable:
+            Right:
+              map ++ seq.map { _ -> false }.toMap
+        case (seq, false) =>
+//          println(s"Failed on $map with $seq")
+          for
+            (x, i) <- seq.zipWithIndex
+          yield
+            Left:
+              map ++ (seq.take(i).map { _ -> false} :+ (x -> true)).toMap
+    .headOption
+

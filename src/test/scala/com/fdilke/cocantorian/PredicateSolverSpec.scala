@@ -14,6 +14,13 @@ class ExPredicateSolverSpec extends PredicateSolverSpec(ExPredicateSolver):
     ): f =>
       f(2) & !f(3)
 
+class ExFreePredicateSolverSpec extends PredicateSolverSpec(ExFreePredicateSolver):
+  test("find a simple predicate"):
+    solvesIn(3,
+      2 -> true,
+      3 -> false
+    ): f =>
+      f(2) & !f(3)
 
 class PredicateSolverSpec(
   solver: PredicateSolver
@@ -31,7 +38,7 @@ class PredicateSolverSpec(
     .is:
       Some:
         entries.toMap
-    println(s"numCalls = $numCalls")
+//    println(s"numCalls = $numCalls")
     (numCalls.get <= maxCalls) is true
 
   test("solve for a trivial predicate"):
