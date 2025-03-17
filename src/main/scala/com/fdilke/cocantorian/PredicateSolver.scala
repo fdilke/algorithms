@@ -7,39 +7,31 @@ object PredicateSolver:
     equation: (X => Boolean) => Boolean
   ): Option[Map[X, Boolean]] =
     case class StumpedAtException(x: X) extends Exception
-    def determine[Q](
-       f: Boolean => Q,
-       predicate: Q => Boolean
-    ): Option[Q] =
-        Seq(true, false).map(f).find(predicate)
-    // ^ todo: inline this
     def tryMap(
       map: Map[X, Boolean]
     ): Option[Map[X, Boolean]] =
-      (try {
-        Left(
-          if (equation(x =>
+      (try
+        Left:
+          if equation: x =>
             map.getOrElse(
               x,
               throw StumpedAtException(x)
             )
-          ))
+          then
             Some(map)
           else
             None
-        )
-      } catch {
+      catch
         case StumpedAtException(x) =>
           Right(x)
-      }) match {
+      ) match
         case Left(result) => result
         case Right(x) =>
-          determine[Option[Map[X, Boolean]]](
-            c =>
-              tryMap(
+          Seq(true, false).map: c =>
+              tryMap:
                 map + (x -> c)
-              ),
-            om => om.isDefined
-          ).flatten
-      }
-    tryMap(Map.empty)
+          .find:
+            _.isDefined
+          .flatten
+    tryMap:
+      Map.empty
