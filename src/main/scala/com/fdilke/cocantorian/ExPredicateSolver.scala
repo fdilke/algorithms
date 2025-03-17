@@ -2,8 +2,13 @@ package com.fdilke.cocantorian
 
 import java.util.concurrent.atomic.AtomicReference
 
-object PredicateSolver:
+trait PredicateSolver:
   def apply[X](
+    equation: (X => Boolean) => Boolean
+  ): Option[Map[X, Boolean]]
+  
+object ExPredicateSolver extends PredicateSolver:
+  override def apply[X](
     equation: (X => Boolean) => Boolean
   ): Option[Map[X, Boolean]] =
     case class StumpedAtException(x: X) extends Exception
