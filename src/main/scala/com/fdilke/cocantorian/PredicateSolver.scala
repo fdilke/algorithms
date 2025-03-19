@@ -69,7 +69,6 @@ object ExFreePredicateSolver extends PredicateSolver:
             Right:
               map ++ seq.map { _ -> false }.toMap
         case (seq, false) =>
-//          println(s"Failed on $map with $seq")
           for
             (x, i) <- seq.zipWithIndex
           yield
