@@ -255,19 +255,3 @@ object SetsUtilities:
       throw new IllegalArgumentException("not a power of 2")
     else
       1 + log2(power2/2)
-
-  def nextSequence(
-    seq: Int*
-  ): Seq[Int] =
-    seq match
-      case Nil => throw new IllegalArgumentException("cannot apply to empty sequence")
-      case head +: _ =>
-        seq.zipWithIndex.find: (v, i) =>
-          v != head + i
-        match
-          case None =>
-            val a = head
-            val b = seq.size
-            (0 until (seq.size - 1)) :+ (head + seq.size)
-          case Some((endBlock, i)) =>
-            (0 until (i - 1)) ++ (( head + i ) +: seq.drop(i))
