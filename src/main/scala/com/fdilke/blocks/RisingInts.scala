@@ -1,8 +1,8 @@
-package com.fdilke.utility
+package com.fdilke.blocks
 
 import scala.collection.mutable
-import scala.runtime.Arrays
 import scala.math.BigInt
+import scala.runtime.Arrays
 
 object RisingInts:
   def apply(rising: Seq[Int]): RisingInts =

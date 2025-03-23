@@ -1,8 +1,8 @@
-package com.fdilke.utility
+package com.fdilke.blocks
 
-import munit.FunSuite
-import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.RichFunSuite._
 import com.fdilke.utility.SetsUtilities.{bitCount, bits}
+import munit.FunSuite
 
 import scala.runtime.Arrays
 
