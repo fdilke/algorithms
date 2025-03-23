@@ -63,3 +63,20 @@ case class RisingInts(
             (0 until (i - 1)) ++ (( head + i ) +: array.toSeq.drop(i))
       RisingInts(seq.toArray)
 
+  def intersect(that: RisingInts): RisingInts =
+    var i: Int = 0
+    var j: Int = 0
+    val buffer = mutable.Buffer[Int]()
+    while i < array.length && j < that.array.length do
+      val sign = array(i) - that.array(j)
+      if sign == 0 then
+        buffer += array(i)
+        i += 1
+        j += 1
+      else if sign < 0 then
+        i += 1
+      else
+        j += 1
+    RisingInts(buffer.toArray)
+
+

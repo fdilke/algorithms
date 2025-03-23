@@ -61,3 +61,17 @@ class RisingIntsSpec extends FunSuite:
     do
       bitSequences(j + 1) is nextSequence(bitSequences(j)*)
 
+  test("intersections"):
+    RisingInts(Array(0,1,3)).intersect(RisingInts(Array(1,3,5))) is
+      RisingInts(Array(1,3))
+    RisingInts(Array(2,3,5)).intersect(RisingInts(Array(2,4,5))) is
+      RisingInts(Array(2,5))
+    for
+      i <- 0 until (1 << 8)
+      j <- 0 until (1 << 8)
+    do
+      val ii = RisingInts.fromBits(i)
+      val jj = RisingInts.fromBits(j)
+      val kk = RisingInts.fromBits(i & j)
+      ii.intersect(jj) is kk
+      
