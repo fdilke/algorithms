@@ -25,7 +25,7 @@ class DivisibilityConditionsSpec extends FunSuite:
       47, 51, 53, 57
     )
     for
-      n <- 0 until 300
+      n <- 0 until 1000
     do
       DivisibilityConditions(1, 4, 5, n) is
         residues.contains(n % modulus)
