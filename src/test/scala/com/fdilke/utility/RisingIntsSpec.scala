@@ -14,7 +14,7 @@ class RisingIntsSpec extends FunSuite:
       RisingInts(Array[Int](1, 0)).sanityTest()
     intercept[IllegalArgumentException]:
       RisingInts(Array[Int](-1)).sanityTest()
-    
+
   test("semantics of equality"):
     val rising12 = RisingInts(Array[Int](1, 2))
     val rising12b = RisingInts(Array[Int](1, 2))
@@ -25,11 +25,15 @@ class RisingIntsSpec extends FunSuite:
     (rising12 == rising23) is false
 
   test("conversion to and from BigIntegers via bits"):
+    intercept[IllegalArgumentException]:
+      RisingInts.fromBits(-1)
+    RisingInts.fromBits(0) is RisingInts(Array[Int]())
+    RisingInts(Array[Int]()).toBits is BigInt(0)
     RisingInts.fromBits(7) is RisingInts(Array(0,1,2))
     RisingInts(Array(0,1,2)).toBits is BigInt(7)
     RisingInts.fromBits(BigInt(18)) is RisingInts(Array(1,4))
     RisingInts(Array(1, 4)).toBits is BigInt(18)
-    
+
   private def nextSequence(
     rising: Int*
   ): Seq[Int] =

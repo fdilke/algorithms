@@ -10,6 +10,8 @@ object RisingInts:
   def fromBits(bits: Int): RisingInts =
     fromBits(BigInt(bits))
   def fromBits(bits: BigInt): RisingInts =
+    if (bits.signum == -1)
+      throw new IllegalArgumentException("negative bit pattern")
     val set: mutable.Buffer[Int] =
       mutable.Buffer[Int]()
     for
