@@ -4,8 +4,6 @@ import scala.annotation.{tailrec, targetName}
 import scala.language.postfixOps
 import scala.reflect.ClassTag
 
-// edited snapshot of bewl2's SetsUtilities
-
 object SetsUtilities:
   def allMaps[A, B](
      source: Iterable[A],
