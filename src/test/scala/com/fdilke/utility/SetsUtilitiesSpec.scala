@@ -250,3 +250,9 @@ class SetsUtilitiesSpec extends FunSuite:
     intercept[IllegalArgumentException]:
       log2(3)
 
+  test("binomial coefficients (low order)"):
+    nCr(1, 1) is 1
+    nCr(3, 2) is 3
+    (0 to 4).map:
+      nCr(4, _)
+    .is(Seq(1,4,6,4,1))

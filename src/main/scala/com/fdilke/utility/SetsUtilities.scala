@@ -1,6 +1,6 @@
 package com.fdilke.utility
 
-import scala.annotation.targetName
+import scala.annotation.{tailrec, targetName}
 import scala.language.postfixOps
 import scala.reflect.ClassTag
 
@@ -255,3 +255,18 @@ object SetsUtilities:
       throw new IllegalArgumentException("not a power of 2")
     else
       1 + log2(power2/2)
+
+  def nCr(n: Int, k: Int): Int =
+    @tailrec def nCrRecurse(
+       iter: Int,
+       i: Int,
+       accumulator: Int
+    ): Int =
+      if i > k then
+        accumulator
+      else
+        nCrRecurse(iter + 1, i + 1, (iter*accumulator)/i)
+    if n == k || k == 0 then
+      1
+    else
+      nCrRecurse(n - k + 1, 1, 1)
