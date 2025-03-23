@@ -1,10 +1,23 @@
 package com.fdilke.utility
 
+import scala.collection.mutable
 import scala.runtime.Arrays
+import scala.math.BigInt
 
 object RisingInts:
   def apply(rising: Seq[Int]): RisingInts =
     RisingInts(rising.toArray)
+  def fromBits(bits: Int): RisingInts =
+    fromBits(BigInt(bits))
+  def fromBits(bits: BigInt): RisingInts =
+    val set: mutable.Buffer[Int] =
+      mutable.Buffer[Int]()
+    for
+      i <- 0 until bits.bitLength
+    do
+      if bits.testBit(i) then
+        set += i
+    RisingInts(set.toArray)
 
 case class RisingInts(
   array: Array[Int]
@@ -25,6 +38,10 @@ case class RisingInts(
       case RisingInts(other) =>
         array.sameElements(other.array)
       case _ => false
+
+  def toBits: BigInt =
+    array.foldLeft(BigInt(0)): (bigint, i) =>
+      bigint.setBit(i)
 
   def next: RisingInts =
     if (array.length == 0)

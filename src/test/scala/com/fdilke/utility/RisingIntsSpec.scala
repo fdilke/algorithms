@@ -24,6 +24,12 @@ class RisingIntsSpec extends FunSuite:
     rising12 is rising12b
     (rising12 == rising23) is false
 
+  test("conversion to and from BigIntegers via bits"):
+    RisingInts.fromBits(7) is RisingInts(Array(0,1,2))
+    RisingInts(Array(0,1,2)).toBits is BigInt(7)
+    RisingInts.fromBits(BigInt(18)) is RisingInts(Array(1,4))
+    RisingInts(Array(1, 4)).toBits is BigInt(18)
+    
   private def nextSequence(
     rising: Int*
   ): Seq[Int] =
