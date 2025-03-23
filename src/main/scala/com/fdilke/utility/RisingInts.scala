@@ -9,6 +9,17 @@ object RisingInts:
 case class RisingInts(
   array: Array[Int]
 ):
+  def sanityTest(): Unit =
+    for
+      i <- 0 until array.length - 1
+    do
+      if array(i) >= array(i+1) then
+        throw new IllegalArgumentException("array is not monotonically increasing")
+    if !array.forall:
+      _ >= 0
+    then
+      throw new IllegalArgumentException("values must be nonnegative")
+
   override def equals(obj: Any): Boolean =
     obj match
       case RisingInts(other) =>

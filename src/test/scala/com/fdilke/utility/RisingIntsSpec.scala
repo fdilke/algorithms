@@ -8,6 +8,13 @@ import scala.runtime.Arrays
 
 class RisingIntsSpec extends FunSuite:
 
+  test("sanity test"):
+    RisingInts(Array[Int](0, 1)).sanityTest()
+    intercept[IllegalArgumentException]:
+      RisingInts(Array[Int](1, 0)).sanityTest()
+    intercept[IllegalArgumentException]:
+      RisingInts(Array[Int](-1)).sanityTest()
+    
   test("semantics of equality"):
     val rising12 = RisingInts(Array[Int](1, 2))
     val rising12b = RisingInts(Array[Int](1, 2))
