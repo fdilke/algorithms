@@ -256,3 +256,22 @@ class SetsUtilitiesSpec extends FunSuite:
     (0 to 4).map:
       nCr(4, _)
     .is(Seq(1,4,6,4,1))
+
+  test("greatest common divisor"):
+    gcd(1, 2) is 1
+    gcd(2, 2) is 2
+    gcd(2, 3) is 1
+    gcd(2, 4) is 2
+    gcd(6, 4) is 2
+    gcd(6, 8) is 2
+    gcd(12, 8) is 4
+    gcd(12, 9) is 3
+    gcd(16, 9) is 1
+  
+  test("least common multiple"):
+    lcm(1, 2) is 2
+    lcm(2, 4) is 4
+    lcm(9, 3) is 9
+    lcm(9, 6) is 18
+    lcm(4, 5) is 20
+    lcm(6, 8) is 24

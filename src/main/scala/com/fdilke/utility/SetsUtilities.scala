@@ -270,3 +270,23 @@ object SetsUtilities:
       1
     else
       nCrRecurse(n - k + 1, 1, 1)
+
+  def gcd(
+    m: Int,
+    n: Int
+  ): Int =
+    @tailrec def gcdSub(
+      greater: Int,
+      lesser: Int
+    ): Int =
+      if lesser == 0 then
+        greater
+      else
+        gcdSub(lesser, greater % lesser)
+    gcdSub(Math.max(m, n), Math.min(m, n))
+
+  def lcm(
+    m: Int,
+    n: Int
+  ): Int =
+    (Math.min(m, n) / gcd(m, n)) * Math.max(m, n)
