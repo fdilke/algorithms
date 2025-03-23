@@ -269,6 +269,21 @@ object SetsUtilities:
     else
       nCrRecurse(n - k + 1, 1, 1)
 
+  def nCrB(n: Int, k: Int): BigInt =
+    @tailrec def nCrRecurse(
+       iter: Int,
+       i: Int,
+       accumulator: BigInt
+    ): BigInt =
+      if i > k then
+        accumulator
+      else
+        nCrRecurse(iter + 1, i + 1, (accumulator*iter)/i)
+    if n == k || k == 0 then
+      BigInt(1)
+    else
+      nCrRecurse(n - k + 1, 1, BigInt(1))
+
   def gcd(
     m: Int,
     n: Int
@@ -288,3 +303,15 @@ object SetsUtilities:
     n: Int
   ): Int =
     (Math.min(m, n) / gcd(m, n)) * Math.max(m, n)
+
+  def gcd(
+    m: BigInt,
+    n: BigInt
+  ): BigInt =
+    m.gcd(n)
+
+  def lcm(
+    m: BigInt,
+    n: BigInt
+  ): BigInt =
+    (m / gcd(m, n)) * n

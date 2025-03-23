@@ -256,6 +256,14 @@ class SetsUtilitiesSpec extends FunSuite:
     (0 to 4).map:
       nCr(4, _)
     .is(Seq(1,4,6,4,1))
+    
+  test("binomial coefficients (higher order)"):
+    nCrB(1, 1) is BigInt(1)
+    nCrB(3, 2) is BigInt(3)
+    (0 to 4).map:
+      nCrB(4, _)
+    .is(Seq(1,4,6,4,1).map(BigInt(_)))
+    nCrB(2000, 1999) is BigInt(2000)
 
   test("greatest common divisor"):
     gcd(1, 2) is 1
@@ -275,3 +283,22 @@ class SetsUtilitiesSpec extends FunSuite:
     lcm(9, 6) is 18
     lcm(4, 5) is 20
     lcm(6, 8) is 24
+    
+  test("greatest common divisor with BigInts"):
+    gcd(BigInt(1), BigInt(2)) is BigInt(1)
+    gcd(BigInt(2), BigInt(2)) is BigInt(2)
+    gcd(BigInt(2), BigInt(3)) is BigInt(1)
+    gcd(BigInt(2), BigInt(4)) is BigInt(2)
+    gcd(BigInt(6), BigInt(4)) is BigInt(2)
+    gcd(BigInt(6), BigInt(8)) is BigInt(2)
+    gcd(BigInt(12), BigInt(8)) is BigInt(4)
+    gcd(BigInt(12), BigInt(9)) is BigInt(3)
+    gcd(BigInt(16), BigInt(9)) is BigInt(1)
+  
+  test("least common multiple with BigInts"):
+    lcm(BigInt(1), BigInt(2)) is BigInt(2)
+    lcm(BigInt(2), BigInt(4)) is BigInt(4)
+    lcm(BigInt(9), BigInt(3)) is BigInt(9)
+    lcm(BigInt(9), BigInt(6)) is BigInt(18)
+    lcm(BigInt(4), BigInt(5)) is BigInt(20)
+    lcm(BigInt(6), BigInt(8)) is BigInt(24)
