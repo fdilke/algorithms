@@ -256,6 +256,9 @@ class SetsUtilitiesSpec extends FunSuite:
     (0 to 4).map:
       nCr(4, _)
     .is(Seq(1,4,6,4,1))
+    (0 to 10).map:
+      nCr(10, _)
+    .sum is (1 << 10)
     
   test("binomial coefficients (higher order)"):
     nCrB(1, 1) is BigInt(1)
@@ -264,6 +267,9 @@ class SetsUtilitiesSpec extends FunSuite:
       nCrB(4, _)
     .is(Seq(1,4,6,4,1).map(BigInt(_)))
     nCrB(2000, 1999) is BigInt(2000)
+    (0 to 10).map:
+      nCrB(10, _)
+    .sum is BigInt(1 << 10)
 
   test("greatest common divisor"):
     gcd(1, 2) is 1
