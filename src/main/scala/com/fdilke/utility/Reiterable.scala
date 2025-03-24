@@ -84,14 +84,14 @@ class ReiterableLite[T](
 
 class ReiterableLite2[T](
   initial:T,
-  nextOperator: T => T,
-  continuePredicate: T => Boolean
+  nextOperator: UnaryOperator[T],
+  continuePredicate: Predicate[T]
 ) extends Iterable[T]:
       override def iterator: Iterator[T] =
         new Iterator[T]:
           var value: T = initial
           override def hasNext: Boolean =
-            continuePredicate(value)
+            continuePredicate.test(value)
           override def next: T =
             val retVal = value
             value = nextOperator(value)
