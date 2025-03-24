@@ -77,10 +77,10 @@ class RisingIntsSpec extends FunSuite:
       ii.intersect(jj) is kk
 
   test("the 'reiterable' of all finite r-subsets of an n-set"):
-    val reiterable: Reiterable[RisingInts] =
+    val reiterable: Iterable[RisingInts] =
       RisingInts.rSubsetsOfN(r = 2, n = 3)
-    (reiterable: Iterable[RisingInts]) is Seq(
+    reiterable.toSeq is Seq(
       RisingInts(Array(0,1)),
-      RisingInts(Array(1,2)),
-      RisingInts(Array(0,2))
+      RisingInts(Array(0,2)),
+      RisingInts(Array(1,2))
     )

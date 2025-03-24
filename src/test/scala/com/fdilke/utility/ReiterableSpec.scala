@@ -6,8 +6,8 @@ import munit.FunSuite
 
 class ReiterableSpec extends FunSuite:
   test("a simple reiterable"):
-    val simple: Iterable[Int] =
-      ReiterableLite2[Int](
+    val simple: Reiterable[Int] =
+      Reiterable[Int](
         initial = 0,
         nextOperator = _ + 1,
         continuePredicate = _ < 7
@@ -18,8 +18,8 @@ class ReiterableSpec extends FunSuite:
     )
 
   test("another simple reiterable"):
-    val simple: Iterable[Boolean] =
-      ReiterableLite2[Boolean](
+    val simple: Reiterable[Boolean] =
+      Reiterable[Boolean](
         initial = true,
         nextOperator = !_,
         continuePredicate = x => x

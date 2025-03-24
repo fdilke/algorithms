@@ -24,7 +24,7 @@ object RisingInts:
     RisingInts(set.toArray)
 
   def rSubsetsOfN(
-    r: Int, 
+    r: Int,
     n : Int
    ): Reiterable[RisingInts] =
     Reiterable[RisingInts](
