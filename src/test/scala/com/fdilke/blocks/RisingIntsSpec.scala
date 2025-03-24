@@ -1,5 +1,6 @@
 package com.fdilke.blocks
 
+import com.fdilke.utility.Reiterable
 import com.fdilke.utility.RichFunSuite._
 import com.fdilke.utility.SetsUtilities.{bitCount, bits}
 import munit.FunSuite
@@ -74,4 +75,12 @@ class RisingIntsSpec extends FunSuite:
       val jj = RisingInts.fromBits(j)
       val kk = RisingInts.fromBits(i & j)
       ii.intersect(jj) is kk
-      
+
+  test("the 'reiterable' of all finite r-subsets of an n-set"):
+    val reiterable: Reiterable[RisingInts] =
+      RisingInts.rSubsetsOfN(r = 2, n = 3)
+    (reiterable: Iterable[RisingInts]) is Seq(
+      RisingInts(Array(0,1)),
+      RisingInts(Array(1,2)),
+      RisingInts(Array(0,2))
+    )

@@ -1,5 +1,7 @@
 package com.fdilke.blocks
 
+import com.fdilke.utility.Reiterable
+
 import scala.collection.mutable
 import scala.math.BigInt
 import scala.runtime.Arrays
@@ -20,6 +22,17 @@ object RisingInts:
       if bits.testBit(i) then
         set += i
     RisingInts(set.toArray)
+
+  def rSubsetsOfN(
+    r: Int, 
+    n : Int
+   ): Reiterable[RisingInts] =
+    Reiterable[RisingInts](
+      RisingInts:
+        (0 until r).toArray,
+      _.next,
+      _.array.last < n
+    )
 
 case class RisingInts(
   array: Array[Int]
