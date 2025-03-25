@@ -16,3 +16,17 @@ class Reiterable[T](
         continuePredicate.test(value.get)
       override def next: T =
         value.getAndUpdate(nextOperator)
+
+object Reiterable:
+  def empty[T](t: T): Reiterable[T] =
+    Reiterable[T](
+      t : T,
+      UnaryOperator.identity[T],
+      _ => false
+    )
+  def one[T](t: T, u: T): Reiterable[T] =
+    Reiterable[T](
+      t : T,
+      _ => u,
+      _ == t
+    )
