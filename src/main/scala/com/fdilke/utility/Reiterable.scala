@@ -30,16 +30,3 @@ object Reiterable:
       ),
       _ != inputs.last
     )
-    
-  def empty[T](t: T): Reiterable[T] =
-    Reiterable[T](
-      t : T,
-      UnaryOperator.identity[T],
-      _ => false
-    )
-  def one[T](t: T, u: T): Reiterable[T] =
-    Reiterable[T](
-      t : T,
-      _ => u,
-      _ == t
-    )
