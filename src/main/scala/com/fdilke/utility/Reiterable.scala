@@ -18,6 +18,19 @@ class Reiterable[T](
         value.getAndUpdate(nextOperator)
 
 object Reiterable:
+  def listStopShort[T](
+    inputs: T*
+  ): Reiterable[T] =
+    Reiterable[T](
+      inputs.head : T,
+      u => inputs(1 +
+        inputs.zipWithIndex.find:
+          (v, i) => v == u
+        .get._2
+      ),
+      _ != inputs.last
+    )
+    
   def empty[T](t: T): Reiterable[T] =
     Reiterable[T](
       t : T,

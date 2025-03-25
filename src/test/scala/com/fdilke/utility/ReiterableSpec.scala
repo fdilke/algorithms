@@ -27,3 +27,7 @@ class ReiterableSpec extends FunSuite:
     simple.toSeq is Seq(
       true
     )
+
+  test("a list reiterable"):
+    Reiterable.listStopShort[Int](1,2,3).toSeq is
+      Seq(1,2)
