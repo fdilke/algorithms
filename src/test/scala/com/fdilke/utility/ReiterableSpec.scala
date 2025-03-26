@@ -8,9 +8,9 @@ class ReiterableSpec extends FunSuite:
   test("a simple reiterable"):
     val simple: Reiterable[Int] =
       Reiterable[Int](
-        initial = 0,
-        nextOperator = _ + 1,
-        continuePredicate = _ < 7
+        initial = Some(0),
+        nextOperator = n => Some(n + 1),
+        continueCondition = _ < 7
       )
     println(s"simple = $simple")
     simple.toSeq is Seq(
@@ -20,14 +20,22 @@ class ReiterableSpec extends FunSuite:
   test("another simple reiterable"):
     val simple: Reiterable[Boolean] =
       Reiterable[Boolean](
-        initial = true,
-        nextOperator = !_,
-        continuePredicate = x => x
+        initial = Some(true),
+        nextOperator = b => Some(!b),
+        continueCondition = identity
       )
     simple.toSeq is Seq(
       true
     )
 
   test("a list reiterable"):
-    Reiterable.listStopShort[Int](1,2,3).toSeq is
+    Reiterable.list[Int](1,2).toSeq is
       Seq(1,2)
+
+  test("the first element doesn't get a free pass"):
+    Reiterable[Boolean](
+      initial = Some(false),
+      nextOperator = b => Some(!b),
+      continueCondition = identity
+    ).toSeq is
+      Seq.empty

@@ -28,9 +28,10 @@ object RisingInts:
     n : Int
    ): Reiterable[RisingInts] =
     Reiterable[RisingInts](
-      RisingInts:
-        (0 until r).toArray,
-      _.next,
+      Some:
+        RisingInts:
+          (0 until r).toArray,
+      rising => Some(rising.next),
       _.array.last < n
     )
 

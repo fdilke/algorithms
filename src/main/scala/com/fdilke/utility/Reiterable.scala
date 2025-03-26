@@ -4,29 +4,38 @@ import java.util.concurrent.atomic.AtomicReference
 import java.util.function.{Predicate, UnaryOperator}
 
 class Reiterable[T](
-  initial:T,
-  nextOperator: UnaryOperator[T],
-  continuePredicate: Predicate[T]
+  initial:Option[T],
+  nextOperator: T => Option[T],
+  continueCondition: Predicate[T]
 ) extends Iterable[T]:
   override def iterator: Iterator[T] =
     new Iterator[T]:
-      val value: AtomicReference[T] =
-        AtomicReference(initial)
+      val value: AtomicReference[Option[T]] =
+        AtomicReference:
+          initial
       override def hasNext: Boolean =
-        continuePredicate.test(value.get)
+        value.get.exists:
+          continueCondition.test
       override def next: T =
-        value.getAndUpdate(nextOperator)
+        value.getAndUpdate:
+          _.flatMap:
+            nextOperator.apply
+        .get
 
 object Reiterable:
-  def listStopShort[T](
+  def list[T](
     inputs: T*
   ): Reiterable[T] =
+    def nextIndex(u: T) =
+      1 + inputs.indexOf(u)
     Reiterable[T](
-      inputs.head : T,
-      u => inputs(1 +
-        inputs.zipWithIndex.find:
-          (v, i) => v == u
-        .get._2
-      ),
-      _ != inputs.last
+      inputs.headOption,
+      u =>
+        val index = nextIndex(u)
+        if index < inputs.length then
+          Some(inputs(index))
+        else
+          None,
+      _ => true
     )
+

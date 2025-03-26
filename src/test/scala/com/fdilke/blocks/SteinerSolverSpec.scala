@@ -12,7 +12,7 @@ class SteinerSolverSpec(
 ) extends FunSuite:
   test("no inputs, no solution"):
     val theEmpty: Reiterable[Unit] =
-      Reiterable.listStopShort[Unit](())
+      Reiterable.list[Unit]()
     solver(
       theEmpty,
       0,
@@ -26,7 +26,7 @@ class SteinerSolverSpec(
 
   test("one input, maybe one solution"):
     val theOne: Reiterable[Boolean] =
-      Reiterable.listStopShort[Boolean](true, false)
+      Reiterable.list[Boolean](true)
     solver(
       theOne,
       0,
