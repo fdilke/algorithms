@@ -1,5 +1,6 @@
 package com.fdilke.blocks
 
+import com.fdilke.backtrack.node.coloring.Graph
 import com.fdilke.utility.Reiterable
 import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
@@ -42,3 +43,18 @@ class SteinerSolverSpec(
       2,
       _ => true
     ) is None
+
+  test("find a complete subgraph"):
+    val graph: Graph =
+      Graph(
+        (0, 2), (1, 2), (2, 3), (3, 0)
+      )
+    val nodes: Reiterable[Int] =
+      Reiterable.list(0, 1, 2, 3)
+    solver(
+      nodes,
+      3,
+      (v, w) => graph.adjacencyTable(v)(w)
+    ) is Some(
+      Set(0, 2, 3)
+    )
