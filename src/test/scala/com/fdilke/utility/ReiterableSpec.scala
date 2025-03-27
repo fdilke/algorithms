@@ -39,3 +39,21 @@ class ReiterableSpec extends FunSuite:
       continueCondition = identity
     ).toSeq is
       Seq.empty
+
+  test("clone the state as a reiterator"):
+    val iterator: Reiterator[Int] =
+      Reiterable.list(1,2,3).iterator
+    iterator.hasNext is true
+    iterator.next() is 1
+    val dupIterator: Reiterator[Int] =
+      iterator.duplicateState()
+    iterator.hasNext is true
+    iterator.next() is 2
+    iterator.hasNext is true
+    iterator.next() is 3
+    iterator.hasNext is false
+    dupIterator.hasNext is true
+    dupIterator.next() is 2
+    dupIterator.hasNext is true
+    dupIterator.next() is 3
+    dupIterator.hasNext is false
