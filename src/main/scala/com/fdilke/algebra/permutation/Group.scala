@@ -1,5 +1,6 @@
 package com.fdilke.algebra.permutation
 
+import com.fdilke.backtrack.BacktrackIterable
 import com.fdilke.backtrack.node.Node
 import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 
@@ -152,29 +153,45 @@ trait Group[T]:
       throw new IllegalArgumentException(s"no element of order $n found")
 
   def subgroups: Set[Subgroup] =
-    def allAboveUsingWithout(
+    case class SubgroupCriteria(
       above: Subgroup,
       elementsToUse: Seq[T],
       elementsToExclude: Seq[T]
-    ): Set[Subgroup] =
-      elementsToUse match
-        case Nil => Set(above)
-        case x +: rest =>
-          if above.elements.contains(x) ||
-            elementsToExclude.contains(x)
-          then
-            allAboveUsingWithout(above, rest, elementsToExclude)
-          else
-            val aboveWithX =
-              group.generateSubgroup(above.elements + x)
-            allAboveUsingWithout(aboveWithX, rest, elementsToExclude) ++
-              allAboveUsingWithout(above, rest, x +: elementsToExclude)
-    allAboveUsingWithout(
-      trivialSubgroup,
-      elements.toSeq,
-      Seq.empty
-    )
-    
+    ):
+      def explore: Either[Seq[SubgroupCriteria], Set[Subgroup]] =
+        elementsToUse match
+          case Nil =>
+            Right:
+              Set:
+                above
+          case x +: rest =>
+            if above.elements.contains(x) ||
+              elementsToExclude.contains(x)
+            then
+              Left:
+                Seq:
+                  SubgroupCriteria(above, rest, elementsToExclude)
+            else
+              val aboveWithX =
+                group.generateSubgroup(above.elements + x)
+              Left:
+                Seq(
+                  SubgroupCriteria(aboveWithX, rest, elementsToExclude),
+                  SubgroupCriteria(above, rest, x +: elementsToExclude)
+                )
+    BacktrackIterable[Seq[SubgroupCriteria], Set[Subgroup]](
+      Seq:
+        SubgroupCriteria(
+          trivialSubgroup,
+          elements.toSeq,
+          Seq.empty
+        )
+    ):
+      _.map:
+        _.explore
+    .reduce:
+      _ union _
+
   lazy val conjugacyClasses: Set[Set[T]] =
     val buf: mutable.ListBuffer[Set[T]] =
       mutable.ListBuffer[Set[T]]()
