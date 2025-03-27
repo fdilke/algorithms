@@ -7,6 +7,8 @@ import munit.FunSuite
 
 class GreedySteinerSolverSpec extends
   SteinerSolverSpec(GreedySteinerSolver)
+class PortionControlledSteinerSolverSpec extends
+  SteinerSolverSpec(PortionControlledSteinerSolver)
 
 class SteinerSolverSpec(
   solver: SteinerSolver

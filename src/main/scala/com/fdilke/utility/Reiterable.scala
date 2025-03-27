@@ -8,19 +8,25 @@ class Reiterable[T](
   nextOperator: T => Option[T],
   continueCondition: Predicate[T]
 ) extends Iterable[T]:
-  override def iterator: Iterator[T] =
-    new Iterator[T]:
-      val value: AtomicReference[Option[T]] =
-        AtomicReference:
-          initial
-      override def hasNext: Boolean =
-        value.get.exists:
-          continueCondition.test
-      override def next: T =
-        value.getAndUpdate:
-          _.flatMap:
-            nextOperator.apply
-        .get
+  private class LocalReiterator(
+    cursor: Option[T]                               
+  ) extends Reiterator[T]:
+    private val value: AtomicReference[Option[T]] =
+      AtomicReference:
+        cursor
+    override def hasNext: Boolean =
+      value.get.exists:
+        continueCondition.test
+    override def next: T =
+      value.getAndUpdate:
+        _.flatMap:
+          nextOperator.apply
+      .get
+    override def duplicateState(): Reiterator[T] =
+      LocalReiterator:
+        value.get
+  override def iterator: Reiterator[T] =
+    LocalReiterator(initial)
 
 object Reiterable:
   def list[T](
@@ -39,3 +45,5 @@ object Reiterable:
       _ => true
     )
 
+trait Reiterator[T] extends Iterator[T]:
+  def duplicateState(): Reiterator[T]
