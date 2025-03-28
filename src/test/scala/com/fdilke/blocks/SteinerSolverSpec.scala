@@ -6,12 +6,20 @@ import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
 
 class GreedySteinerSolverSpec extends
-  SteinerSolverSpec(GreedySteinerSolver)
+  SteinerSolverSpec(
+    solver = GreedySteinerSolver,
+    greedy = true
+  )
+
 class PortionControlledSteinerSolverSpec extends
-  SteinerSolverSpec(PortionControlledSteinerSolver)
+  SteinerSolverSpec(
+    solver = PortionControlledSteinerSolver,
+    greedy = false
+  )
 
 class SteinerSolverSpec(
-  solver: SteinerSolver
+  solver: SteinerSolver,
+  greedy: Boolean
 ) extends FunSuite:
   test("no inputs, no solution"):
     val theEmpty: Reiterable[Unit] =
@@ -60,3 +68,20 @@ class SteinerSolverSpec(
     ) is Some(
       Set(0, 2, 3)
     )
+
+  test("find a complete subgraph iff portion-controlled"):
+    val graph: Graph =
+      Graph(
+        (0, 1), (0, 2), (2, 3), (3, 0)
+      )
+    val nodes: Reiterable[Int] =
+      Reiterable.list(0, 1, 2, 3)
+    solver(
+      nodes,
+      3,
+      (v, w) => graph.adjacencyTable(v)(w)
+    ) is:
+      if greedy then
+        None
+      else
+        Some(Set(0, 2, 3))
