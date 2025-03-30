@@ -293,3 +293,13 @@ object SetsUtilities:
     n: BigInt
   ): BigInt =
     (m / gcd(m, n)) * n
+
+  def showSequence[T](
+    seq: Seq[T],
+    maxSize: Int
+  ): String =
+    s"{ ${
+      seq.take(Math.min(maxSize, seq.length)).mkString(", ")
+    }${
+      if seq.length > maxSize then ", ..." else ""
+    } }"

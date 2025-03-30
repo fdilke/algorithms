@@ -16,6 +16,10 @@ class RisingIntsSpec extends FunSuite:
     intercept[IllegalArgumentException]:
       RisingInts(Array[Int](-1)).sanityTest()
 
+  test("passthrough size calculation"):
+    RisingInts(Array[Int](0, 1)).size is 2
+    RisingInts(Array[Int](4, 5, 6)).size is 3
+
   test("semantics of equality"):
     val rising12 = RisingInts(Array[Int](1, 2))
     val rising12b = RisingInts(Array[Int](1, 2))
@@ -76,11 +80,34 @@ class RisingIntsSpec extends FunSuite:
       val kk = RisingInts.fromBits(i & j)
       ii.intersect(jj) is kk
 
+  test("containment"):
+    RisingInts(Array(0)).contains(RisingInts(Array(0))) is true
+    RisingInts(Array(0)).contains(RisingInts(Array(1))) is false
+    RisingInts(Array(0,1,3)).contains(RisingInts(Array(3))) is true
+    RisingInts(Array(0,1,3)).contains(RisingInts(Array(3, 4))) is false
+    RisingInts(Array(1,3)).contains(RisingInts(Array(3))) is true
+    RisingInts(Array(1,3)).contains(RisingInts(Array(3, 4))) is false
+    RisingInts(Array(1,3,7)).contains(RisingInts(Array(1, 7))) is true
+    RisingInts(Array(1,3,7)).contains(RisingInts(Array(6))) is false
+    RisingInts(Array(2,4,6)).contains(RisingInts(Array(2,4,6))) is true
+    RisingInts(Array(2,6)).contains(RisingInts(Array(2,4,6))) is false
+    RisingInts(Array(0,1,2)).contains(RisingInts(Array(0,1))) is true
+    for
+      sub2 <- RisingInts.qSubsetsOfN(2, 7)
+      sub3 <- RisingInts.qSubsetsOfN(3, 7)
+    do
+      (sub3 contains sub2) is
+        sub2.array.toSet.subsetOf(sub3.array.toSet)
+
   test("the 'reiterable' of all finite r-subsets of an n-set"):
     val reiterable: Iterable[RisingInts] =
-      RisingInts.rSubsetsOfN(r = 2, n = 3)
+      RisingInts.qSubsetsOfN(q = 2, n = 3)
     reiterable.toSeq is Seq(
       RisingInts(Array(0,1)),
       RisingInts(Array(0,2)),
       RisingInts(Array(1,2))
     )
+
+  test("toString() for RisingInts"):
+    RisingInts(Array(3,4,5)).toString is
+      "{ 3, 4, 5 }"

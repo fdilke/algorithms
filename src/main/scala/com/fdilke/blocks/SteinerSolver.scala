@@ -64,9 +64,11 @@ object PortionControlledSteinerSolver extends SteinerSolver:
           if set.forall:
             u => compatible.test(t, u)
           then
+            val dupSource =
+              source.duplicateState()
             Iterable(
               continueWith(set, source),
-              continueWith(set + t, source.duplicateState()),
+              continueWith(set + t, dupSource),
             )
           else
             Iterable(

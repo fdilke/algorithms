@@ -308,3 +308,9 @@ class SetsUtilitiesSpec extends FunSuite:
     lcm(BigInt(9), BigInt(6)) is BigInt(18)
     lcm(BigInt(4), BigInt(5)) is BigInt(20)
     lcm(BigInt(6), BigInt(8)) is BigInt(24)
+
+  test("displaying a sequence in a nice form"):
+    showSequence(Seq(1,2), 2) is "{ 1, 2 }"
+    showSequence(Seq(1,2), 1) is "{ 1, ... }"
+    showSequence(Seq(4,5,6,7), 3) is "{ 4, 5, 6, ... }"
+    showSequence(Seq(4,5,6,7), 4) is "{ 4, 5, 6, 7 }"

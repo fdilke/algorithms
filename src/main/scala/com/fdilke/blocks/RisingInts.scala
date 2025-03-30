@@ -23,14 +23,14 @@ object RisingInts:
         set += i
     RisingInts(set.toArray)
 
-  def rSubsetsOfN(
-    r: Int,
+  def qSubsetsOfN(
+    q: Int,
     n : Int
-   ): Reiterable[RisingInts] =
+ ): Reiterable[RisingInts] =
     Reiterable[RisingInts](
       Some:
         RisingInts:
-          (0 until r).toArray,
+          (0 until q).toArray,
       rising => Some(rising.next),
       _.array.last < n
     )
@@ -48,6 +48,9 @@ case class RisingInts(
       _ >= 0
     then
       throw new IllegalArgumentException("values must be nonnegative")
+
+  def size: Int =
+    array.length
 
   override def equals(obj: Any): Boolean =
     obj match
@@ -77,7 +80,7 @@ case class RisingInts(
             (0 until (i - 1)) ++ (( head + i ) +: array.toSeq.drop(i))
       RisingInts(seq.toArray)
 
-  def intersect(that: RisingInts): RisingInts =
+  infix def intersect(that: RisingInts): RisingInts =
     var i: Int = 0
     var j: Int = 0
     val buffer = mutable.Buffer[Int]()
@@ -93,4 +96,27 @@ case class RisingInts(
         j += 1
     RisingInts(buffer.toArray)
 
+  infix def contains(
+    subset: RisingInts
+  ): Boolean =
+    var i: Int = 0
+    var j: Int = 0
+    var okSoFar = true
+    while okSoFar && i < array.length && j < subset.array.length
+    do
+      val sign = array(i) - subset.array(j)
+      if sign == 0 then
+        i += 1
+        j += 1
+      else if sign < 0 then
+        i += 1
+        if i == array.length then
+          okSoFar = false
+      else
+        okSoFar = false
+    okSoFar && j == subset.array.length
 
+  override def toString: String =
+    s"{ ${
+      array.mkString(", ")
+    } }"
