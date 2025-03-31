@@ -12,7 +12,6 @@ class ReiterableSpec extends FunSuite:
         nextOperator = n => Some(n + 1),
         continueCondition = _ < 7
       )
-    println(s"simple = $simple")
     simple.toSeq is Seq(
       0, 1, 2, 3, 4, 5, 6
     )
