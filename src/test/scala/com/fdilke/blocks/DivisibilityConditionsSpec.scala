@@ -59,3 +59,11 @@ class DivisibilityConditionsSpec extends FunSuite:
     DivisibilityConditions.leastN(1, 2, 4) is 13
     DivisibilityConditions.leastN(1, 3, 4) is 8
 
+  test("calculate all N for a given lambda, r, q"):
+    DivisibilityConditions.allN(1, 2, 3).take(3) is Seq(7, 9, 13)
+    DivisibilityConditions.allN(1, 2, 4).take(4) is Seq(13, 16, 25, 28)
+    DivisibilityConditions.allN(1, 2, 5).take(4) is Seq(21, 25, 41, 45)
+    DivisibilityConditions.allN(1, 3, 4).take(5) is Seq(8, 10, 14, 16, 20)
+    DivisibilityConditions.allN(1, 3, 5).take(6) is Seq(17, 26, 41, 50, 62, 65)
+    DivisibilityConditions.allN(1, 4, 5).take(6) is Seq(11, 15, 17, 21, 23, 27)
+

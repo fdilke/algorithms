@@ -54,12 +54,19 @@ object DivisibilityConditions:
     mainLcm -> (0 until mainLcm).filter: n =>
       globalResiduesAllowed(n)
 
+  def allN(
+    lambda: Int,
+    r: Int,
+    q: Int
+  ):LazyList[Int] =
+    LazyList.iterate(q + 1)(_ + 1).filter: n =>
+      DivisibilityConditions(lambda = 1, r = r, q = q, n = n)
+    
   def leastN(
     lambda: Int,
     r: Int,
     q: Int
   ):Int =
-    LazyList.iterate(q + 1)(_ + 1).find: n =>
-      DivisibilityConditions(lambda = 1, r = r, q = q, n = n)
-    .get
+    allN(lambda,r,q)
+    .head
     
