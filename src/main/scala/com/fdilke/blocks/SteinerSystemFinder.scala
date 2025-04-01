@@ -22,6 +22,14 @@ object SteinerSystemFinder:
       blocks =>
         SteinerSystem(r, q, n, blocks)
 
+  def apply(
+    r: Int,
+    q: Int
+  ): Option[SteinerSystem] =
+    val n: Int =
+      DivisibilityConditions.leastN(lambda=1, r=r, q=q)
+    apply(r=r,q=q,n=n)
+    
 case class SteinerSystem(
   r: Int,
   q: Int,
