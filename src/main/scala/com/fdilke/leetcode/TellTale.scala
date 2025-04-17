@@ -1,4 +1,4 @@
-package com.fdilke.telltale
+package com.fdilke.leetcode
 
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.{bits, log2, xorNumbers}

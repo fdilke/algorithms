@@ -1,4 +1,4 @@
-package com.fdilke.telltale
+package com.fdilke.leetcode
 
 import com.fdilke.utility.RichFunSuite._
 import com.fdilke.utility.SetsUtilities._

@@ -303,3 +303,20 @@ object SetsUtilities:
     }${
       if seq.length > maxSize then ", ..." else ""
     } }"
+
+  def sameCycle[A](
+    cycle: Seq[A],
+    altCycle: Seq[A]
+  ): Boolean =
+    (cycle.length == altCycle.length) &&
+      (cycle.isEmpty || {
+        val initial: A = cycle.head
+        altCycle.zipWithIndex.find:
+          _._1 == initial
+        .match
+          case None => false
+          case Some((_, i)) =>
+            cycle == (
+              altCycle.drop(i) ++ altCycle.take(i)
+            )
+      })

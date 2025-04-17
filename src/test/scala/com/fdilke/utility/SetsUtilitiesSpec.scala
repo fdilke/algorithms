@@ -314,3 +314,16 @@ class SetsUtilitiesSpec extends FunSuite:
     showSequence(Seq(1,2), 1) is "{ 1, ... }"
     showSequence(Seq(4,5,6,7), 3) is "{ 4, 5, 6, ... }"
     showSequence(Seq(4,5,6,7), 4) is "{ 4, 5, 6, 7 }"
+
+  test("tell if two sequences represent the same cycle"):
+    sameCycle(Seq.empty[Int], Seq.empty[Int]) is true
+    sameCycle(Seq(1, 3), Seq(1, 3)) is true
+    sameCycle(Seq(1, 3), Seq(3, 1)) is true
+    sameCycle(Seq(1, 4, 7), Seq(4, 7, 1)) is true
+    sameCycle(Seq(1, 2, 4, 3, 7), Seq(4, 3, 7, 1, 2)) is true
+
+    sameCycle(Seq(1, 4), Seq(4, 4)) is false
+    sameCycle(Seq(1, 4, 7), Seq(4, 1, 7)) is false
+    sameCycle(Seq(1, 2), Seq.empty[Int]) is false
+    sameCycle(Seq(1), Seq(2)) is false
+    sameCycle(Seq(1, 2, 4, 3, 7), Seq(4, 3, 7, 2, 1)) is false
