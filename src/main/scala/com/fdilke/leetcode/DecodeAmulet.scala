@@ -32,6 +32,8 @@ object DecodeAmulet:
       for
         (x, y) <- pairs
       do
+        if x == y then
+          throw IllegalArgumentException("contains a loop")
         processPair(x, y)
         processPair(y, x)
       var nextSymbol: A =
@@ -48,5 +50,10 @@ object DecodeAmulet:
           case Some(a) =>
             cycle.append(a)
             nextSymbol = a
-      cycle.toSeq
+      if cycle.size == symbols.size &&
+        pairMaps(cycle.last).contains(cycle.head)
+      then
+        cycle.toSeq
+      else
+        throw IllegalArgumentException("faulty cycle structure")
 
