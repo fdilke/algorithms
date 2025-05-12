@@ -1,0 +1,15 @@
+#lang racket
+
+(define lower 1)
+(define upper 1)
+
+(define (start m n)
+  (set! lower (min m n))
+  (set! upper (max m n))
+  )
+
+(define (guess)
+  (quotient (+ upper lower) 2)
+  )
+
+  
