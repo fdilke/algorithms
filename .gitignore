@@ -5,6 +5,7 @@
 
 # sbt specific
 dist/*
+src/*/*.bak
 target/
 lib/
 lib_managed/
