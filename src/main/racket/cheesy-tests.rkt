@@ -9,12 +9,35 @@
   )
 )
 
+;; find all pythagorean triples below a given number
+(define (pyth-triples n)
+     (for*/list (
+        [i (in-range 1 n)] 
+        [j (in-range i n)] 
+        [k (in-range j n)] 
+        #:when (= (sqr k) (+ (sqr i) (sqr j)))
+        ) 
+        (list i j k)
+    )
+)
+
 (struct document (author title content))
+
+(define pyth-triples-tests
+    (test-suite "Test pyth triples code"
+        #:before (lambda () (display "Before trples"))
+        #:after  (lambda () (display "After triples"))
+        (test-case "Finds triples"
+            (check-equal? (pyth-triples 10) '((3 4 5)) "Not equal :(")
+        )
+    )
+)
 
 (define fibo-structs-tests
     (test-suite "Test fibo and structs"
-        #:before (lambda () (display "Before"))
-        #:after  (lambda () (display "After"))
+        #:before (lambda () (display "Before fibo"))
+        #:after  (lambda () (display "After fibo"))
+        pyth-triples-tests
         (test-case
             "Fibo behaves"
                 (check-equal? (fibo 5) 5 "It's not!")
