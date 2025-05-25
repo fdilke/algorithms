@@ -40,7 +40,7 @@
     (define lookup (hash-ref indices c null))
     (cond
       ((null? lookup) (hash-set! indices c index) (set! index (add1 index)) (sub1 index))
-      (else c)
+      (else lookup)
     )
   )
 )
@@ -82,8 +82,8 @@
   (check-equal? (build-equivalence 4 '((0 0)(0 1)(0 2)(0 3)(1 0)(1 1)(1 2)(1 3)(2 0)(2 1)(2 2)(2 3)(3 0)(3 1)(3 2)(3 3))) '(3 3 3 3))
   (check-equal? (class-indices '(1 0)) '(0 1))
   (check-equal? (class-indices '(2 3 0)) '(0 1 2))
-;;  (check-equal? (class-indices '(2 2 0 0 2 2 1 1)) '(0 0 1 1 0 0 2 2))
-;;  (check-equal? (class-indices '(0 2 2 3)) '(0 1 1 2))
-;;  (check-equal? (build-classes 4 '((1 2))) '(0 1 1 2))
+  (check-equal? (class-indices '(2 2 0 0 2 2 1 1)) '(0 0 1 1 0 0 2 2))
+  (check-equal? (class-indices '(0 2 2 3)) '(0 1 1 2))
+  (check-equal? (build-classes 4 '((1 2))) '(0 1 1 2))
 ) 
 
