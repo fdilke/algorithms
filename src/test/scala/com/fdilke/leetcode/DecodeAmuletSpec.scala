@@ -7,30 +7,30 @@ import munit.FunSuite
 class DecodeAmuletSpec extends FunSuite:
 
   extension[A] (cycle: Seq[A])
-    def isCycle(altCycle: A*): Unit =
+    infix def checkCycle(altCycle: A*): Unit =
       sameCycle[A](cycle, altCycle) is true
 
   test("can decode amulets"):
-    DecodeAmulet[Int]().isCycle()
+    DecodeAmulet[Int]().checkCycle()
     DecodeAmulet[Int](
       (1, 2)
-    ) isCycle(1, 2)
+    ) checkCycle(1, 2)
     DecodeAmulet[String](
       ("mo", "eeny"),
       ("meeny", "miny"),
       ("eeny", "meeny"),
       ("miny", "mo")
-    ) isCycle(
+    ) checkCycle(
       "eeny", "meeny", "miny", "mo"
     )
     DecodeAmulet[Boolean](
       (false, true)
-    ) isCycle(
+    ) checkCycle(
       true, false
     )
     DecodeAmulet[Int](
       (1, 2)
-    ) isCycle(1, 2)
+    ) checkCycle(1, 2)
 
   test("can detect faulty amulets"):
     intercept[IllegalArgumentException]:
