@@ -119,13 +119,21 @@ class DupAndDedupBacktrackIterableSpec extends FunSuite:
 
   private val sumNode: SumNode = SumNode(Set())
 
-  test("vanilla backtracker enumerates solutions redundantly"):
-    BacktrackIterable(sumNode)(explore).toSet is Set(
-      Set(1, 2, 4), Set(1, 4, 2), Set(1, 6), Set(2, 1, 4), Set(2, 4, 1), Set(2, 5),
-      Set(3, 4), Set(4, 1, 2), Set(4, 2, 1), Set(4, 3), Set(5, 2), Set(6, 1), Set(7)
-    )
+  test("vanilla backtracker enumerates solutions redundantly, is reusable"):
+    val expectedSolutions: Set[Set[Int]] =
+      Set(
+        Set(1, 2, 4), Set(1, 4, 2), Set(1, 6), Set(2, 1, 4), Set(2, 4, 1), Set(2, 5),
+        Set(3, 4), Set(4, 1, 2), Set(4, 2, 1), Set(4, 3), Set(5, 2), Set(6, 1), Set(7)
+      )
+    BacktrackIterable(sumNode)(explore).toSet is expectedSolutions
+    BacktrackIterable(sumNode)(explore).toSet is expectedSolutions
 
-  test("dedup backtracker enumerates solutions irredundantly"):
-    BacktrackIterable.dedup(sumNode)(explore).toSet is Set(
-      Set(1, 2, 4), Set(1, 6), Set(2, 5), Set(3, 4), Set(7)
-    )
+  test("dedup backtracker enumerates solutions irredundantly, is re-usable"):
+    val expectedSolutions: Set[Set[Int]] =
+      Set(
+        Set(1, 2, 4), Set(1, 6), Set(2, 5), Set(3, 4), Set(7)
+      )
+    val solutions: Iterable[Set[Int]] =
+      BacktrackIterable.dedup(sumNode)(explore)
+    solutions.toSet is expectedSolutions
+    solutions.toSet is expectedSolutions
