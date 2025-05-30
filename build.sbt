@@ -4,7 +4,7 @@ lazy val root = project
     name := "algorithms",
     description := "place to explore algorithmic adventures in Scala 3",
     version := "0.1.0",
-    scalaVersion := "3.6.2",
+    scalaVersion := "3.7.0",
     scalacOptions ++= Seq(),
     ThisBuild/scalacOptions ++= Seq(
       "-unchecked", 
@@ -17,9 +17,6 @@ lazy val root = project
       "org.typelevel" % "cats-free_3" % "2.13.0",
       "org.redfx" % "strangefx" % "0.1.4",
       "org.apache.commons" % "commons-math3" % "3.4.1"
-//      "org.apache.commons" % "commons-math4-parent" % "4.0-SNAPSHOT"
-// "org.apache.commons" % "commons-math-parent" % "4.0-beta1"
-//      "org.apache.commons" % "commons-math4" % "4.0-beta1"
     )
   )
 
