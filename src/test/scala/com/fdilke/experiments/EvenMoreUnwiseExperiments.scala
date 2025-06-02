@@ -50,11 +50,10 @@ object EvenMoreUnwiseExperiments extends App:
     block[Int]:
       snoid.LarkClark:
         summon[Set[X]].head
-  
-  val endMessage: String = {
+
+  val endMessage: String =
     given Set[Boolean] = Set(true, false)
     withEndorphinMonoid[Boolean, String]:
       [E] => (_: Set[E]) ?=> (snoid: MrSnoid[E]) ?=> (lark: snoid.LarkClark[Boolean]) =>
         s"heeee"
-  }
 
