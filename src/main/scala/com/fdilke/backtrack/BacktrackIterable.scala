@@ -12,8 +12,8 @@ object BacktrackIterable extends BacktrackIterableSolver:
   ](
      startNode: NODE
    )(
-   explore: NODE => Iterable[Either[NODE, SOLUTION]]
-  ): Iterable[SOLUTION] =
+      explore: NODE => Iterable[Either[NODE, SOLUTION]]
+    ): Iterable[SOLUTION] =
     MonadIterable.tailRecM[NODE, SOLUTION](startNode):
       explore
 

@@ -43,18 +43,18 @@ object EvenMoreUnwiseExperiments extends App:
     case class LarkClark[X](x: X)
   
   def withEndorphinMonoid[X : Set, RESULT](
-    block: [E] => Set[E] ?=> (snoid: MrSnoid[E]) ?=> snoid.LarkClark[X] ?=> RESULT
+    block: [E] => Set[E] ?=> (snoid: MrSnoid[E]) ?=> snoid.LarkClark[X] => RESULT
   ): RESULT =
     given Set[Int] = Set(1,2,3)
     implicit val snoid: MrSnoid[Int] = MrSnoid(0)
-    given snoid.LarkClark[X] = snoid.LarkClark(
-      summon[Set[X]].head
-    )
-    block[Int]
-
+    block[Int]:
+      snoid.LarkClark:
+        summon[Set[X]].head
+  
   val endMessage: String = {
+    given Set[Boolean] = Set(true, false)
     withEndorphinMonoid[Boolean, String]:
-      [E] => (_: Set[E]) ?=> (snoid: MrSnoid[E]) ?=> (lark: snoid.LarkClark[Boolean]) ?=>
+      [E] => (_: Set[E]) ?=> (snoid: MrSnoid[E]) ?=> (lark: snoid.LarkClark[Boolean]) =>
         s"heeee"
   }
 
