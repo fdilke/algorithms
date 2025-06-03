@@ -47,9 +47,11 @@ abstract class GenericBacktrackIterableSolverSpec(
     val seqValues: Iterable[Boolean] =
       Iterable(true, false)
     val explorations: AtomicReference[Seq[Seq[Boolean]]] =
-      AtomicReference[Seq[Seq[Boolean]]](Seq.empty)
+      AtomicReference[Seq[Seq[Boolean]]]:
+        Seq.empty
     solver(Seq.empty[Boolean]): prefix =>
-        explorations.set(explorations.get() :+ prefix)
+        explorations.set:
+          explorations.get() :+ prefix
         if (prefix.length == 3)
           Iterable(Right(prefix))
         else
