@@ -4,7 +4,8 @@
 
 (define (backtrack start-node explore)
     (define (result input-list unprocessed)
-        (println (string-append "looping into result..." (~v (length input-list))))
+        ; (println (string-append "looping into result..." (~v (length input-list))))
+        (println (list "looping: " input-list (stream->list unprocessed)))
         (stream-lazy
             (cond
                 ((stream-empty? unprocessed)
@@ -21,13 +22,14 @@
                         (remaining (stream-rest unprocessed))
                         )
                         (either 
+                            (λ (node)
+                                (println (string-append "found node: " (~v node)))
+                                (result (cons node input-list) remaining)
+                            )
                             (λ (solution)
                                 (println (string-append "found solution: " (~v solution)))
                                 (stream-cons solution 
                                     (result input-list remaining))
-                            )
-                            (λ (node)
-                                (result (cons node input-list) remaining)
                             )
                             an-either
                         )
@@ -51,9 +53,9 @@
         (backtrack 0 (lambda (x) (stream))))
     null
   )
-;   (check-equal? ; a one-off node that explores to one level
-;     (stream->list
-;         (backtrack 0 (lambda (x) (stream (success 1)))))
-;     '(1)
-;   )
+  (check-equal? ; a one-off node that explores to one level
+    (stream->list
+        (backtrack 0 (lambda (x) (stream (success 1)))))
+    '(1)
+  )
 )
