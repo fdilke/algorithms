@@ -65,19 +65,25 @@
         ))))
     '(#t)
   )
-  (check-equal? ; find all bit-sequences of length 3
-    (stream->list
-        (backtrack '() (lambda (prefix)
-            (if (= (length prefix) 3)
-                (stream (success prefix))
-                (stream
-                    (failure (cons #t prefix))
-                    (failure (cons #f prefix))
-                )))))
-     '(
-        (#f #f #f) (#t #f #f)
-        (#f #t #f) (#t #t #f)
-        (#f #f #t) (#t #f #t)
-        (#f #t #t) (#t #t #t)
-    ))
+  (begin
+    (define num-explores 0)
+    (check-equal? ; find all bit-sequences of length 3
+        (stream->list
+            (backtrack '() (lambda (prefix)
+                (set! num-explores (add1 num-explores))
+                (if (= (length prefix) 3)
+                    (stream (success prefix))
+                    (stream
+                        (failure (cons #t prefix))
+                        (failure (cons #f prefix))
+                    )))))
+        '(
+            (#f #f #f) (#t #f #f)
+            (#f #t #f) (#t #t #f)
+            (#f #f #t) (#t #f #t)
+            (#f #t #t) (#t #t #t)
+        )
+    )
+    (check-equal? num-explores 15)
+  )
 )
