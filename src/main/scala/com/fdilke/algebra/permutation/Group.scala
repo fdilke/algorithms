@@ -133,6 +133,13 @@ trait Group[T]:
       elements.forall: y =>
         commute(x, y)
 
+  def isAmbivalent: Boolean =
+    conjugacyClasses.map:
+      _.head
+    .forall: x =>
+      elements.exists: y =>
+        y == multiply(x, multiply(y, x))
+
   private def commute(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
 

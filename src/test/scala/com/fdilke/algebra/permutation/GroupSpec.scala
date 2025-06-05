@@ -173,3 +173,15 @@ class GroupSpec extends FunSuite:
     DihedralGroup(2).simple is true
     DihedralGroup(4).simple is false
     DihedralGroup(6).simple is false
+
+  test("can tell if a group is ambivalent"):
+    CyclicGroup(1).isAmbivalent is true
+    CyclicGroup(2).isAmbivalent is true
+    CyclicGroup(3).isAmbivalent is false
+    CyclicGroup(9).isAmbivalent is false
+    DihedralGroup(4).isAmbivalent is true
+    DihedralGroup(6).isAmbivalent is true
+    DihedralGroup(8).isAmbivalent is true
+    Permutation.symmetricGroup(4).isAmbivalent is true
+    Permutation.symmetricGroup(5).isAmbivalent is true
+ 
