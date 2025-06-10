@@ -7,6 +7,7 @@ import com.fdilke.backtrack.node.NodeSolvers.StackSafeDedupNodeSolver
 import scala.annotation.{tailrec, targetName}
 import scala.annotation.targetName
 import com.fdilke.backtrack.node.MonadIterable
+import com.fdilke.utility.SetsUtilities
 
 import scala.collection.mutable
 import scala.compiletime.ops.any.==
@@ -18,6 +19,18 @@ trait Group[T]:
   val elements: Set[T]
   def multiply(element1: T, element2 : T): T
   def invert(element: T): T
+
+  def power(element: T, exponent: Int): T =
+    exponent match
+      case 0 => unit
+      case 1 => element
+      case _ =>
+        val xn_2 = power(element, exponent/2)
+        val xn = multiply(xn_2, xn_2)
+        if (exponent % 2 == 1)
+          multiply(xn, element)
+        else
+          xn
 
   lazy val order: Int =
     elements.size
@@ -134,11 +147,23 @@ trait Group[T]:
         commute(x, y)
 
   def isAmbivalent: Boolean =
-    conjugacyClasses.map:
-      _.head
-    .forall: x =>
-      elements.exists: y =>
-        y == multiply(x, multiply(y, x))
+    conjugacyClasses.forall:
+      cc =>
+      val x: T = cc.head
+      cc.contains:
+        invert:
+          x
+
+  def isStronglyAmbivalent: Boolean =
+    conjugacyClasses.forall:
+      cc =>
+      val x: T = cc.head
+      val o = orderOf(x)
+      (2 until o).filter: r=>
+        SetsUtilities.gcd(r, o) == 1
+      .forall: r =>
+        cc.contains:
+          power(x, r)
 
   private def commute(x: T, y: T): Boolean =
     multiply(x, y) == multiply(y, x)
