@@ -25,8 +25,8 @@
 
 (define pyth-triples-tests
     (test-suite "Test pyth triples code"
-        #:before (lambda () (display "Before trples"))
-        #:after  (lambda () (display "After triples"))
+        #:before (lambda () (println "Before triples"))
+        #:after  (lambda () (println "After triples"))
         (test-case "Finds triples"
             (check-equal? (pyth-triples 10) '((3 4 5)) "Not equal :(")
         )
@@ -35,8 +35,8 @@
 
 (define fibo-structs-tests
     (test-suite "Test fibo and structs"
-        #:before (lambda () (display "Before fibo"))
-        #:after  (lambda () (display "After fibo"))
+        #:before (lambda () (println "Before fibo"))
+        #:after  (lambda () (println "After fibo"))
         pyth-triples-tests
         (test-case
             "Fibo behaves"
@@ -83,6 +83,20 @@
             (test-case "Int comparison is sane"
                 (check < 1 2)
             )
+        )
+        (test-suite "a suite to test continuations"
+            (test-case "saving a context"
+                (define saved-k #f)
+                (define (save-comp!)
+                    (call-with-composable-continuation
+                    (lambda (k) ; k is the captured continuation
+                    (set! saved-k k)
+                    0)))
+                (check = 3 (+ 1 (+ 1 (+ 1 (save-comp!)))))
+            )
+        )
+        (test-case "Int comparison is sane"
+            (check < 1 2)
         )
     )
 )
