@@ -44,6 +44,11 @@
 
 (module+ test
   (require rackunit)
+  (define (param-tests p)
+    (check-equal? p 7)
+    (check-equal? (+ 3 3) 6)
+  ) ; replace with sensible parameterized tests
+  (param-tests 7)
   (check-equal? ; a non starter node that can't be explored
     (stream->list
         (backtrack 0 (lambda (x) (stream))))
