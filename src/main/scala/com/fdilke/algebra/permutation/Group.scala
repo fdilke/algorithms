@@ -13,7 +13,7 @@ import scala.collection.mutable
 import scala.compiletime.ops.any.==
 import scala.language.postfixOps
 
-trait Group[T]: 
+trait Group[T]:
   group =>
   val unit: T
   val elements: Set[T]

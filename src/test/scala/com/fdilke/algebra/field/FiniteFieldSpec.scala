@@ -1,0 +1,100 @@
+package com.fdilke.algebra.field
+
+import com.fdilke.utility.RichFunSuite._
+import munit.FunSuite
+
+class FiniteFieldSpec extends FunSuite:
+
+  test("can recognize nontrivial prime powers"):
+    val NontrivialPrimePower(q, r) = 7 : @unchecked
+    q is 7
+    r is 1
+
+    val NontrivialPrimePower(p, n)  = 81 : @unchecked
+    p is 3
+    n is 4
+
+    intercept[MatchError]:
+      val NontrivialPrimePower(p, n) = 1 : @unchecked
+
+    intercept[MatchError]:
+      val NontrivialPrimePower(p, n) = 6 : @unchecked
+
+  test("rejects request for a non-prime-power-sized field"):
+    intercept[IllegalArgumentException]:
+      FiniteField.GF(6)
+
+  test("can load the integers mod 5"):
+    val field5: Field[Int] = FiniteField.GF(5)
+
+    import field5.{ I, O }
+    val I2: Int = field5.add(I, I)
+    val I3: Int = field5.add(I, I2)
+    val I4: Int = field5.add(I2, I2)
+    field5.elements.size is 5
+    field5.elements is Seq(
+      O, I, I2, I3, I4
+    )
+    field5.multiply(I2, I3) is I
+
+  test("can load GF(4) in detail"):
+    val field4: Field[Int] =
+      FiniteField.GF(4)
+
+    import field4.{ O, I }
+    field4.elements.size is 4
+    val Seq(o, i, a, b) = field4.elements
+    o is O
+    i is I
+    b is field4.add(a, I)
+    a is field4.add(b, I)
+    field4.multiply(a, a) is b
+    field4.multiply(b, b) is a
+
+  test("can load GF(4)"):
+    testField(4)
+
+  test("can load GF(27)"):
+    testField(27)
+
+  test("can load GF(81)"):
+    testField(81)
+
+    /* these work, but take too long to run
+
+    ignore("can load GF(243)") {
+      testField(243)
+    }
+
+    ignore("can load GF(343)") {
+      testField(343)
+    }
+
+    ignore("can load GF(1024)") {
+      testField(1024)
+    }
+    */
+
+  def testField(pn: Int): Unit =
+    val field = FiniteField.GF(pn)
+    field.dump()
+    import field.{ I, O }
+    field.elements.size is pn
+    field.elements.foreach: a =>
+      field.add(a, O) is a
+      field.add(a, field.minus(a)) is O
+      field.subtract(a, a) is O
+      field.multiply(a, O) is O
+      field.multiply(a, I) is a
+      if (a != O)
+        field.multiply(a, field.invert(a)) is I
+      field.elements.foreach: b =>
+        field.add(a, b) is field.add(b, a)
+        field.multiply(a, b) is field.multiply(b, a)
+        field.add(field.subtract(a, b), b) is a
+        if (b != O)
+          field.multiply(field.divide(a, b), b) is a
+        field.elements.foreach: c =>
+          field.add(field.add(a, b), c) is field.add(a, field.add(b, c))
+          field.multiply(field.multiply(a, b), c) is field.multiply(a, field.multiply(b, c))
+          field.multiply(field.add(a, b), c) is field.add(field.multiply(a, c), field.multiply(b, c))
