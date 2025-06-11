@@ -77,7 +77,6 @@ class FiniteFieldSpec extends FunSuite:
 
   def testField(pn: Int): Unit =
     val field = FiniteField.GF(pn)
-    field.dump()
     import field.{ I, O }
     field.elements.size is pn
     field.elements.foreach: a =>
