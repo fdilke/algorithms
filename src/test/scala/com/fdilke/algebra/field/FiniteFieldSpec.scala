@@ -60,20 +60,12 @@ class FiniteFieldSpec extends FunSuite:
   test("can load GF(81)"):
     testField(81)
 
-    /* these work, but take too long to run
-
-    ignore("can load GF(243)") {
-      testField(243)
-    }
-
-    ignore("can load GF(343)") {
-      testField(343)
-    }
-
-    ignore("can load GF(1024)") {
-      testField(1024)
-    }
-    */
+// pass, but are too slow
+//  test("can load GF(243)"):
+//    testField(243)
+//
+//  test("can load GF(343)"):
+//    testField(343)
 
   def testField(pn: Int): Unit =
     val field = FiniteField.GF(pn)
@@ -97,3 +89,22 @@ class FiniteFieldSpec extends FunSuite:
           field.add(field.add(a, b), c) is field.add(a, field.add(b, c))
           field.multiply(field.multiply(a, b), c) is field.multiply(a, field.multiply(b, c))
           field.multiply(field.add(a, b), c) is field.add(field.multiply(a, c), field.multiply(b, c))
+
+  test("can enumerate matrices"):
+    def showMatrix(matrix: Array[Array[Int]]): String =
+      matrix.map: row =>
+        row.mkString + "/"
+      .mkString.replaceAll("/$", "")
+
+    val field2: Field[Int] = FiniteField.GF(2)
+    field2.squareMatrices(0).toSeq.map(showMatrix) is:
+      Seq("")
+    field2.squareMatrices(1).toSeq.map(showMatrix) is:
+      Seq("0", "1")
+    field2.squareMatrices(2).toSeq.map(showMatrix) is:
+      Seq(
+        "00/00", "10/00", "01/00", "11/00",
+        "00/10", "10/10", "01/10", "11/10",
+        "00/01", "10/01", "01/01", "11/01",
+        "00/11", "10/11", "01/11", "11/11"
+      )

@@ -1,9 +1,13 @@
 package com.fdilke.algebra.field
 
+import com.fdilke.utility.SetsUtilities
+import com.fdilke.utility.SetsUtilities.allMaps
+
 import java.io.InputStream
+import scala.reflect.ClassTag
 import scala.util.matching.Regex
 
-trait Field[T]:
+trait Field[T: ClassTag]:
   val O: T
   val I: T
   val elements: Seq[T]
@@ -18,6 +22,21 @@ trait Field[T]:
     add(element1, minus(element2))
   def divide(element1: T, element2: T): T =
     multiply(element1, invert(element2))
+  def squareMatrices(order: Int): Iterable[Array[Array[T]]] =
+    val indices: Seq[Int] =
+      0 until order
+    val possibleRows: Iterable[Map[Int, T]] = {
+      allMaps(indices, elements)
+    }
+    allMaps(indices, possibleRows).map:
+      (matrix: Map[Int, Map[Int, T]]) =>
+      (indices map: i =>
+        val row: Map[Int, T] = matrix(i)
+        indices.map: j =>
+          row(j)
+        .toArray)
+      .toArray
+
 
 object FiniteField:
 
