@@ -22,21 +22,22 @@ trait Field[T: ClassTag]:
     add(element1, minus(element2))
   def divide(element1: T, element2: T): T =
     multiply(element1, invert(element2))
-  def squareMatrices(order: Int): Iterable[Array[Array[T]]] =
+  def squareMatrices(order: Int): Iterable[SquareMatrix[T]] =
     val indices: Seq[Int] =
       0 until order
-    val possibleRows: Iterable[Map[Int, T]] = {
+    allMaps(
+      indices,
       allMaps(indices, elements)
-    }
-    allMaps(indices, possibleRows).map:
+    ).map:
       (matrix: Map[Int, Map[Int, T]]) =>
-      (indices map: i =>
-        val row: Map[Int, T] = matrix(i)
-        indices.map: j =>
-          row(j)
-        .toArray)
-      .toArray
-
+      new SquareMatrix[T](
+        (indices map: i =>
+          val row: Map[Int, T] = matrix(i)
+          indices.map: j =>
+            row(j)
+          .toArray)
+          .toArray
+      )
 
 object FiniteField:
 

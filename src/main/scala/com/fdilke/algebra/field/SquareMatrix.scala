@@ -25,6 +25,11 @@ class SquareMatrix[T](
   def apply(row: Int)(column: Int): T =
     matrix(row)(column)
 
+  override def toString: String =
+    matrix.map: row =>
+      row.mkString + "/"
+    .mkString.replaceAll("/$", "")
+
 object SquareMatrix:
   def apply[T: ClassTag](values: T*): SquareMatrix[T] =
     val order = intSqrt(values.size)
