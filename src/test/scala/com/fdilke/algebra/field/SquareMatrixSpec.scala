@@ -27,3 +27,9 @@ class SquareMatrixSpec extends FunSuite:
       2, 3
     ).toString is
       "01/23"
+
+  test("can measure the order (size) of a matrix"):
+    SquareMatrix[Int](
+      0, 1,
+      2, 3
+    ).order is 2

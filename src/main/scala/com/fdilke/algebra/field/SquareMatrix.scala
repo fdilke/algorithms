@@ -29,6 +29,9 @@ class SquareMatrix[T](
     matrix.map: row =>
       row.mkString + "/"
     .mkString.replaceAll("/$", "")
+    
+  def order: Int =
+    matrix.length
 
 object SquareMatrix:
   def apply[T: ClassTag](values: T*): SquareMatrix[T] =

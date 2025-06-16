@@ -38,11 +38,83 @@ trait Field[T: ClassTag]:
           .toArray)
           .toArray
       )
+  def determinant(values: T*): T =
+    val matrix = SquareMatrix(values*)
+    val indices: Seq[Int] =
+      0 until matrix.order
+    def alternateAdd(
+      index: Int,
+      x: T,
+      y: T
+    ): T = {
+      (if (index % 2 == 0)
+        add
+      else
+        subtract
+      )(x, y)
+    }
+
+    def determinantSub(
+      presentRows: Seq[Int],
+      presentColumns: Seq[Int]
+    ): T =
+      if presentRows.isEmpty then
+        I
+      else
+        val indent: String =
+          Seq.fill(3 - presentRows.size)("\t").mkString
+        val firstRow =
+          presentRows.head
+        val remainingRows =
+          presentRows.tail
+        val firstColumn =
+          presentColumns.head
+        var sumD: T = O
+        presentColumns.zipWithIndex.foreach: (column, index) =>
+          val remainingColumns =
+            presentColumns.filterNot:
+              _ == column
+          val h =
+            matrix(firstRow)(column)
+          val k =
+            determinantSub(remainingRows, remainingColumns)
+          val subDet: T =
+            multiply(
+              h,
+              k
+            )
+          val altAdd =
+            alternateAdd(
+              index,
+              sumD,
+              subDet
+            )
+          println(s"$indent alternate add calc: $sumD +$index= ($h.$k = $subDet) => $altAdd")
+          sumD = altAdd
+
+        println(s"$indent present rows/cols: ${presentRows.mkString} ${presentColumns.mkString} => $sumD")
+        sumD
+    determinantSub(indices, indices)
+
+  def showTables(): Unit =
+    def showTable(symbol: String, op: (T, T) => T): Unit =
+      print(s"$symbol")
+      for(i <- elements)
+        print(s"$i")
+      println()
+      for(i <- elements)
+        print(s"$i")
+        for(j <- elements)
+          print(s"${op(i,j)}")
+        println()
+    showTable("+", add)
+    println()
+    showTable("*", multiply)
 
 object FiniteField:
 
   private val conwayRegex: Regex = 
-    "\\[(.*),(.*),\\[(.*)\\]\\],".r
+    "\\[(.*),(.*),\\[(.*)]],".r
 
   private val stream: InputStream =
     getClass.getResourceAsStream("CPimport.txt")
@@ -87,7 +159,7 @@ class FiniteField(
   override def dump(): Unit =
     println("Addition:")
     for (j <- elements)
-      print(s"${j} ")
+      print(s"$j ")
     println("")
     for (i <- elements)
       for (j <- elements)
@@ -95,7 +167,7 @@ class FiniteField(
       println("")
     println("Multiplication:")
     for (j <- elements)
-      print(s"${j} ")
+      print(s"$j ")
     println("")
     for (i <- elements)
       for (j <- elements)

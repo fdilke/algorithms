@@ -103,3 +103,49 @@ class FiniteFieldSpec extends FunSuite:
         "00/01", "10/01", "01/01", "11/01",
         "00/11", "10/11", "01/11", "11/11"
       )
+
+  test("can calculate matrix determinants over GF(4)"):
+    val field4: Field[Int] = FiniteField.GF(4)
+    val Seq(o, i, a, b) = field4.elements
+    field4.determinant(
+    ) is i
+    field4.determinant(
+      a
+    ) is a
+    field4.determinant(
+      o, i,
+      a, b
+    ) is a
+    field4.determinant(
+      i, a,
+      b, 0
+    ) is i
+    field4.determinant(
+      o, i, a,
+      i, 0, b,
+      i, i, i
+    ) is 0
+
+  test("can calculate matrix determinants over GF(9)"):
+    val field9: Field[Int] = FiniteField.GF(9)
+    field9.showTables()
+//    val Seq(o, i, z, a, ai, az, d, e, f) = field9.elements
+//    field9.determinant(
+//    ) is i
+//    field9.determinant(
+//      a
+//    ) is a
+//    field9.determinant(
+//      o, i,
+//      a, b
+//    ) is a
+//    field9.determinant(
+//      i, a,
+//      b, 0
+//    ) is i
+//    field9.determinant(
+//      o, i, a,
+//      i, 0, b,
+//      i, i, i
+//    ) is 0
+//
