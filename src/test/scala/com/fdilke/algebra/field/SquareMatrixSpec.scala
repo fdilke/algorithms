@@ -21,6 +21,9 @@ class SquareMatrixSpec extends FunSuite:
     matrix0123(1)(0) is 2
     matrix0123(1)(1) is 3
 
-  test("can display matrices in string form"):
-    SquareMatrix[Int](0, 1, 2, 3).toString is
+  test("can initialize matrices as square arrays and display them in string form"):
+    SquareMatrix[Int](
+      0, 1,
+      2, 3
+    ).toString is
       "01/23"
