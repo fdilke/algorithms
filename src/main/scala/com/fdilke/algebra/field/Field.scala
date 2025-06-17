@@ -37,20 +37,21 @@ trait Field[T: ClassTag]:
           .toArray
       )
   def determinant(values: T*): T =
-    val matrix = SquareMatrix(values*)
+    determinant(SquareMatrix(values*))
+    
+  def determinant(matrix: SquareMatrix[T]): T =
     val indices: Seq[Int] =
       0 until matrix.order
     def alternateAdd(
       index: Int,
       x: T,
       y: T
-    ): T = {
+    ): T =
       (if (index % 2 == 0)
         add
       else
         subtract
       )(x, y)
-    }
 
     def determinantSub(
       presentRows: Seq[Int],
@@ -105,6 +106,19 @@ trait Field[T: ClassTag]:
     showTable("+", add)
     println()
     showTable("*", multiply)
+    
+  def multiplyMatrices(
+    m1: SquareMatrix[T], 
+    m2: SquareMatrix[T]
+  ): SquareMatrix[T] = 
+    val order: Int = m1.order
+    new SquareMatrix(
+      Array.tabulate(order, order): (i, j) =>
+        (0 until order).map: k =>
+          multiply(m1(i)(k), m2(k)(j))
+        .reduce(add)
+    )        
+
 
 object FiniteField:
 

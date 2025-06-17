@@ -1,7 +1,9 @@
 package com.fdilke.algebra.field
 
-import com.fdilke.utility.RichFunSuite._
+import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
+
+import scala.concurrent.duration.Duration
 
 class FiniteFieldSpec extends FunSuite:
 
@@ -151,3 +153,37 @@ class FiniteFieldSpec extends FunSuite:
     ) is 0
 
   test("can multiply matrices"):
+    val field9: Field[Int] = FiniteField.GF(9)
+    field9.multiplyMatrices(
+      SquareMatrix(
+        0, 2, 5,
+        1, 7, 8,
+        4, 6, 3
+      ),
+      SquareMatrix(
+        1, 0, 3,
+        4, 8, 7,
+        6, 5, 2
+      )
+    ) is SquareMatrix(
+      7, 0, 0,
+      5, 0, 3,
+      5, 8, 5
+    )
+
+  // override val munitTimeout = Duration(6000, "s")
+  test("determinant is multiplicative"):
+    val field: Field[Int] = FiniteField.GF(4)
+    val matrices: Iterable[SquareMatrix[Int]] =
+      field.squareMatrices(2)
+    for
+      m1 <- matrices
+      m2 <- matrices
+    do
+      field.determinant:
+        field.multiplyMatrices(m1, m2)
+      .is:
+        field.multiply(
+          field.determinant(m1),
+          field.determinant(m2)
+        )
