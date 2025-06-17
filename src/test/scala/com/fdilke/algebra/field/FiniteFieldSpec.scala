@@ -128,24 +128,24 @@ class FiniteFieldSpec extends FunSuite:
 
   test("can calculate matrix determinants over GF(9)"):
     val field9: Field[Int] = FiniteField.GF(9)
-    field9.showTables()
-//    val Seq(o, i, z, a, ai, az, d, e, f) = field9.elements
-//    field9.determinant(
-//    ) is i
-//    field9.determinant(
-//      a
-//    ) is a
-//    field9.determinant(
-//      o, i,
-//      a, b
-//    ) is a
-//    field9.determinant(
-//      i, a,
-//      b, 0
-//    ) is i
-//    field9.determinant(
-//      o, i, a,
-//      i, 0, b,
-//      i, i, i
-//    ) is 0
-//
+    // field9.showTables()
+    field9.determinant(
+      7
+    ) is 7
+    field9.determinant(
+      6, 5,
+      7, 3
+    ) is 4
+    field9.determinant(
+      1, 5,
+      2, 3
+    ) is 8
+    field9.determinant(
+      1, 6,
+      2, 7
+    ) is 4
+    field9.determinant(
+      0, 8, 4,
+      1, 6, 5,
+      2, 7, 3
+    ) is 0

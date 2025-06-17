@@ -1,6 +1,5 @@
 package com.fdilke.algebra.field
 
-import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.allMaps
 
 import java.io.InputStream
@@ -11,7 +10,6 @@ trait Field[T: ClassTag]:
   val O: T
   val I: T
   val elements: Seq[T]
-  def dump(): Unit
 
   def add(element1: T, element2: T): T
   def multiply(element1: T, element2: T): T
@@ -89,10 +87,7 @@ trait Field[T: ClassTag]:
               sumD,
               subDet
             )
-          println(s"$indent alternate add calc: $sumD +$index= ($h.$k = $subDet) => $altAdd")
           sumD = altAdd
-
-        println(s"$indent present rows/cols: ${presentRows.mkString} ${presentColumns.mkString} => $sumD")
         sumD
     determinantSub(indices, indices)
 
@@ -153,26 +148,8 @@ class FiniteField(
 
   override val elements: Seq[Int] =
     0 until pn.power
-  lazy val polyTable: Seq[Seq[Int]] =
+  private lazy val polyTable: Seq[Seq[Int]] =
     elements map toPoly
-
-  override def dump(): Unit =
-    println("Addition:")
-    for (j <- elements)
-      print(s"$j ")
-    println("")
-    for (i <- elements)
-      for (j <- elements)
-        print(s"${add(i,j)} ")
-      println("")
-    println("Multiplication:")
-    for (j <- elements)
-      print(s"$j ")
-    println("")
-    for (i <- elements)
-      for (j <- elements)
-        print(s"${multiply(i,j)} ")
-      println("")
 
   private lazy val additionTable: Seq[Seq[Int]] =
     elements.map: i =>
