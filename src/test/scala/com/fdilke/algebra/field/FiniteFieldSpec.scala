@@ -149,3 +149,5 @@ class FiniteFieldSpec extends FunSuite:
       1, 6, 5,
       2, 7, 3
     ) is 0
+
+  test("can multiply matrices"):
