@@ -37,9 +37,14 @@
     (result (list start-node) (stream))
 )
 
+(define (dedup-explore explore)
+    explore
+)
+
 (provide
  (contract-out
     [backtrack (parametric->/c [A] (-> A (-> A stream?) stream?))]
+    [dedup-explore (parametric->/c [A] (-> (-> A (-> A stream?) stream?) (-> A (-> A stream?) stream?)))]
  ))
 
 (module+ test
@@ -90,5 +95,18 @@
         )
     )
     (check-equal? num-explores 15)
+  )
+  (begin
+    (define (just-over value) ; add 1 or 3 ; success is being just over 10
+        (if (> value 6)
+            (stream (success value))
+            (stream (failure (+ value 1)) (failure (+ value 3)))
+        )
+    )
+    (check-equal? 
+        (stream->list
+            (backtrack 0 just-over))
+        '(9 7 7 8 9 7 7 8 9 7 8 9 7 9 7 7 8 9 7)
+    )
   )
 )
