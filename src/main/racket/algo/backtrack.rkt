@@ -38,7 +38,16 @@
 )
 
 (define (dedup-explore explore)
-    explore
+   (define previously-seen null)
+   (lambda (node)
+        (cond
+            [(member node previously-seen) (stream)]
+            [else
+                (set! previously-seen (cons node previously-seen))
+                (explore node)
+            ]
+        )
+   )
 )
 
 (provide
@@ -107,6 +116,11 @@
         (stream->list
             (backtrack 0 just-over))
         '(9 7 7 8 9 7 7 8 9 7 8 9 7 9 7 7 8 9 7)
+    )
+    (check-equal? 
+        (stream->list
+            (backtrack 0 (dedup-explore just-over)))
+        '(9 7 8)
     )
   )
 )
