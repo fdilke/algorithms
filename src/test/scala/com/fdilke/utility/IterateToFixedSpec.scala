@@ -1,6 +1,6 @@
 package com.fdilke.utility
 
-import RichFunSuite.*
+import RichFunSuite._
 import munit.FunSuite
 
 import scala.collection.mutable.ListBuffer
