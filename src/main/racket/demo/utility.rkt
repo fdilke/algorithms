@@ -59,7 +59,6 @@
     [class-indices (parametric->/c [A] (-> (listof A) (listof number?)))]
   )
 )
-  
 
 (module+ test
   (require rackunit)

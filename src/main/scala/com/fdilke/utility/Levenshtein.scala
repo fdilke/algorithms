@@ -12,7 +12,7 @@ object Levenshtein:
     do
       prev(j) = j
     for
-      i <- 0 until s1.length
+      i <- s1.indices
     do
       val curr = new Array[Int](s2.length + 1)
       curr(0) = i + 1
