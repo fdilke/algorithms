@@ -16,4 +16,5 @@ class LevenshteinSpec extends FunSuite:
     distance("fox", "fax") is 1
     distance("folx", "fax") is 2
     distance("switch", "with") is 2
+    distance("felix the cat", "anita the hamster") is 10
 
