@@ -63,3 +63,8 @@ class PartitionsSpec extends FunSuite:
       Seq(7)
     )
 
+  test("can count partitions"):
+    for
+      n <- 0 to 20
+    do
+      Partitions(n).size is Partitions.count(n)

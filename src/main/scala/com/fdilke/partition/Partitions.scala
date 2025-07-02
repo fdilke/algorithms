@@ -22,3 +22,21 @@ object Partitions:
   def apply(n: Int): Seq[Seq[Int]] =
     apply(1, n)
 
+  def count(min: Int, total: Int): Int =
+    if total == 0 then
+      1
+    else if min == total then
+      1
+    else if min > total then
+      0
+    else
+      val partitions: Seq[Int] =
+        for
+          m <- min to total
+        yield
+          count(m, total - m)
+      partitions.sum
+  
+  def count(n: Int): Int =
+    count(1, n)
+    
