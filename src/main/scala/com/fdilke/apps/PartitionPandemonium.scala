@@ -13,7 +13,7 @@ object PartitionPandemonium extends App:
   val (_, totalTimeMsec) =
     Handy.timeMsec:
       for
-        n <- 0 to 100
+        n <- 0 to 500
       do
         val (count, timeMsec) =
         Handy.timeMsec:

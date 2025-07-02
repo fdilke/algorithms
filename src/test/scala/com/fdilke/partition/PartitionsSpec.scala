@@ -72,14 +72,13 @@ class PartitionsSpec extends FunSuite:
       for
         i <- 0 until (p.size - 1)
       do
-        println(s"checking order for partition ${p(i)}")
         (p(i) < p(i + 1)) is true
 
   test("can count partitions"):
     for
       n <- 0 to 20
     do
-      Partitions(n).size is Partitions.count(n)
+      Partitions(n).size.toLong is Partitions.count(n)
 
   test("can compute the 'next' partition"):
     Partitions.next() is None
@@ -96,5 +95,4 @@ class PartitionsSpec extends FunSuite:
       for
         i <- 0 until (p.size - 1)
       do
-        println(s"nexting partition ${p(i)}")
         Partitions.next(p(i)) is Some(p(i + 1))
