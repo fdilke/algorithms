@@ -78,7 +78,7 @@ class PartitionsSpec extends FunSuite:
     for
       n <- 0 to 20
     do
-      Partitions(n).size.toLong is Partitions.count(n)
+      BigInt(Partitions(n).size) is Partitions.count(n)
 
   test("can compute the 'next' partition"):
     Partitions.next() is None

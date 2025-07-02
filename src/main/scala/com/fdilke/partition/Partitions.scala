@@ -32,27 +32,30 @@ object Partitions:
   def apply(n: Int): Seq[Seq[Int]] =
     apply(1, n)
 
-  private val memoizedCount: (Int, Int) => Long =
+  private val bigInt0 = BigInt(0)
+  private val bigInt1 = BigInt(1)
+  
+  private val memoizedCount: (Int, Int) => BigInt =
     Memoize:
       (min: Int, total: Int) =>
         if total == 0 then
-          1L
+          bigInt1
         else if min == total then
-          1L
+          bigInt1
         else if min > total then
-          0L
+          bigInt0
         else
-          val partitions: Seq[Long] =
+          val partitions: Seq[BigInt] =
             for
               m <- min to total
             yield
               memoizedCount(m, total - m)
           partitions.sum
 
-  def count(min: Int, total: Int): Long =
+  def count(min: Int, total: Int): BigInt =
     memoizedCount(min, total)
 
-  def count(n: Int): Long =
+  def count(n: Int): BigInt =
     count(1, n)
 
   @targetName("nextVarargs")
