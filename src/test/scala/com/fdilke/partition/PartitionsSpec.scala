@@ -2,6 +2,7 @@ package com.fdilke.partition
 
 import com.fdilke.utility.RichFunSuite._
 import munit.FunSuite
+import scala.math.Ordering.Implicits._
 
 class PartitionsSpec extends FunSuite:
   test("can enumerate partitions with a specified minimum"):
@@ -63,8 +64,37 @@ class PartitionsSpec extends FunSuite:
       Seq(7)
     )
 
+  test("partitions are always ordered lexicographically"):
+    for
+      n <- 0 to 30
+    do
+      val p = Partitions(n)
+      for
+        i <- 0 until (p.size - 1)
+      do
+        println(s"checking order for partition ${p(i)}")
+        (p(i) < p(i + 1)) is true
+
   test("can count partitions"):
     for
       n <- 0 to 20
     do
       Partitions(n).size is Partitions.count(n)
+
+  test("can compute the 'next' partition"):
+    Partitions.next() is None
+    Partitions.next(1) is None
+    Partitions.next(1, 1) is Some(Seq(2))
+    Partitions.next(1, 4) is Some(Seq(2, 3))
+    Partitions.next(1, 1, 2, 3) is Some(Seq(1, 1, 5))
+    Partitions.next(1, 3, 3) is Some(Seq(1, 6))
+    Partitions.next(7) is None
+    for
+      n <- 0 to 20
+    do
+      val p = Partitions(n)
+      for
+        i <- 0 until (p.size - 1)
+      do
+        println(s"nexting partition ${p(i)}")
+        Partitions.next(p(i)) is Some(p(i + 1))

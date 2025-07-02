@@ -1,5 +1,8 @@
 package com.fdilke.partition
 
+import scala.annotation.targetName
+import scala.math.Integral.Implicits._
+
 object Partitions:
   // Return all sorted tuples of integers >= min > 0 which sum to total
   def apply(min: Int, total: Int): Seq[Seq[Int]] =
@@ -36,7 +39,37 @@ object Partitions:
         yield
           count(m, total - m)
       partitions.sum
-  
+
   def count(n: Int): Int =
     count(1, n)
-    
+
+  @targetName("nextVarargs")
+  def next(partition: Int*): Option[Seq[Int]] =
+    next(partition)
+
+  def next(partition: Seq[Int]): Option[Seq[Int]] =
+    partition match
+      case Nil =>
+        None
+      case _ +: Nil =>
+        None
+      case first +: tail =>
+        next(tail) match
+          case Some(nextTail) =>
+            Some(first +: nextTail)
+          case None =>
+            tail.headOption match
+              case None =>
+                throw IllegalArgumentException(s"shouldn't happen! partition = $partition")
+              case Some(rest) =>
+                if rest <= (first + 1) then
+                  Some(Seq(first + rest))
+                else
+                  val (quotient, remainder) = (rest - 1) /% (first + 1)
+                  if remainder == 0 then
+                    Some(Seq.fill(quotient + 1)(first + 1))
+                  else
+                    Some(Seq.fill(quotient)(first + 1) :+ (remainder + first + 1))
+
+
+
