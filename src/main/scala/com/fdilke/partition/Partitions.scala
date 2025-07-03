@@ -1,6 +1,6 @@
 package com.fdilke.partition
 
-import com.fdilke.utility.Memoize
+import com.fdilke.utility.{Memoize, TriangularCache}
 
 import scala.annotation.targetName
 import scala.math.Integral.Implicits.*
@@ -35,28 +35,54 @@ object Partitions:
   private val bigInt0 = BigInt(0)
   private val bigInt1 = BigInt(1)
   
-  private val memoizedCount: (Int, Int) => BigInt =
-    Memoize:
+  private val conditionalMemoizedCount: (Int, Int) => BigInt =
+    TriangularCache:
       (min: Int, total: Int) =>
-        if total == 0 then
-          bigInt1
-        else if min == total then
-          bigInt1
-        else if min > total then
-          bigInt0
-        else
-          val partitions: Seq[BigInt] =
-            for
-              m <- min to total
-            yield
-              memoizedCount(m, total - m)
-          partitions.sum
+      val partitions: Seq[BigInt] =
+        for
+          m <- min to total
+        yield
+          slowCount(m, total - m)
+      partitions.sum
 
-  def count(min: Int, total: Int): BigInt =
-    memoizedCount(min, total)
+  def slowCount(min: Int, total: Int): BigInt =
+    if total == 0 then
+      bigInt1
+    else if min == total then
+      bigInt1
+    else if min > total then
+      bigInt0
+    else
+      conditionalMemoizedCount(min, total)
 
-  def count(n: Int): BigInt =
-    count(1, n)
+  def slowCount(n: Int): BigInt =
+    slowCount(1, n)
+
+  val count: Int => BigInt =
+    Memoize: n =>
+      if n == 0 then
+        bigInt1
+      else
+        var running: Boolean = true
+        var k: Int = 1
+        var pentagonal1: Int = 1
+        var pentagonal2: Int = 2
+        var signPositive: Boolean = true
+        var sum: BigInt = bigInt0
+        while n >= pentagonal1 do
+          var subsum: BigInt =
+            count(n - pentagonal1)
+          if n >= pentagonal2 then
+            subsum += count(n - pentagonal2)
+          if signPositive then
+            sum += subsum
+          else
+            sum -= subsum
+          pentagonal1 = pentagonal2 + k + k + 1
+          pentagonal2 = pentagonal1 + k + 1
+          k += 1
+          signPositive = !signPositive
+        sum
 
   @targetName("nextVarargs")
   def next(partition: Int*): Option[Seq[Int]] =
