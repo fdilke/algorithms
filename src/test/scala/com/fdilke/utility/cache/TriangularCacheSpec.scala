@@ -1,6 +1,7 @@
-package com.fdilke.utility
+package com.fdilke.utility.cache
 
 import com.fdilke.utility.RichFunSuite.*
+import com.fdilke.utility.cache.TriangularCache
 import munit.FunSuite
 
 import scala.collection.mutable

@@ -1,6 +1,6 @@
 package com.fdilke.partition
 
-import com.fdilke.utility.{Memoize, TriangularCache}
+import com.fdilke.utility.cache.{Memoize, TriangularCache}
 
 import scala.annotation.targetName
 import scala.math.Integral.Implicits.*

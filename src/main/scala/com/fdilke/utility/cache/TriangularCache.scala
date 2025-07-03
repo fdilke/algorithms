@@ -1,4 +1,4 @@
-package com.fdilke.utility
+package com.fdilke.utility.cache
 
 import scala.reflect.ClassTag
 
