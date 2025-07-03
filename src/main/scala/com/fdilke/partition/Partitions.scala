@@ -1,6 +1,6 @@
 package com.fdilke.partition
 
-import com.fdilke.utility.cache.{Memoize, TriangularCache}
+import com.fdilke.utility.cache.{LinearCache, Memoize, TriangularCache}
 
 import scala.annotation.targetName
 import scala.math.Integral.Implicits.*
@@ -59,7 +59,7 @@ object Partitions:
     slowCount(1, n)
 
   val count: Int => BigInt =
-    Memoize: n =>
+    LinearCache: n =>
       if n == 0 then
         bigInt1
       else
