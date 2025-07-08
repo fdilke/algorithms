@@ -32,6 +32,12 @@ object Partitions:
   def apply(n: Int): Seq[Seq[Int]] =
     apply(1, n)
 
+  // Return the partitions reversed individually and collectively
+  def antiLex(n: Int): Seq[Seq[Int]] =
+    apply(n).map:
+      _.reverse
+    .reverse
+
   private val bigInt0 = BigInt(0)
   private val bigInt1 = BigInt(1)
   

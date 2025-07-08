@@ -97,3 +97,22 @@ class PartitionsSpec extends FunSuite:
         i <- 0 until (p.size - 1)
       do
         Partitions.next(p(i)) is Some(p(i + 1))
+
+  test("can enumerate partitions backwards as is standard for symmrep theory"):
+    Partitions.antiLex(3) is Seq(Seq(3), Seq(2, 1), Seq(1, 1, 1))
+    Partitions.antiLex(4) is Seq(
+      Seq(4),
+      Seq(2, 2),
+      Seq(3, 1),
+      Seq(2, 1, 1),
+      Seq(1, 1, 1, 1)
+    )
+    Partitions.antiLex(5) is Seq(
+      Seq(5),
+      Seq(3, 2),
+      Seq(4, 1),
+      Seq(2, 2, 1),
+      Seq(3, 1, 1),
+      Seq(2, 1, 1, 1),
+      Seq(1, 1, 1, 1, 1)
+    )
