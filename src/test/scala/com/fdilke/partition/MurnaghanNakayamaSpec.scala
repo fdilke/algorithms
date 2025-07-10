@@ -45,3 +45,9 @@ class MurnaghanNakayamaSpec extends FunSuite:
       Seq(0, 1, 2, 1, 0),
       Seq(0, 0, 0, 2, 2)
     )
+
+  test("calculate the height of a border strip (aka reduction)"):
+    MurnaghanNakayama.height(Seq(0, 0, 0)) is -1
+    MurnaghanNakayama.height(Seq(0, 0, 0, 2, 2)) is 1
+    MurnaghanNakayama.height(Seq(3, 0, 0)) is 0
+    
