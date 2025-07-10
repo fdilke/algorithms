@@ -46,3 +46,28 @@ object MurnaghanNakayama:
     reduction.count:
       _ > 0
     - 1
+
+  def sign(
+    n: Int
+  ): Int =
+    if n % 2 == 0 then
+      1
+    else
+      -1
+
+  def character(
+    lambda: Seq[Int],
+    rho: Seq[Int]
+  ): Int =
+    rho match
+      case Nil => 1
+      case r1 +: rhoTail =>
+        reductions(lambda, r1).map: reduction =>
+          sign(height(reduction)) *
+            character(
+              lambda.zip(reduction).map:
+                _ - _,
+              rhoTail
+            )
+        .sum
+
