@@ -69,7 +69,6 @@ object Partitions:
       if n == 0 then
         bigInt1
       else
-        var running: Boolean = true
         var k: Int = 1
         var pentagonal1: Int = 1
         var pentagonal2: Int = 2

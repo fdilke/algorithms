@@ -64,3 +64,8 @@ object PartitionPandemonium2 extends App:
       case Some((_, r)) =>
         println(s"residue missing: $r mod $i")
 
+object PartitionPandemonium3 extends App:
+  for
+    n <- 0 to 10
+  do
+    println(s"$n -> ${Partitions.count(n)}")
