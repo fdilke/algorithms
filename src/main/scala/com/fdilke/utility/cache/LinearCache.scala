@@ -8,19 +8,19 @@ import scala.reflect.ClassTag
 class LinearCache[RESULT: ClassTag](
   f: Int => RESULT
 ) extends (Int => RESULT):
-  private var size = 0
+  private var size = 1
   private var array: Array[RESULT] =
-    Array.fill(0)(null.asInstanceOf[RESULT])
+    Array.fill(size)(null.asInstanceOf[RESULT])
 
   override def apply(n: Int): RESULT =
-    if n >= size then
+    while n >= size do
       array =
-        Array.tabulate(n + 1): i =>
+        Array.tabulate(size * 2): i =>
           if i < size then
             array(i)
           else
             null.asInstanceOf[RESULT]
-      size = n + 1
+      size *= 2
     Option(array(n)) match
       case None =>
         val result: RESULT = f(n)
