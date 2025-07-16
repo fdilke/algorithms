@@ -25,11 +25,12 @@ class LinearCacheSpec extends FunSuite:
     val cache: Int => String =
       LinearCache(scope.fn)
 
+    cache(0) is "0"
     cache(1) is "1"
-    scope.calls is Seq(1)
+    scope.calls is Seq(0, 1)
     cache(3) is "3"
-    scope.calls is Seq(1, 3)
+    scope.calls is Seq(0, 1, 3)
     cache(3) is "3"
-    scope.calls is Seq(1, 3)
+    scope.calls is Seq(0, 1, 3)
     cache(8) is "8"
-    scope.calls is Seq(1, 3, 8)
+    scope.calls is Seq(0, 1, 3, 8)
