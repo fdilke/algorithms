@@ -33,3 +33,10 @@ class SquareMatrixSpec extends FunSuite:
       0, 1,
       2, 3
     ).order is 2
+    
+  test("can generate diagonal matrices of a given order"):
+    SquareMatrix.diagonal(2, 10, 11) is:
+      SquareMatrix[Int](
+        11, 10,
+        10, 11
+      )

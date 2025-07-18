@@ -42,3 +42,13 @@ object SquareMatrix:
           values:
             (row * order) + column
     new SquareMatrix[T](matrix)
+    
+  def diagonal[T: ClassTag](
+    order: Int, 
+    o: T, 
+    i: T
+  ): SquareMatrix[T] =
+    new SquareMatrix[T](
+      Array.tabulate(order, order): (m, n) =>
+        if m == n then i else o
+    )

@@ -1,5 +1,6 @@
 package com.fdilke.algebra.field
 
+import com.fdilke.algebra.permutation.Group
 import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
 
@@ -187,3 +188,8 @@ class FiniteFieldSpec extends FunSuite:
           field.determinant(m1),
           field.determinant(m2)
         )
+
+  test("construct the general linear group"):
+    val field: Field[Int] = FiniteField.GF(4)
+    val group: Group[SquareMatrix[Int]] =
+      field.generalLinear(2)

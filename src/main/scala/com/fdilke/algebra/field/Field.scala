@@ -1,5 +1,6 @@
 package com.fdilke.algebra.field
 
+import com.fdilke.algebra.permutation.Group
 import com.fdilke.utility.SetsUtilities.allMaps
 
 import java.io.InputStream
@@ -117,8 +118,23 @@ trait Field[T: ClassTag]:
         (0 until order).map: k =>
           multiply(m1(i)(k), m2(k)(j))
         .reduce(add)
-    )        
+    )
 
+  def generalLinear(n: Int): Group[SquareMatrix[T]] =
+    new Group[SquareMatrix[T]]:
+      override val unit: SquareMatrix[T] =
+        SquareMatrix.diagonal(n, O, I)
+      override val elements: Set[SquareMatrix[T]] =
+        squareMatrices(n).toSet
+      override def multiply(
+        m1: SquareMatrix[T],
+        m2: SquareMatrix[T]
+      ): SquareMatrix[T] =
+        multiplyMatrices(m1, m2)
+      override def invert(
+        element: SquareMatrix[T]
+      ): SquareMatrix[T] =
+        ???
 
 object FiniteField:
 

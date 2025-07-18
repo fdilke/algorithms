@@ -13,12 +13,12 @@ object PartitionPandemonium extends App:
   val (_, totalTimeMsec) =
     Handy.timeMsec:
       for
-        m <- 0 to 100
-        n = 100 * m
+        m <- 0 to 5000
+        n = 1000 * m
       do
         val (count, timeMsec) =
         Handy.timeMsec:
-          Partitions.slowCount(n)
+          Partitions.count(n)
         println(pad(n) + pad(s"${timeMsec}ms") + s"$count")
 
   val (min, sec) = (totalTimeMsec/1000) /% 60
