@@ -1,6 +1,9 @@
 #lang racket
 
-(define (partition-count n)
+(require "cache.rkt")
+
+(define partition-count
+    (linear-cache (lambda (n)
     (if (= n 0)    
         1
         (let loop (
@@ -28,7 +31,7 @@
                 )
             )
             sum
-        ))))
+        ))))))
 
 (provide
  (contract-out
@@ -38,7 +41,7 @@
 (module+ test
   (require rackunit)
   (check-equal? 
-    (map partition-count (stream->list (in-range 11)))
+    (map partition-count (range 11))
     '(1 1 2 3 5 7 11 15 22 30 42)
   )
 )
