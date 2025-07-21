@@ -189,6 +189,34 @@ class FiniteFieldSpec extends FunSuite:
           field.determinant(m2)
         )
 
+  test("invert a matrix".ignore):
+    val field4: Field[Int] = FiniteField.GF(4)
+    val Seq(o, i, a, b) = field4.elements
+    field4.invertMatrix:
+      SquareMatrix(
+        i,  o,
+        o,  i
+      )
+    .is:
+      Some:
+        SquareMatrix(
+          i, o,
+          o, i
+        )
+    field4.invertMatrix:
+      SquareMatrix(
+        i,  o,
+        a,  b
+      )
+    .is:
+      Some:
+        SquareMatrix(
+          a, b,
+          i, o
+        )
+
+
+  // TODO complete
   test("construct the general linear group"):
     val field: Field[Int] = FiniteField.GF(4)
     val group: Group[SquareMatrix[Int]] =

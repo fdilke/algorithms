@@ -93,6 +93,11 @@ trait Field[T: ClassTag]:
         sumD
     determinantSub(indices, indices)
 
+  def invertMatrix(
+    matrix: SquareMatrix[T]
+  ): Option[SquareMatrix[T]] =
+    ???
+  
   def showTables(): Unit =
     def showTable(symbol: String, op: (T, T) => T): Unit =
       print(s"$symbol")

@@ -320,3 +320,21 @@ object SetsUtilities:
               altCycle.drop(i) ++ altCycle.take(i)
             )
       })
+
+  def associativePower[T](
+    base: T,
+    exponent: Int
+  )(
+    op: (T, T) => T
+  ): T =
+    exponent match
+      case 0 => throw new IllegalArgumentException("no unit!")
+      case 1 => base
+      case _ =>
+        val xn_2 = associativePower(base, exponent/2)(op)
+        val xn = op(xn_2, xn_2)
+        if exponent % 2 == 1 then
+          op(xn, base)
+        else
+          xn
+    

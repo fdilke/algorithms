@@ -327,3 +327,10 @@ class SetsUtilitiesSpec extends FunSuite:
     sameCycle(Seq(1, 2), Seq.empty[Int]) is false
     sameCycle(Seq(1), Seq(2)) is false
     sameCycle(Seq(1, 2, 4, 3, 7), Seq(4, 3, 7, 2, 1)) is false
+
+  test("calculate optimized associative powers"):
+    associativePower(3, 5)(_ * _) is 243
+    associativePower("x", 6)(_ + _) is "xxxxxx"
+    associativePower("_", 1)(_ + _) is "_"
+    intercept[IllegalArgumentException]:
+      associativePower(2, 0)(_ + _)
