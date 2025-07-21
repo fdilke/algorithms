@@ -1,6 +1,6 @@
 package com.fdilke.utility
 
-import munit.{ FunSuite, Assertions }
+import munit.Assertions
 import Assertions.{ assertEquals, assertNotEquals }
 
 object RichFunSuite:

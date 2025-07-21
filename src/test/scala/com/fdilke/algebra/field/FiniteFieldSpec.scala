@@ -4,8 +4,6 @@ import com.fdilke.algebra.permutation.Group
 import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
 
-import scala.concurrent.duration.Duration
-
 class FiniteFieldSpec extends FunSuite:
 
   test("can recognize nontrivial prime powers"):

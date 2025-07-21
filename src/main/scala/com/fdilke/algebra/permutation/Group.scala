@@ -8,6 +8,7 @@ import scala.annotation.{tailrec, targetName}
 import scala.annotation.targetName
 import com.fdilke.backtrack.node.MonadIterable
 import com.fdilke.utility.SetsUtilities
+import com.fdilke.utility.SetsUtilities.*
 
 import scala.collection.mutable
 import scala.compiletime.ops.any.==
@@ -21,16 +22,13 @@ trait Group[T]:
   def invert(element: T): T
 
   def power(element: T, exponent: Int): T =
-    exponent match
-      case 0 => unit
-      case 1 => element
-      case _ =>
-        val xn_2 = power(element, exponent/2)
-        val xn = multiply(xn_2, xn_2)
-        if (exponent % 2 == 1)
-          multiply(xn, element)
-        else
-          xn
+    if exponent == 0 then
+      unit
+    else if exponent > 0 then
+      associativePower(element, exponent)(multiply)
+    else
+      invert:
+        associativePower(element, -exponent)(multiply)
 
   lazy val order: Int =
     elements.size
@@ -160,7 +158,7 @@ trait Group[T]:
       val x: T = cc.head
       val o = orderOf(x)
       (2 until o).filter: r=>
-        SetsUtilities.gcd(r, o) == 1
+        gcd(r, o) == 1
       .forall: r =>
         cc.contains:
           power(x, r)
