@@ -16,6 +16,9 @@ class SquareMatrix[T](
       case _ =>
         throw new IllegalArgumentException("bad comparison")
 
+  override def hashCode(): Int =
+    util.Arrays.deepHashCode(matrix.asInstanceOf[Array[Any]])
+
   private def isEqual(other: SquareMatrix[T]): Boolean =
     util.Arrays.deepEquals(
       matrix.asInstanceOf[Array[Any]],
@@ -33,22 +36,22 @@ class SquareMatrix[T](
   def order: Int =
     matrix.length
 
+  def this(values: T*)(implicit tag: ClassTag[T]) =
+    this(SquareMatrix.fromSquare(values))
+
 object SquareMatrix:
-  def apply[T: ClassTag](values: T*): SquareMatrix[T] =
+  def fromSquare[T: ClassTag](values: Seq[T]): Array[Array[T]] =
     val order = intSqrt(values.size)
-    val matrix: Array[Array[T]] =
-      Array.tabulate(order): row =>
-        Array.tabulate(order):column =>
-          values:
-            (row * order) + column
-    new SquareMatrix[T](matrix)
-    
+    Array.tabulate(order): row =>
+      Array.tabulate(order):column =>
+        values:
+          (row * order) + column
+
   def diagonal[T: ClassTag](
     order: Int, 
     o: T, 
     i: T
   ): SquareMatrix[T] =
-    new SquareMatrix[T](
+    SquareMatrix[T]:
       Array.tabulate(order, order): (m, n) =>
         if m == n then i else o
-    )

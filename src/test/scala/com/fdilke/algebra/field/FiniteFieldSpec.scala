@@ -1,6 +1,6 @@
 package com.fdilke.algebra.field
 
-import com.fdilke.algebra.permutation.Group
+import com.fdilke.algebra.permutation.{Group, GroupVerifier}
 import com.fdilke.utility.RichFunSuite.*
 import munit.FunSuite
 
@@ -220,9 +220,12 @@ class FiniteFieldSpec extends FunSuite:
     .is:
       None
 
-
-      // TODO complete
   test("construct the general linear group"):
     val field: Field[Int] = FiniteField.GF(4)
     val group: Group[SquareMatrix[Int]] =
       field.generalLinear(2)
+    if false then // too slow, 5 sec
+      GroupVerifier.checkGroupOf(group)
+    group.order is 180
+    group.isAbelian is false
+    group.isSimple is false

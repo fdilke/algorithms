@@ -235,7 +235,7 @@ trait Group[T]:
           conjugate(e, _)
     buf.toSet
     
-  lazy val simple: Boolean =
+  lazy val isSimple: Boolean =
     conjugacyClasses.forall: conjs =>
       if (conjs.contains(unit))
         true

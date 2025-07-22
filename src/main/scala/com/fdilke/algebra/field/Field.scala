@@ -3,6 +3,7 @@ package com.fdilke.algebra.field
 import com.fdilke.algebra.permutation.Group
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.{allMaps, associativePower, power}
+import com.fdilke.utility.cache.Memoize
 
 import java.io.InputStream
 import scala.reflect.ClassTag
@@ -141,21 +142,30 @@ trait Field[T: ClassTag]:
         .reduce(add)
     )
 
-  def generalLinear(n: Int): Group[SquareMatrix[T]] =
+  def generalLinear(n: Int): Group[SquareMatrix[T]] = {
+    val cachedMultiply: (SquareMatrix[T], SquareMatrix[T]) => SquareMatrix[T] =
+      Memoize:
+        multiplyMatrices
+    val cachedInvert: SquareMatrix[T] => SquareMatrix[T] =
+      Memoize:
+        m => invertMatrix(m).get
     new Group[SquareMatrix[T]]:
       override val unit: SquareMatrix[T] =
         SquareMatrix.diagonal(n, O, I)
       override val elements: Set[SquareMatrix[T]] =
-        squareMatrices(n).toSet
+        squareMatrices(n).filter:
+          determinant(_) != O
+        .toSet
       override def multiply(
         m1: SquareMatrix[T],
         m2: SquareMatrix[T]
       ): SquareMatrix[T] =
-        multiplyMatrices(m1, m2)
+        cachedMultiply(m1, m2)
       override def invert(
         element: SquareMatrix[T]
       ): SquareMatrix[T] =
-        ???
+        cachedInvert(element)
+  }
 
 object FiniteField:
 

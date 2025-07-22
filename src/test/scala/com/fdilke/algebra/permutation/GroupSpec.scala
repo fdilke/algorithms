@@ -171,17 +171,17 @@ class GroupSpec extends FunSuite:
     classSizes(DihedralGroup(4)) is Seq(1, 1, 1, 1)
 
   test("can compute if a group is simple"):
-    CyclicGroup(2).simple is true
-    CyclicGroup(3).simple is true
-    CyclicGroup(4).simple is false
-    Permutation.symmetricGroup(0).simple is true
-    Permutation.symmetricGroup(3).simple is false
-    Permutation.alternatingGroup(3).simple is true
-    Permutation.alternatingGroup(4).simple is false
-    Permutation.alternatingGroup(5).simple is true
-    DihedralGroup(2).simple is true
-    DihedralGroup(4).simple is false
-    DihedralGroup(6).simple is false
+    CyclicGroup(2).isSimple is true
+    CyclicGroup(3).isSimple is true
+    CyclicGroup(4).isSimple is false
+    Permutation.symmetricGroup(0).isSimple is true
+    Permutation.symmetricGroup(3).isSimple is false
+    Permutation.alternatingGroup(3).isSimple is true
+    Permutation.alternatingGroup(4).isSimple is false
+    Permutation.alternatingGroup(5).isSimple is true
+    DihedralGroup(2).isSimple is true
+    DihedralGroup(4).isSimple is false
+    DihedralGroup(6).isSimple is false
 
   test("can tell if a group is ambivalent"):
     CyclicGroup(1).isAmbivalent is true

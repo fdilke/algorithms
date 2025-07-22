@@ -14,6 +14,11 @@ class SquareMatrixSpec extends FunSuite:
     matrix0110 is matrix0110_2
     matrix0110 isnt matrix1001
 
+  test("semantics of equality II"):
+    val matrix0110 = SquareMatrix[Int](0, 1, 1, 0)
+    val matrix0110_2 = SquareMatrix[Int](0, 1, 1, 0)
+    matrix0110.hashCode() is matrix0110_2.hashCode()
+
   test("can read entries in the right order, following Herstein"):
     val matrix0123 = SquareMatrix[Int](0, 1, 2, 3)
     matrix0123(0)(0) is 0

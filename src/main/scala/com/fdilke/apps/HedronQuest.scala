@@ -193,7 +193,7 @@ class Plushie(
     val e = f * v
     assert(e.order == 2)
     println(s"Plushie group order = ${plushieGroup.order}")
-    println(s"Plushie group simple = ${plushieGroup.simple}")
+    println(s"Plushie group simple = ${plushieGroup.isSimple}")
     type Coset = Set[Permutation]
     type Corner= (Coset, Coset)
     def multiplyCoset(
