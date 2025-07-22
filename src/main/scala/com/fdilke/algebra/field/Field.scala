@@ -1,7 +1,8 @@
 package com.fdilke.algebra.field
 
 import com.fdilke.algebra.permutation.Group
-import com.fdilke.utility.SetsUtilities.allMaps
+import com.fdilke.utility.SetsUtilities
+import com.fdilke.utility.SetsUtilities.{allMaps, associativePower, power}
 
 import java.io.InputStream
 import scala.reflect.ClassTag
@@ -96,8 +97,23 @@ trait Field[T: ClassTag]:
   def invertMatrix(
     matrix: SquareMatrix[T]
   ): Option[SquareMatrix[T]] =
-    ???
-  
+    if determinant(matrix) == O then
+      None
+    else
+      // Temu Gaussian elimination
+      val matrixOrder: Int = matrix.order
+      def qTo(i: Int): Int =
+        power(elements.size, i)
+      val q_n: Int =
+        qTo(matrixOrder)
+      val groupOrder: Int =
+        ((0 until matrixOrder) map:
+          (i: Int) =>
+            q_n - qTo(i)
+        ).product
+      Some:
+        associativePower(matrix, groupOrder - 1)(multiplyMatrices)
+
   def showTables(): Unit =
     def showTable(symbol: String, op: (T, T) => T): Unit =
       print(s"$symbol")
