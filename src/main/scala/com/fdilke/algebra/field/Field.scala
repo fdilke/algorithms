@@ -142,7 +142,7 @@ trait Field[T: ClassTag]:
         .reduce(add)
     )
 
-  def generalLinear(n: Int): Group[SquareMatrix[T]] = {
+  def generalLinear(n: Int): Group[SquareMatrix[T]] =
     val cachedMultiply: (SquareMatrix[T], SquareMatrix[T]) => SquareMatrix[T] =
       Memoize:
         multiplyMatrices
@@ -165,11 +165,9 @@ trait Field[T: ClassTag]:
         element: SquareMatrix[T]
       ): SquareMatrix[T] =
         cachedInvert(element)
-  }
 
 object FiniteField:
-
-  private val conwayRegex: Regex = 
+  private val conwayRegex: Regex =
     "\\[(.*),(.*),\\[(.*)]],".r
 
   private val stream: InputStream =
@@ -185,12 +183,11 @@ object FiniteField:
       Map[NontrivialPrimePower, FiniteField]()
     ):
       (map, line) =>
-        if ((line startsWith "[") && (line endsWith "],"))
+        if (line startsWith "[") && (line endsWith "],") then
           val conwayRegex(pp, nn, coefftsCSV) = line
           val pn = NontrivialPrimePower(pp.toInt, nn.toInt)
-          val coeffts = coefftsCSV.split(",").map {
+          val coeffts = coefftsCSV.split(",").map:
             _.toInt
-          }
           map + (pn -> new FiniteField(pn, coeffts))
         else map
 
@@ -257,9 +254,9 @@ class FiniteField(
     elements.map: i =>
       val polyI = polyTable(i)
       elements.map:j =>
-        (Seq.iterate(j, pn.n) { j => shiftTable(j) } zip polyI map {
-          case (r, s) => scalarMultiplicationTable(s)(r)
-        }).foldLeft(O):
+        (Seq.iterate(j, pn.n) { j => shiftTable(j) } zip polyI map:
+          (r, s) => scalarMultiplicationTable(s)(r)
+        ).foldLeft(O):
           add
 
   override def multiply(element1: Int, element2: Int): Int =
