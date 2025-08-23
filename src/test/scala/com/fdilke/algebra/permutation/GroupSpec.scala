@@ -210,3 +210,44 @@ class GroupSpec extends FunSuite:
     Permutation.alternatingGroup(4).isStronglyAmbivalent is false
     Permutation.alternatingGroup(5).isStronglyAmbivalent is false
 
+  test("can compute coset representatives of a subgroup"):
+    val group: Group[Permutation] =
+      Permutation.symmetricGroup(3)
+    val subgroup2: group.Subgroup =
+      group.generateSubgroup(Permutation(1, 0, 2))
+    subgroup2.order is 2
+    val reps: Seq[Permutation] =
+      subgroup2.rightCosetRepresentatives
+    reps.size is 3
+    val cosetUnion: Set[Permutation] =
+      for
+        r <- reps.toSet
+        s <- subgroup2.elements
+      yield
+          group.multiply(r, s)
+    cosetUnion.size is 6
+
+  test("can compute quotients by a normal subgroup"):
+    val group: Group[Permutation] =
+      Permutation.symmetricGroup(3)
+    val alternating: group.Subgroup =
+      group.generateSubgroup(Permutation(1, 2, 0))
+    val quotient: Group[Permutation] =
+      group / alternating
+    GroupVerifier.checkGroupOf[Permutation](quotient)
+    quotient.order is 2
+
+  test("can compute the quotients of S_4".ignore):
+    val group: Group[Permutation] =
+      Permutation.symmetricGroup(4)
+    group.subgroups.filter:
+      _.isNormal
+    .map: subgroup =>
+      println(s"subgroup order = ${subgroup.order}")
+      val quotient: Group[Permutation] =
+        group/subgroup
+      GroupVerifier.checkGroupOf[Permutation](quotient)
+      (quotient.order * subgroup.order) is group.order
+      subgroup.order
+    .is:
+      Set(1,4,12,24)

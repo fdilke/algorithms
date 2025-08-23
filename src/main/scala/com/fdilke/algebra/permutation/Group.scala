@@ -9,10 +9,13 @@ import scala.annotation.targetName
 import com.fdilke.backtrack.node.MonadIterable
 import com.fdilke.utility.SetsUtilities
 import com.fdilke.utility.SetsUtilities.*
+import com.fdilke.utility.cache.Memoize
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.compiletime.ops.any.==
 import scala.language.postfixOps
+import scala.reflect.ClassTag
 
 trait Group[T]:
   group =>
@@ -96,6 +99,20 @@ trait Group[T]:
         elements.map:
           conjugate(_, x)
 
+    lazy val rightCosetRepresentatives: Seq[T] =
+      group.elements.foldLeft(
+        Seq[T]:
+          group.unit
+      ):
+        (seq, t) =>
+          val t_1 = invert(t)
+          if seq.exists:
+            s => elements.contains(multiply(s, t_1))
+          then
+            seq
+          else
+            t +: seq
+    
   lazy val trivialSubgroup: Subgroup =
     Subgroup(Set(unit))
 
@@ -241,6 +258,39 @@ trait Group[T]:
         true
       else
         generateSubgroup(conjs).order == Group.this.order
+
+  def /(normalSubgroup: Subgroup)(using ClassTag[T]): Group[T] =
+    val representatives: Seq[T] =
+      normalSubgroup.rightCosetRepresentatives
+    // It would have been nice to compute a normalized form of these that's inverse-closed.
+    // But we can't! The cyclic group C_4 and its socle C_2 illustrate this.
+    val findRepresentative: T => T =
+      Memoize: (t: T) =>
+        invert:
+          representatives.find: s =>
+            normalSubgroup.elements.contains:
+              multiply(t, s)
+          .get
+    val doMultiply: (T, T) => T =
+      Memoize[T, T, T]: (t, u) =>
+        findRepresentative:
+          multiply(t, u)
+    val doInvert: T => T =
+      Memoize[T, T]: t =>
+        findRepresentative:
+          group.invert(t)
+    new Group:
+      override val unit: T =
+        group.unit
+      override val elements: Set[T] =
+        representatives.toSet
+      override def multiply(
+        t1: T,
+        t2: T
+      ): T =
+        doMultiply(t1, t2)
+      override def invert(t: T): T =
+        doInvert(t)
 
 object Group:
   extension(group: Group[Permutation])
