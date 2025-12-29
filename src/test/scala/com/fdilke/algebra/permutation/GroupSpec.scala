@@ -237,7 +237,8 @@ class GroupSpec extends FunSuite:
     GroupVerifier.checkGroupOf[Permutation](quotient)
     quotient.order is 2
 
-  test("can compute the quotients of S_4".ignore):
+  test("can compute the quotients of S_4"):
+//    def checkQuotients[T](group: Group[T]): Unit =
     val group: Group[Permutation] =
       Permutation.symmetricGroup(4)
     group.subgroups.filter:

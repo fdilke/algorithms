@@ -266,11 +266,11 @@ trait Group[T]:
     // But we can't! The cyclic group C_4 and its socle C_2 illustrate this.
     val findRepresentative: T => T =
       Memoize: (t: T) =>
-        invert:
-          representatives.find: s =>
-            normalSubgroup.elements.contains:
-              multiply(t, s)
-          .get
+        val t_1 = invert(t)
+        representatives.find: s =>
+          normalSubgroup.elements.contains:
+            multiply(s, t_1)
+        .get
     val doMultiply: (T, T) => T =
       Memoize[T, T, T]: (t, u) =>
         findRepresentative:
