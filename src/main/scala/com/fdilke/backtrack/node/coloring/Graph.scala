@@ -96,14 +96,12 @@ class Graph(
   def fullExtensions(
     images: Seq[Int]
   ): Iterable[Seq[Int]] =
-    def myExplore(extImages: Seq[Int]): Iterable[Either[Seq[Int], Seq[Int]]] =
+    BacktrackIterable[Seq[Int], Seq[Int]](images): extImages =>
       if extImages.size == numVertices then
         Iterable(Right(extImages))
       else
         singlePointExtensions(extImages).map:
           furtherExtension => Left(furtherExtension)
-    BacktrackIterable[Seq[Int], Seq[Int]](images):
-      myExplore
 
   def singlePointExtensionsMap(
     images: Map[Int, Int]
