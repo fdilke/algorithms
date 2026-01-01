@@ -1,7 +1,5 @@
 package com.fdilke.backtrack.node.coloring
 
-import com.fdilke.backtrack.node.Node
-import com.fdilke.backtrack.node.NodeSolvers.StackSafeNodeSolver
 import Graph.adjacencyTableFromPairs
 import com.fdilke.algebra.permutation.{Group, Permutation}
 import com.fdilke.backtrack.BacktrackIterable
@@ -98,17 +96,14 @@ class Graph(
   def fullExtensions(
     images: Seq[Int]
   ): Iterable[Seq[Int]] =
-    class Extension(
-      extendedImages: Seq[Int]
-    ) extends Node[Extension, Iterable, Seq[Int]]:
-      override def explore: Iterable[Either[Extension, Seq[Int]]] =
-        if extendedImages.size == numVertices then
-          Iterable(solution(extendedImages))
-        else
-          singlePointExtensions(extendedImages).map:
-            furtherExtension => node(Extension(furtherExtension))
-    StackSafeNodeSolver.allSolutions[Extension, Iterable, Seq[Int]]:
-      Extension(images)
+    def myExplore(extImages: Seq[Int]): Iterable[Either[Seq[Int], Seq[Int]]] =
+      if extImages.size == numVertices then
+        Iterable(Right(extImages))
+      else
+        singlePointExtensions(extImages).map:
+          furtherExtension => Left(furtherExtension)
+    BacktrackIterable[Seq[Int], Seq[Int]](images):
+      myExplore
 
   def singlePointExtensionsMap(
     images: Map[Int, Int]
