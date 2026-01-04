@@ -659,4 +659,8 @@ class GraphSpec extends FunSuite:
     Graph(
       (0, 1), (0, 2)
     ).connectedCore is
-      Seq(0, 2, 2) -> Set(0, 2) 
+      Seq(0, 2, 2) -> Set(0, 2)
+    Graph(
+      (0, 1), (1, 2), (2, 3)
+    ).connectedCore is
+      Seq(2, 1, 2, 1) -> Set(1, 2)

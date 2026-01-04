@@ -269,7 +269,7 @@ class Graph(
     yield
       (i, j)
     ).find: (i, j) =>
-      cachedNeighbours(i).diff(draftCore).subsetOf(cachedNeighbours(j))
+      cachedNeighbours(i).diff(cachedNeighbours(j)).intersect(draftCore).isEmpty
     match
       case None =>
         (vertices.map: v =>
