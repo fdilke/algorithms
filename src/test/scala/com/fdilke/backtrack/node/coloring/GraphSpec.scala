@@ -654,3 +654,9 @@ class GraphSpec extends FunSuite:
     icosahedralGraph.chromaticNumber is 4
     completeBipartite(2, 3).chromaticNumber is 2
     completeBipartite(3, 3).chromaticNumber is 2
+
+  test("calculate the core of a connected graph"):
+    Graph(
+      (0, 1), (0, 2)
+    ).connectedCore is
+      Seq(0, 2, 2) -> Set(0, 2) 

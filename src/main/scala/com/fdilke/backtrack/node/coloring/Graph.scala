@@ -255,6 +255,36 @@ class Graph(
       ).isDefined
     .get
 
+  @tailrec private def connectedCoreSub(
+    draftCore: Set[Int],
+    images: Map[Int, Int]
+  ): (Seq[Int], Set[Int]) =
+    println("UUU cC looping with: " + draftCore + " ; " + images)
+    val cachedNeighbours: Seq[Set[Int]] =
+      vertices map: v =>
+        neighborsOf(v).toSet
+    (for
+      i <- draftCore
+      j <- draftCore if i != j && !adjacencyTable(i)(j)
+    yield
+      (i, j)
+    ).find: (i, j) =>
+      cachedNeighbours(i).diff(draftCore).subsetOf(cachedNeighbours(j))
+    match
+      case None =>
+        (vertices.map: v =>
+          images.getOrElse(v, v)
+        ) -> draftCore
+      case Some(v, w) =>
+        println("UUU cC recursing with: " + v + " ; " + w)
+        connectedCoreSub(
+          draftCore - v,
+          images + (v -> w)
+        )
+
+  lazy val connectedCore: (Seq[Int], Set[Int]) =
+    connectedCoreSub(vertices.toSet, Map.empty)
+
 object Graph:
   @targetName("applyWithEdges")
   def apply(
