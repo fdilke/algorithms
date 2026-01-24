@@ -655,12 +655,12 @@ class GraphSpec extends FunSuite:
     completeBipartite(2, 3).chromaticNumber is 2
     completeBipartite(3, 3).chromaticNumber is 2
 
-  test("calculate the core of a connected graph"):
+  test("calculate the semireduction of a connected graph"):
     Graph(
       (0, 1), (0, 2)
-    ).connectedCore is
+    ).connectedSemiReduction is
       Seq(0, 2, 2) -> Set(0, 2)
     Graph(
       (0, 1), (1, 2), (2, 3)
-    ).connectedCore is
+    ).connectedSemiReduction is
       Seq(2, 1, 2, 1) -> Set(1, 2)

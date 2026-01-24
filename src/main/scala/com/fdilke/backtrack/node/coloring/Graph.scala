@@ -255,35 +255,35 @@ class Graph(
       ).isDefined
     .get
 
-  @tailrec private def connectedCoreSub(
-    draftCore: Set[Int],
+  @tailrec private def connectedSemiReductionSub(
+    draftVertexes: Set[Int],
     images: Map[Int, Int]
   ): (Seq[Int], Set[Int]) =
-    println("UUU cC looping with: " + draftCore + " ; " + images)
+    println("UUU cC looping with: " + draftVertexes + " ; " + images)
     val cachedNeighbours: Seq[Set[Int]] =
       vertices map: v =>
         neighborsOf(v).toSet
     (for
-      i <- draftCore
-      j <- draftCore if i != j && !adjacencyTable(i)(j)
+      i <- draftVertexes
+      j <- draftVertexes if i != j && !adjacencyTable(i)(j)
     yield
       (i, j)
     ).find: (i, j) =>
-      cachedNeighbours(i).diff(cachedNeighbours(j)).intersect(draftCore).isEmpty
+      cachedNeighbours(i).diff(cachedNeighbours(j)).intersect(draftVertexes).isEmpty
     match
       case None =>
         (vertices.map: v =>
           images.getOrElse(v, v)
-        ) -> draftCore
+        ) -> draftVertexes
       case Some(v, w) =>
         println("UUU cC recursing with: " + v + " ; " + w)
-        connectedCoreSub(
-          draftCore - v,
+        connectedSemiReductionSub(
+          draftVertexes - v,
           images + (v -> w)
         )
 
-  lazy val connectedCore: (Seq[Int], Set[Int]) =
-    connectedCoreSub(vertices.toSet, Map.empty)
+  lazy val connectedSemiReduction: (Seq[Int], Set[Int]) =
+    connectedSemiReductionSub(vertices.toSet, Map.empty)
 
 object Graph:
   @targetName("applyWithEdges")
