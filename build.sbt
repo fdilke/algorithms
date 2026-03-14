@@ -5,7 +5,6 @@ lazy val root = project
     description := "place to explore algorithmic adventures in Scala 3",
     version := "0.1.0",
     scalaVersion := "3.7.0",
-    scalacOptions ++= Seq(),
     ThisBuild/scalacOptions ++= Seq(
       "-unchecked", 
       "-deprecation", 
