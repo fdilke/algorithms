@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class EganTellTaleSpec extends TellTaleSpec(TellTale.egan)
 class MyTellTaleSpec extends TellTaleSpec(TellTale.my)
 
-class TellTaleSpec(
+abstract class TellTaleSpec(
   tellTale: Seq[Seq[Boolean]] => (Int, Int)
 ) extends FunSuite:
   private def flipSquare(

@@ -22,9 +22,9 @@ class ExFreePredicateSolverSpec extends PredicateSolverSpec(ExFreePredicateSolve
     ): f =>
       f(2) & !f(3)
 
-class PredicateSolverSpec(
+abstract class PredicateSolverSpec(
   solver: PredicateSolver
-)  extends FunSuite:
+) extends FunSuite:
   def solvesIn(
     maxCalls: Int,
     entries: (Int, Boolean)*

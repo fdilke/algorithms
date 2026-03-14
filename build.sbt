@@ -20,3 +20,5 @@ lazy val root = project
   )
 
 testFrameworks += new TestFramework("munit.Framework")
+
+Compile / mainClass := Some("com.fdilke.apps.CubeQuest")

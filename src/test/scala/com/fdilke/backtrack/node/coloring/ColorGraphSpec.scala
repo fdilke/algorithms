@@ -12,7 +12,7 @@ class ColorGraphLoopSpec extends ColorGraphSpec(ColorGraphLoop)
 
 class ColorGraphTweakedLoopSpec extends ColorGraphSpec(ColorGraphTweakedLoop)
  
-class ColorGraphSpec(
+abstract class ColorGraphSpec(
   algo: ColoringAlgo
 ) extends FunSuite:
   

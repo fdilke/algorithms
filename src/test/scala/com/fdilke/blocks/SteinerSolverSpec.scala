@@ -17,7 +17,7 @@ class PortionControlledSteinerSolverSpec extends
     greedy = false
   )
 
-class SteinerSolverSpec(
+abstract class SteinerSolverSpec(
   solver: SteinerSolver,
   greedy: Boolean
 ) extends FunSuite:
